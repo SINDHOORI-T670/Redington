@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Auth::routes();
+
+Route::get('admin/login','GeneralController@adminLogin')->name('Admin-Login');
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('admin/home','AdminController@index')->name('Admin-Home');
+
+
+Route::get('Admin/Logout', 'AdminController@logout')->name('Admin-Logout');
