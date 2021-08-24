@@ -4,7 +4,7 @@
       <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
           <li class="nav-item mobile-menu d-md-none mr-auto"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="ft-menu font-large-1"></i></a></li>
-          <li class="nav-item"><a class="navbar-brand" href="{{url('Admin-Home')}}">
+          <li class="nav-item"><a class="navbar-brand" href="{{route('Admin-Home')}}">
             <img class="brand-logo" alt="redington admin logo" src="{{asset('admin/app-assets/images/logo/logo-light-sm.png')}}">
             <h3 class="brand-text">{{ isset($company)? $company['site_title']:"REDINGTON"  }}</h3></a></li>
           <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="fa fa-ellipsis-v"></i></a></li>
@@ -221,12 +221,12 @@
             <li class="dropdown dropdown-user nav-item">
                 <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="avatar avatar-online"><img src="{{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}}" alt="avatar"><i></i></span><span class="user-name">{{Auth::User()->name}}</span></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#"><i class="ft-user"></i> Edit Profile</a>
-                    <a class="dropdown-item" href="#"><i class="ft-mail"></i> My Inbox</a>
-                    <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
-                    <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a>
+                    <a class="dropdown-item" href="{{url('admin/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
+                    <a class="dropdown-item" href="{{url('admin/edit/company/profile')}}"><i class="ft-mail"></i> My Company</a>
+                    {{-- <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
+                    <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a> --}}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{url('Admin/Logout')}}" onclick="event.preventDefault();
+                    <a class="dropdown-item" href="{{url('admin/logout')}}" onclick="event.preventDefault();
                         document.getElementById('logout-form1').submit();">
                         <form id="logout-form1" action="{{route('Admin-Logout')}}" method="get" style="display: none;">
                             {{ csrf_field() }}
@@ -243,7 +243,100 @@
   <div class="main-menu menu-fixed menu-dark menu-accordion    menu-shadow " data-scroll-to-active="true">
     <div class="main-menu-content">
       <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
-        <li class=" nav-item"><a href="index-2.html"><i class="icon-home"></i><span class="menu-title" data-i18n="nav.dash.main">Dashboard</span><span class="badge badge badge-info badge-pill float-right mr-2">5</span></a>
+        {{-- users --}}
+        <li class=" nav-item">
+          <a href="#"><i class="fa fa-users"></i><span class="menu-title" data-i18n="nav.page_layouts.main">User</span></a>
+          <ul class="menu-content">
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Customer</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Partner</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Employee</a>
+            </li>
+          </ul>
+        </li>
+
+        {{-- Company --}}
+        <li class=" nav-item">
+          <a href="#"><i class="icon-home"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Redington</span></a>
+          <ul class="menu-content">
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Edit Details</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Country</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Languages</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Currency</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Service Region</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Location</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Branch</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Divisions</a>
+            </li>
+            </li>
+          </ul>
+        </li>
+
+        {{-- Product --}}
+        <li class=" nav-item">
+          <a href="#"><i class="fa fa-cart-plus"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Products</span></a>
+          <ul class="menu-content">
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Product Category</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Product Sub Category</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Products</a>
+            </li>
+          </ul>
+        </li>
+
+        {{-- Services --}}
+        <li class=" nav-item">
+          <a href="#"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Services</span></a>
+          <ul class="menu-content">
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Service Category</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Service Sub Category</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Services</a>
+            </li>
+          </ul>
+        </li>
+
+        {{-- Events --}}
+        <li class=" nav-item">
+          <a href="#"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Events</span></a>
+          <ul class="menu-content">
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Create Event</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">List Event</a>
+            </li>
+          </ul>
+        </li>
+
+        {{-- Meeting --}}
+        <li class=" nav-item">
+          <a href="#"><i class="fa fa-calendar"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Meetings</span></a>
+          <ul class="menu-content">
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Schedule New</a>
+            </li>
+            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">List Meetings</a>
+            </li>
+          </ul>
+        </li>
+
+        {{-- Promotions --}}
+        <li class=" nav-item"><a href="#"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Promotions</span></a>
+        </li>
+
+        {{-- Blogs --}}
+        <li class=" nav-item"><a href="#"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Blogs</span></a>
+        </li>
+
+        {{-- <li class=" nav-item"><a href="index-2.html"><i class="icon-home"></i><span class="menu-title" data-i18n="nav.dash.main">Dashboard</span><span class="badge badge badge-info badge-pill float-right mr-2">5</span></a>
           <ul class="menu-content">
             <li class="active"><a class="menu-item" href="dashboard-ecommerce.html" data-i18n="nav.dash.ecommerce">eCommerce</a>
             </li>
@@ -1307,7 +1400,7 @@
         <li class=" nav-item"><a href="http://support.pixinvent.com/"><i class="icon-support"></i><span class="menu-title" data-i18n="nav.support_raise_support.main">Raise Support</span></a>
         </li>
         <li class=" nav-item"><a href="https://pixinvent.com/robust-bootstrap-admin-template/documentation"><i class="icon-notebook"></i><span class="menu-title" data-i18n="nav.support_documentation.main">Documentation</span></a>
-        </li>
+        </li> --}}
       </ul>
     </div>
 </div>

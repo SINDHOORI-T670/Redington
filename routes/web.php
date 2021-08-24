@@ -19,11 +19,13 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('admin/login','GeneralController@adminLogin')->name('Admin-Login');
+
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('admin/home','AdminController@index')->name('Admin-Home');
-
-
-Route::get('Admin/Logout', 'AdminController@logout')->name('Admin-Logout');
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
+    Route::get('/home','AdminController@index')->name('Admin-Home');
+    Route::get('/edit/profile','AdminController@editprofile');
+    Route::get('/edit/company/profile','AdminController@editprofile');
+    Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
+});
