@@ -222,7 +222,7 @@
                 <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="avatar avatar-online"><img src="{{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}}" alt="avatar"><i></i></span><span class="user-name">{{Auth::User()->name}}</span></a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="{{url('admin/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
-                    <a class="dropdown-item" href="{{url('admin/edit/company/profile')}}"><i class="ft-mail"></i> My Company</a>
+                    <a class="dropdown-item" href="{{url('admin/edit/company/profile')}}"><i class="icon-home"></i> My Company</a>
                     {{-- <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
                     <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a> --}}
                     <div class="dropdown-divider"></div>
@@ -245,13 +245,13 @@
       <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
         {{-- users --}}
         <li class=" nav-item">
-          <a href="#"><i class="fa fa-users"></i><span class="menu-title" data-i18n="nav.page_layouts.main">User</span></a>
+          <a href="#"><i class="fa fa-users"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Users</span></a>
           <ul class="menu-content">
-            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Customer</a>
+            <li><a class="menu-item" href="{{url('admin/list/user/2')}}" data-i18n="nav.page_layouts.1_column">Customer</a>
             </li>
-            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Partner</a>
+            <li><a class="menu-item" href="{{url('admin/list/user/3')}}" data-i18n="nav.page_layouts.2_columns">Partner</a>
             </li>
-            <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Employee</a>
+            <li><a class="menu-item" href="{{url('admin/list/user/4')}}" data-i18n="nav.page_layouts.2_columns">Employee</a>
             </li>
           </ul>
         </li>

@@ -26,6 +26,13 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
     Route::get('/home','AdminController@index')->name('Admin-Home');
     Route::get('/edit/profile','AdminController@editprofile');
-    Route::get('/edit/company/profile','AdminController@editprofile');
+    Route::post('/update/profile','AdminController@updateprofile');
+    Route::get('/edit/company/profile','AdminController@editCompanyDetails');
+    Route::post('/update/company/profile','AdminController@updateCompanyDetails');
+    Route::get('/list/user/{type}','AdminController@listUser');
+    Route::get('/create/user/{type}','AdminController@createUser');
+    Route::post('/save/user','AdminController@saveUser');
+    Route::get('/edit/user/{id}','AdminController@editUser');
+    Route::post('/update/user','AdminController@updateUser');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

@@ -11,6 +11,8 @@
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
+        <br>
+        @include('alert.messages')
         <div class="content-body">
             <section id="horizontal-form-layouts">
                 <div class="row justify-content-md-center">
@@ -30,56 +32,28 @@
                             </div>
                             <div class="card-content collpase show">
                                 <div class="card-body">
-                                    <form class="form form-horizontal">
+                                    <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/update/profile')}}" method="post"> 
+                                        @csrf
+                                        {{-- {{ method_field('PUT') }} --}}
                                         <div class="form-body">
                                             <div class="form-group row">
-                                                <label class="col-md-3 label-control" for="eventRegInput1">Full Name</label>
+                                                <label class="col-md-3 label-control" for="eventRegInput1">Name</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="name" name="fullname">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="col-md-3 label-control" for="eventRegInput2">Title</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" id="eventRegInput2" class="form-control" placeholder="title" name="title">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="col-md-3 label-control" for="eventRegInput3">Company</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" id="eventRegInput3" class="form-control" placeholder="company" name="company">
+                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="name" name="name" value={{Auth::User()->name}}>
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control" for="eventRegInput4">Email</label>
                                                 <div class="col-md-9">
-                                                    <input type="email" id="eventRegInput4" class="form-control" placeholder="email" name="email">
+                                                    <input type="email" id="eventRegInput4" class="form-control" placeholder="email" name="email" value="{{Auth::User()->email}}">
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control" for="eventRegInput5">Contact Number</label>
                                                 <div class="col-md-9">
-                                                    <input type="tel" id="eventRegInput5" class="form-control" name="contact" placeholder="contact number">
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <label class="col-md-3 label-control">Existing Customer</label>
-                                                <div class="col-md-9">
-                                                    <div class="input-group">
-                                                        <div class="d-inline-block custom-control custom-radio mr-1">
-                                                            <input type="radio" name="customer1" class="custom-control-input" checked="" id="yes">
-                                                            <label class="custom-control-label" for="yes">Yes</label>
-                                                        </div>
-                                                        <div class="d-inline-block custom-control custom-radio">
-                                                            <input type="radio" name="customer1" class="custom-control-input" id="no">
-                                                            <label class="custom-control-label" for="no">No</label>
-                                                        </div>
-                                                    </div>
+                                                    <input type="tel" id="eventRegInput5" class="form-control" name="phone" placeholder="contact number" value="{{Auth::User()->phone}}">
                                                 </div>
                                             </div>
                                         </div>
@@ -88,7 +62,7 @@
                                             <button type="button" class="btn btn-warning mr-1">
                                                 <i class="ft-x"></i> Cancel
                                             </button>
-                                            <button type="button" class="btn btn-primary">
+                                            <button type="submit" class="btn btn-primary">
                                                 <i class="fa fa-check-square-o"></i> Save
                                             </button>
                                         </div>

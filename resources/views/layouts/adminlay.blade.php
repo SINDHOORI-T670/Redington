@@ -37,11 +37,11 @@
   <body class="vertical-layout vertical-menu 2-columns   menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-col="2-columns">
 
     @include('include/admin_header')
-
     @yield('content')
-
     @include('include/admin_footer')
 
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <!-- BEGIN VENDOR JS-->
     <script src="{{asset('admin/app-assets/vendors/js/vendors.min.js')}}"></script>
     <!-- BEGIN VENDOR JS-->
