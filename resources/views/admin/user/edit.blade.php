@@ -55,7 +55,6 @@
                                 <div class="card-body">
                                     <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/update/user')}}" method="post"> 
                                         @csrf
-                                        {{ method_field('PUT') }}
                                         <input type="hidden" name="id" value="{{$user->id}}">
                                         <div class="form-body">
                                             <h4 class="form-section"><i class="ft-user"></i> Personal Info</h4>
@@ -100,7 +99,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="projectinput4">Contact Number</label>
                                                 <div class="col-md-9">
-                                                    <input type="tel" id="phone" class="form-control" placeholder="Contact Number" name="phone" value="{{ $user->phone }}">
+                                                    <input type="text" id="phone" class="form-control" placeholder="Contact Number" name="phone" value="{{ $user->phone }}">
                                                     @if ($errors->has('phone'))
                                                         <span class="help-block">
                                                             <strong class="error">{{ $errors->first('phone') }}</strong>
@@ -177,6 +176,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
 
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 
 <script type="text/javascript">
     function readURL(input) {
@@ -190,6 +191,13 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+    var phones = [{ "mask": "+(###) ########"},{ "mask": "+(###) ########"}];
+            $('#phone').inputmask({ 
+                mask: phones, 
+                greedy: false, 
+                definitions: { '#': { validator: "[0-9]", cardinality: 1}} ,
+                
+            });
     console.clear();
 
 

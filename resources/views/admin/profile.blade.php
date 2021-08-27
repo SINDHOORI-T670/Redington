@@ -53,7 +53,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control" for="eventRegInput5">Contact Number</label>
                                                 <div class="col-md-9">
-                                                    <input type="tel" id="eventRegInput5" class="form-control" name="phone" placeholder="contact number" value="{{Auth::User()->phone}}">
+                                                    <input type="text" id="phone" class="form-control" name="phone" placeholder="contact number" value="{{Auth::User()->phone}}">
                                                 </div>
                                             </div>
                                         </div>
@@ -76,4 +76,35 @@
         </div>
     </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+
+<script type="text/javascript">
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+            $('#profile').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    var phones = [{ "mask": "+(###) ########"},{ "mask": "+(###) ########"}];
+            $('#phone').inputmask({ 
+                mask: phones, 
+                greedy: false, 
+                definitions: { '#': { validator: "[0-9]", cardinality: 1}} ,
+                
+            });
+    console.clear();
+
+
+    
+</script>
 @endsection

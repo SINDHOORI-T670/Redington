@@ -34,5 +34,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/save/user','AdminController@saveUser');
     Route::get('/edit/user/{id}','AdminController@editUser');
     Route::post('/update/user','AdminController@updateUser');
+    Route::get('/delete/user/{id}','AdminController@deleteUser');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

@@ -10,6 +10,8 @@ table.dataTable tbody td {
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
+        <br>
+        @include('alert.messages')
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -52,7 +54,7 @@ table.dataTable tbody td {
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
                                             <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $user->id }}','{{ $user->name }}');"><i class="icon-trash"></i> Delee</button>
-                                            <form id="resource-delete-{{ $user->id }}" action="#" method="POST">
+                                            <form id="resource-delete-{{ $user->id }}" action="{{url('admin/delete/user/')}}/{{$user->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>

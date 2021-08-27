@@ -43,7 +43,8 @@ class AdminController extends Controller
             // 'post' => $request->post,
             // 'password' => Hash::make($request->password),
         ];
-        $admin->update($data);
+        User::where('id',Auth::User()->id)->update($data);
+        // dd($admin);
         return redirect()->back()->with('message', 'Admin Updated');
         
     }
@@ -191,33 +192,23 @@ class AdminController extends Controller
     }
 
     public function updateUser(Request $request){
-        $validator = $this->createValidation($request);
-        if ($validator->fails()) {
-            $messages = $validator->messages();
-            // dd($messages);
-            return Redirect::back()->withErrors($messages)->withInput();
-        } else  {
+        
             $inputData = [
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'email' => $request->email,
-                'post' => $request->post
+                // 'post' => $request->post
             ];
             User::where('id',$request->id)->update($inputData);
             return redirect()->back()->with('success', $request->name.' updated successfully');
-        }
+       
     }
 
-
-
-
-
-
-
-
-
-
-
+    public function deleteUser($id){
+        User::where('id',$id)->delete();
+        return redirect()->back()->with('success','User deleted successfully');
+    }
+    
     public function logout(Request $request)
     {
         Auth::logout();
