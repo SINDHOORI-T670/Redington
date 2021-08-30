@@ -121,7 +121,7 @@
                                                 @endif
                                             </div> --}}
 
-                                            {{-- <div class="form-group row">
+                                            <div class="form-group row">
                                                 <label class="col-md-3 label-control required">Profile Image</label>
                                                 <div class="col-md-9">
                                                     <label id="projectinput6" class="file center-block">
@@ -134,7 +134,7 @@
                                                         <strong class="error">{{ $errors->first('image') }}</strong>
                                                     </span>
                                                 @endif
-                                            </div> --}}
+                                            </div>
                                                 
                                             <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>
             

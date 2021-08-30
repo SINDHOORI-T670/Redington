@@ -11,7 +11,9 @@ use App\User;
 use App\Models\Setting;
 use Redirect;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Service;
+use App\Models\Technology;
+use App\Models\UserSpec;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -36,13 +38,25 @@ class AdminController extends Controller
     public function updateprofile(Request $request){
         // dd($request->all());
         $admin = User::find(Auth::User()->id);
+        $fileName = "";
+            if ($request->file('image') != "") {
+                $userFile = User::find(Auth::User()->id);
+                if ($userFile->image != "") {
+                    unlink($userFile->image);
+                }
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/profiles/', $fileName);
+                $fileName = 'uploads/profiles/'.$fileName;
+            }
         $data = [
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
-            // 'post' => $request->post,
+            'image' => $fileName
             // 'password' => Hash::make($request->password),
         ];
+        // dd($data);
         User::where('id',Auth::User()->id)->update($data);
         // dd($admin);
         return redirect()->back()->with('message', 'Admin Updated');
@@ -69,10 +83,7 @@ class AdminController extends Controller
                         $logo = $temp_setting->value;
                     } else {
                         $logo = $temp_setting->value;
-                        // if($temp_setting->value) {
-                        //     remove_image($temp_setting->value);
-                        // }
-                        // $logo = upload_image($request->file('site_favicon'));
+                        
                     }
                     $temp_setting->value = $logo;
 
@@ -83,10 +94,7 @@ class AdminController extends Controller
                         $logo = $temp_setting->value;
                     } else {
                         $logo = $temp_setting->value;
-                        // if($temp_setting->value) {
-                        //     remove_image($temp_setting->value);
-                        // }
-                        // $logo = upload_image($request->file('site_logo'));
+                        
                     }
                     $temp_setting->value = $logo;
                 }
@@ -167,6 +175,13 @@ class AdminController extends Controller
             return Redirect::back()->withErrors($messages)->withInput();
         } else  {
             DB::beginTransaction();
+            $fileName = "";
+            if ($request->file('image') != "") {
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/profiles/', $fileName);
+                $fileName = 'uploads/profiles/' . $fileName;
+            }
             $userId = User::insertGetId([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -174,6 +189,7 @@ class AdminController extends Controller
                 'type'=>$request->type,
                 'status'=>1,
                 'verify_status'=>1,
+                'image'=>$fileName,
                 'password' => Hash::make(123456),
             ]);
             DB::commit();
@@ -192,12 +208,23 @@ class AdminController extends Controller
     }
 
     public function updateUser(Request $request){
+        $fileName = "";
+            if ($request->file('image') != "") {
+                $userFile = User::find($request->id);
+                if ($userFile->image != "") {
+                    unlink($userFile->image);
+                }
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/profiles/', $fileName);
+                $fileName = 'uploads/profiles/' . $fileName;
+            }
         
             $inputData = [
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'email' => $request->email,
-                // 'post' => $request->post
+                'image' => $fileName
             ];
             User::where('id',$request->id)->update($inputData);
             return redirect()->back()->with('success', $request->name.' updated successfully');
@@ -209,6 +236,21 @@ class AdminController extends Controller
         return redirect()->back()->with('success','User deleted successfully');
     }
     
+    public function ListRedingtonFeatures($type){
+        if($type=='services'){
+            $services = Service::all();
+            // dd($services);
+            return view('admin.service.list',compact('services'));
+        }elseif($type=='technologies'){
+            $technologys = Technology::all();
+            return view('admin.technology.list',compact('technologys'));
+        }else{
+            dd("$type");
+        }
+    }
+    public function editTechnology(Request $request,$id){
+        
+    }
     public function logout(Request $request)
     {
         Auth::logout();

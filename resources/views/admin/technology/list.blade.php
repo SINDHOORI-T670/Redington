@@ -16,18 +16,11 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        @php 
-                            $usertype = (
-                                ($type == 2) ? "Customer" :
-                                (($type == 3) ? "Partner" :
-                                (($type == 4) ? "Employee" : "No List"))
-                                );
-                        @endphp
-                        <h4 class="card-title">{{$usertype}} List</h4>
+                        <h4 class="card-title">Technology List</h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                <li><a href="{{url('admin/create/user')}}/{{$type}}" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add {{$usertype}}</span></a></li>
+                                <li><a data-toggle="modal" data-target="#addTechnologyModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Technology</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -37,28 +30,52 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
-                                        <th>Name</th>
-                                        <th>E-mail</th>
-                                        <th>Phone</th>
-                                        <th>Status</th>
+                                        <th>Technology</th>
+                                       
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($users as $user)
-                                    <tr role="row" class="odd">
-                                        <td>{{$user->name}}</td>
-                                        <td>{{$user->email}}</td>
-                                        <td>{{$user->phone}}</td>
-                                        <td>{{($user->status==1)?"Active":"Inactive"}}</td>
+                                    @forelse($technologys as $technology)
+                                    <tr role="row" data-toggle="modal" data-target="#technologyDetailModal" class="odd" data-id="{{$technology->id}}">
+                                        <td>{{$technology->name}}</td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
-                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $user->id }}','{{ $user->name }}');"><i class="icon-trash"></i> Delee</button>
-                                            <form id="resource-delete-{{ $user->id }}" action="{{url('admin/delete/user/')}}/{{$user->id}}" method="get">
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editTechnologyModal{{$technology->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
+                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $technology->id }}','{{ $technology->name }}');"><i class="icon-trash"></i> Delee</button>
+                                            <form id="resource-delete-{{ $technology->id }}" action="{{url('admin/delete/user/')}}/{{$technology->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
                                     </tr>
+                                    <div class="modal fade text-left show" id="editTechnologyModal{{$technology->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                        <div class="modal-dialog" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h3 class="modal-title" id="myModalLabel35"> Edit Technology</h3>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                              </button>
+                                            </div>
+                                            <form>
+                                              <div class="modal-body">
+                                                  <fieldset class="form-group floating-label-form-group">
+                                                      <label for="email">Technology</label>
+                                                      <input type="text" class="form-control" id="editname" name="editname" value="{{$technology->name}}">
+                                                  </fieldset>
+                                                  <br>
+                                                  <fieldset class="form-group floating-label-form-group">
+                                                      <label for="title1">Description</label>
+                                                      <textarea class="form-control" id="editdescription" name="editdescription">{{$technology->description}}</textarea>
+                                                  </fieldset>
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Update">
+                                              </div>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
                                     @empty
                                     @endforelse
                                 </tbody>

@@ -16,18 +16,11 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        @php 
-                            $usertype = (
-                                ($type == 2) ? "Customer" :
-                                (($type == 3) ? "Partner" :
-                                (($type == 4) ? "Employee" : "No List"))
-                                );
-                        @endphp
-                        <h4 class="card-title">{{$usertype}} List</h4>
+                        <h4 class="card-title">Service List</h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                <li><a href="{{url('admin/create/user')}}/{{$type}}" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add {{$usertype}}</span></a></li>
+                                <li><a href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Service</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -37,24 +30,19 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
-                                        <th>Name</th>
-                                        <th>E-mail</th>
-                                        <th>Phone</th>
-                                        <th>Status</th>
+                                        <th>Service</th>
+                                       
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($users as $user)
+                                    @forelse($services as $service)
                                     <tr role="row" class="odd">
-                                        <td>{{$user->name}}</td>
-                                        <td>{{$user->email}}</td>
-                                        <td>{{$user->phone}}</td>
-                                        <td>{{($user->status==1)?"Active":"Inactive"}}</td>
+                                        <td>{{$service->name}}</td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
-                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $user->id }}','{{ $user->name }}');"><i class="icon-trash"></i> Delee</button>
-                                            <form id="resource-delete-{{ $user->id }}" action="{{url('admin/delete/user/')}}/{{$user->id}}" method="get">
+                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$service->id}}"><i class="icon-pencil"></i> Edit</a>
+                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $service->id }}','{{ $service->name }}');"><i class="icon-trash"></i> Delee</button>
+                                            <form id="resource-delete-{{ $service->id }}" action="{{url('admin/delete/user/')}}/{{$service->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>

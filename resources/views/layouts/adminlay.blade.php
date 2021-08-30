@@ -65,6 +65,7 @@
     <!-- BEGIN PAGE LEVEL JS-->
     <script src="{{asset('admin/app-assets/js/scripts/pages/dashboard-ecommerce.min.js')}}"></script>
     <!-- END PAGE LEVEL JS-->
+    <script src="{{asset('admin/app-assets/js/scripts/modal/components-modal.min.js')}}"></script>
 
   </body>
   <!-- END: Body-->

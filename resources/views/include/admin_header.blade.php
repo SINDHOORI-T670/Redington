@@ -294,7 +294,7 @@
         </li>
 
         {{-- Services --}}
-        <li class=" nav-item">
+        {{-- <li class=" nav-item">
           <a href="#"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Services</span></a>
           <ul class="menu-content">
             <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.1_column">Service Category</a>
@@ -304,7 +304,14 @@
             <li><a class="menu-item" href="#" data-i18n="nav.page_layouts.2_columns">Services</a>
             </li>
           </ul>
+        </li> --}}
+        <li class=" nav-item"><a href="{{url('admin/list/Redington/services')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Services</span></a>
         </li>
+
+        {{-- Technologies --}}
+        <li class=" nav-item"><a href="{{url('admin/list/Redington/technologies')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Technologies</span></a>
+        </li>
+
 
         {{-- Events --}}
         <li class=" nav-item">

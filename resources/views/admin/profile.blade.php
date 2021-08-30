@@ -23,13 +23,15 @@
                                 <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                                 <div class="heading-elements">
                                     <ul class="list-inline mb-0">
-                                        <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-                                        <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
-                                        <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                                        <li><a data-action="close"><i class="ft-x"></i></a></li>
+                                        <li>
+                                            <div class="user-profile-images">
+                                                <img src="@if(Auth::User()->image!=""){{url(Auth::User()->image)}} @else {{asset('admin/app-assets/images/gallery/noimage.jpg')}}@endif"  id="profile" class="user-profile-image rounded" alt="user profile image" height="100" width="132">
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div>
-                            </div>
+                                
+                            </div><br><br><br>
                             <div class="card-content collpase show">
                                 <div class="card-body">
                                     <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/update/profile')}}" method="post"> 
@@ -55,6 +57,21 @@
                                                 <div class="col-md-9">
                                                     <input type="text" id="phone" class="form-control" name="phone" placeholder="contact number" value="{{Auth::User()->phone}}">
                                                 </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required">Profile Image</label>
+                                                <div class="col-md-9">
+                                                    <label id="projectinput6" class="file center-block">
+                                                        <input type="file"  name="image" id="image" accept=".jpg,.png,.jpeg" onchange="readURL(this);">
+                                                        <span class="file-custom"></span>
+                                                    </label>
+                                                </div>
+                                                @if ($errors->has('image'))
+                                                    <span class="help-block">
+                                                        <strong class="error">{{ $errors->first('image') }}</strong>
+                                                    </span>
+                                                @endif
                                             </div>
                                         </div>
 

@@ -45,7 +45,7 @@
                                     <ul class="list-inline mb-0">
                                         <li>
                                             <div class="user-profile-images">
-                                                <img src="{{asset('admin/app-assets/images/gallery/noimage.jpg')}}" id="profile" class="user-profile-image rounded" alt="user profile image" height="100" width="132">
+                                                <img src="@if($user->image!=""){{url($user->image)}} @else {{asset('admin/app-assets/images/gallery/noimage.jpg')}} @endif" id="profile" class="user-profile-image rounded" alt="user profile image" height="100" width="132">
                                             </div>
                                         </li>
                                     </ul>
@@ -120,7 +120,7 @@
                                                 @endif
                                             </div> --}}
 
-                                            {{-- <div class="form-group row">
+                                            <div class="form-group row">
                                                 <label class="col-md-3 label-control required">Profile Image</label>
                                                 <div class="col-md-9">
                                                     <label id="projectinput6" class="file center-block">
@@ -133,7 +133,7 @@
                                                         <strong class="error">{{ $errors->first('image') }}</strong>
                                                     </span>
                                                 @endif
-                                            </div> --}}
+                                            </div>
                                                 
                                             <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>
             
