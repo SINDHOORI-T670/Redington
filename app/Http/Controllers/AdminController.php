@@ -241,11 +241,21 @@ class AdminController extends Controller
                 'image' => $fileName
             ];
             User::where('id',$request->id)->update($inputData);
-            $feature =[
-                'service_id' => implode(",",$request->services),
-                'technology_id' => implode(",",$request->technologies),
-            ];
-            UserSpec::where('user_id',$request->id)->update($feature);
+            $check = UserSpec::where('user_id',$request->id)->count();
+            if($check==0){
+                $feature = UserSpec::insertGetId([
+                    'user_id' => $request->id,
+                    'service_id' => implode(",",$request->services),
+                    'technology_id' => implode(",",$request->technologies),
+                ]);
+            }else{
+                $feature =[
+                    'service_id' => isset($request->services)?implode(",",$request->services):"",
+                    'technology_id' => isset($request->technologies)?implode(",",$request->technologies):"",
+                ];
+                UserSpec::where('user_id',$request->id)->update($feature);
+            }
+            
             return redirect()->back()->with('success', $request->name.' updated successfully');
        
     }

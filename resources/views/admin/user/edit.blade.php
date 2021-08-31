@@ -143,7 +143,7 @@
                                                 <select class="form-control select2-multi" name="services[]" multiple="multiple">
                                                     @forelse ($services as $item)
                                                         
-                                                        <option value={{$item->id}} @foreach(explode(",",$userspecs->service_id) as $spec) @if($spec==$item->id) selected @else @endif @endforeach>{{$item->name}}</option>
+                                                        <option value={{$item->id}} @if(isset($userspecs->service_id))@foreach(explode(",",$userspecs->service_id) as $spec) @if($spec==$item->id) selected @else @endif @endforeach @endif>{{$item->name}}</option>
                                                     @empty
                                                     @endforelse
                                                 </select>
@@ -153,7 +153,7 @@
                                             <div class="form-group row">
                                                 <select class="form-control select2-multi" name="technologies[]" multiple="multiple">
                                                     @forelse ($technologies as $item)
-                                                        <option value={{$item->id}} @foreach(explode(",",$userspecs->technology_id) as $spec) @if($spec==$item->id) selected @else @endif @endforeach>{{$item->name}}</option>
+                                                        <option value={{$item->id}} @if(isset($userspecs->technology_id))@foreach(explode(",",$userspecs->technology_id) as $spec) @if($spec==$item->id) selected @else @endif @endforeach @endif>{{$item->name}}</option>
                                                     @empty
                                                     @endforelse
                                                 </select>
