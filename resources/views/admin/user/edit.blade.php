@@ -1,6 +1,7 @@
 @extends('layouts.adminlay')
 @section('content')
 <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" />
 <style>
     .required:after {
         content: "*";
@@ -139,18 +140,23 @@
             
             
                                             <div class="form-group row">
-                                                <label class="col-md-3 label-control" for="projectinput8">Tags</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" name="serv_tags[]" value="{{ old('tags') }}" data-role="tagsinput" class="form-control" />
-                                                </div>
+                                                <select class="form-control select2-multi" name="services[]" multiple="multiple">
+                                                    @forelse ($services as $item)
+                                                        
+                                                        <option value={{$item->id}} @foreach(explode(",",$userspecs->service_id) as $spec) @if($spec==$item->id) selected @else @endif @endforeach>{{$item->name}}</option>
+                                                    @empty
+                                                    @endforelse
+                                                </select>
                                             </div>
                                             <h4 class="form-section"><i class="ft-clipboard"></i> Technologies</h4>
                                             
                                             <div class="form-group row">
-                                                <label class="col-md-3 label-control" for="projectinput8">Tags</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" name="tec_tags[]" value="{{ old('tags') }}" data-role="tagsinput" class="form-control" />
-                                                </div>
+                                                <select class="form-control select2-multi" name="technologies[]" multiple="multiple">
+                                                    @forelse ($technologies as $item)
+                                                        <option value={{$item->id}} @foreach(explode(",",$userspecs->technology_id) as $spec) @if($spec==$item->id) selected @else @endif @endforeach>{{$item->name}}</option>
+                                                    @empty
+                                                    @endforelse
+                                                </select>
                                             </div>
                                         </div>
             
@@ -178,8 +184,9 @@
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script type="text/javascript">
+    $('.select2-multi').select2();
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();

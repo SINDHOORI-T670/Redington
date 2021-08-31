@@ -3,10 +3,17 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
 <style>
-table.dataTable tbody td {
-    word-break: break-word;
-    vertical-align: top;
-}
+    table.dataTable tbody td {
+        word-break: break-word;
+        vertical-align: top;
+    }
+.required:after {
+        content: "*";
+        color: red;
+    }
+    .error{
+        color:red;
+    }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -20,7 +27,7 @@ table.dataTable tbody td {
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                <li><a href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Service</span></a></li>
+                                <li><a data-toggle="modal" data-target="#createServiceModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Service</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -40,17 +47,97 @@ table.dataTable tbody td {
                                     <tr role="row" class="odd">
                                         <td>{{$service->name}}</td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$service->id}}"><i class="icon-pencil"></i> Edit</a>
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editServiceModal{{$service->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
                                             <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $service->id }}','{{ $service->name }}');"><i class="icon-trash"></i> Delee</button>
                                             <form id="resource-delete-{{ $service->id }}" action="{{url('admin/delete/user/')}}/{{$service->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
                                     </tr>
+                                    <div class="modal fade text-left show" id="editServiceModal{{$service->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                        <div class="modal-dialog" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h3 class="modal-title" id="myModalLabel35"> Edit Service</h3>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                              </button>
+                                            </div>
+                                            <form method="POST" action="{{url('admin/edit/Redington/service')}}/{{$service->id}}">
+                                                @csrf
+                                              <div class="modal-body">
+                                                    <fieldset class="form-group floating-label-form-group">
+                                                      <label for="email" class="label-control required">Technology</label>
+                                                      <input type="text" class="form-control" id="editname" name="editname" value="{{$service->name}}">
+                                                        @if ($errors->has('editname'))
+                                                            <span class="help-block">
+                                                                <strong class="error">{{ $errors->first('editname') }}</strong>
+                                                            </span>
+                                                        @endif
+                                                    </fieldset>
+                                                    <br>
+                                                  <fieldset class="form-group floating-label-form-group">
+                                                      <label for="title1" class="label-control required">Description</label>
+                                                      <textarea class="form-control" id="editdescription" name="editdescription">{{$service->description}}</textarea>
+                                                        @if ($errors->has('editdescription'))
+                                                            <span class="help-block">
+                                                                <strong class="error">{{ $errors->first('editdescription') }}</strong>
+                                                            </span>
+                                                        @endif
+                                                  </fieldset>
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Update">
+                                              </div>
+                                            </form>
+                                          </div>
+                                        </div>
+                                    </div>
                                     @empty
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <div class="modal fade text-left show" id="createServiceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h3 class="modal-title" id="myModalLabel35"> Create Service</h3>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                              </button>
+                            </div>
+                            <form method="POST" action="{{url('admin/add/new/Redington/service')}}">
+                                @csrf
+                              <div class="modal-body">
+                                  <fieldset class="form-group floating-label-form-group">
+                                      <label for="email" class="label-control required">Service</label>
+                                      <input type="text" class="form-control" id="servicename" name="servicename" placeholder="Service Name">
+                                        @if ($errors->has('servicename'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('servicename') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+                                  <br>
+                                  <fieldset class="form-group floating-label-form-group">
+                                      <label for="title1" class="label-control required">Description</label>
+                                      <textarea class="form-control" id="servicedescription" name="servicedescription" placeholder="Service Description"></textarea>
+                                        @if ($errors->has('servicedescription'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('servicedescription') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+                              </div>
+                              <div class="modal-footer">
+                                  <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Save">
+                              </div>
+                            </form>
+                          </div>
                         </div>
                     </div>
                 </div>

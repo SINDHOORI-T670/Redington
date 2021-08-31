@@ -36,5 +36,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/update/user','AdminController@updateUser');
     Route::get('/delete/user/{id}','AdminController@deleteUser');
     Route::get('list/Redington/{type}','AdminController@ListRedingtonFeatures');
+    Route::post('add/new/Redington/{type}','AdminController@AddRedingtonFeatures');
+    Route::post('/edit/Redington/technology/{id}','AdminController@editRedingtonTechnology');
+    Route::post('/edit/Redington/service/{id}','AdminController@editRedingtonService');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

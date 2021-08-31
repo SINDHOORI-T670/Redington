@@ -3,10 +3,17 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
 <style>
-table.dataTable tbody td {
-    word-break: break-word;
-    vertical-align: top;
-}
+    table.dataTable tbody td {
+        word-break: break-word;
+        vertical-align: top;
+    }
+.required:after {
+        content: "*";
+        color: red;
+    }
+    .error{
+        color:red;
+    }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -20,7 +27,7 @@ table.dataTable tbody td {
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                <li><a data-toggle="modal" data-target="#addTechnologyModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Technology</span></a></li>
+                                <li><a data-toggle="modal" data-target="#createTechnologyModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Technology</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -56,16 +63,27 @@ table.dataTable tbody td {
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form>
+                                            <form method="POST" action="{{url('admin/edit/Redington/technology')}}/{{$technology->id}}">
+                                                @csrf
                                               <div class="modal-body">
-                                                  <fieldset class="form-group floating-label-form-group">
-                                                      <label for="email">Technology</label>
+                                                    <fieldset class="form-group floating-label-form-group">
+                                                      <label for="email" class="label-control required">Technology</label>
                                                       <input type="text" class="form-control" id="editname" name="editname" value="{{$technology->name}}">
-                                                  </fieldset>
-                                                  <br>
+                                                        @if ($errors->has('editname'))
+                                                            <span class="help-block">
+                                                                <strong class="error">{{ $errors->first('editname') }}</strong>
+                                                            </span>
+                                                        @endif
+                                                    </fieldset>
+                                                    <br>
                                                   <fieldset class="form-group floating-label-form-group">
-                                                      <label for="title1">Description</label>
+                                                      <label for="title1" class="label-control required">Description</label>
                                                       <textarea class="form-control" id="editdescription" name="editdescription">{{$technology->description}}</textarea>
+                                                        @if ($errors->has('editdescription'))
+                                                            <span class="help-block">
+                                                                <strong class="error">{{ $errors->first('editdescription') }}</strong>
+                                                            </span>
+                                                        @endif
                                                   </fieldset>
                                               </div>
                                               <div class="modal-footer">
@@ -75,11 +93,52 @@ table.dataTable tbody td {
                                             </form>
                                           </div>
                                         </div>
-                                      </div>
+                                    </div>
                                     @empty
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <div class="modal fade text-left show" id="createTechnologyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h3 class="modal-title" id="myModalLabel35"> Create Technology</h3>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                              </button>
+                            </div>
+                            <form method="POST" action="{{url('admin/add/new/Redington/technology')}}">
+                                @csrf
+                              <div class="modal-body">
+                                  <fieldset class="form-group floating-label-form-group">
+                                      <label for="email" class="label-control required">Technology</label>
+                                      <input type="text" class="form-control" id="techname" name="techname" placeholder="Technology Name">
+                                        @if ($errors->has('techname'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('techname') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+                                  <br>
+                                  <fieldset class="form-group floating-label-form-group">
+                                      <label for="title1" class="label-control required">Description</label>
+                                      <textarea class="form-control" id="techdescription" name="techdescription" placeholder="Technology Description"></textarea>
+                                        @if ($errors->has('techdescription'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('techdescription') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+                              </div>
+                              <div class="modal-footer">
+                                  <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Save">
+                              </div>
+                            </form>
+                          </div>
                         </div>
                     </div>
                 </div>
@@ -102,6 +161,7 @@ table.dataTable tbody td {
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
 <script>
+    
     function confirmDelete(id,name) {
         Swal.fire({
             title: 'Are you sure?',

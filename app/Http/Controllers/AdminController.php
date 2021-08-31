@@ -119,7 +119,9 @@ class AdminController extends Controller
 
     public function createUser(Request $request){
         $type = $request->type;
-        return view('admin.user.create',compact('type'));
+        $services= Service::all();
+        $technologies= Technology::all();
+        return view('admin.user.create',compact('type','services','technologies'));
     }
 
     public function createValidation($request)
@@ -129,12 +131,12 @@ class AdminController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required',
-                    'post' => 'required',
+                    // 'post' => 'required',
                     'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i|unique:users'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    'post.required' => 'Please enter job position',
+                    // 'post.required' => 'Please enter job position',
                     'email.regex' => 'Domain not valid for registration(example@redington.com).'
                 ]);
             }elseif($request->type==3){
@@ -142,12 +144,12 @@ class AdminController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required',
-                    'post' => 'required',
+                    // 'post' => 'required',
                     'email' => 'required|email|max:255|regex:/(.*)@myemail\.com/i|unique:users'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    'post.required' => 'Please enter job position',
+                    // 'post.required' => 'Please enter job position',
                     'email.regex' => 'Domain not valid for registration(Business email only,example@myemail.com).'
                 ]);
             }else{
@@ -155,12 +157,12 @@ class AdminController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required',
-                    'post' => 'required',
+                    // 'post' => 'required',
                     'email' => 'required|email|max:255|unique:users'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    'post.required' => 'Please enter job position',
+                    // 'post.required' => 'Please enter job position',
                     'email.required' => 'Please enter email address'
                 ]);
             }
@@ -171,9 +173,9 @@ class AdminController extends Controller
         $validator = $this->createValidation($request);
         if ($validator->fails()) {
             $messages = $validator->messages();
-            // dd($messages);
             return Redirect::back()->withErrors($messages)->withInput();
         } else  {
+            // dd($request->all());
             DB::beginTransaction();
             $fileName = "";
             if ($request->file('image') != "") {
@@ -192,6 +194,15 @@ class AdminController extends Controller
                 'image'=>$fileName,
                 'password' => Hash::make(123456),
             ]);
+            $check=UserSpec::where('user_id',$userId)->get();
+            // if(isset($check)){
+
+            // }
+            $feature = UserSpec::insertGetId([
+                'user_id' => $userId,
+                'service_id' => implode(",",$request->services),
+                'technology_id' => implode(",",$request->technologies),
+            ]);
             DB::commit();
             $usertype = (
                 ($request->type == 2) ? "Customer" :
@@ -204,7 +215,10 @@ class AdminController extends Controller
 
     public function editUser(Request $request){
         $user = User::find($request->id);
-        return view('admin.user.edit',compact('user'));
+        $services= Service::all();
+        $technologies= Technology::all();
+        $userspecs=UserSpec::where('user_id',$request->id)->first();
+        return view('admin.user.edit',compact('user','services','technologies','userspecs'));
     }
 
     public function updateUser(Request $request){
@@ -227,6 +241,11 @@ class AdminController extends Controller
                 'image' => $fileName
             ];
             User::where('id',$request->id)->update($inputData);
+            $feature =[
+                'service_id' => implode(",",$request->services),
+                'technology_id' => implode(",",$request->technologies),
+            ];
+            UserSpec::where('user_id',$request->id)->update($feature);
             return redirect()->back()->with('success', $request->name.' updated successfully');
        
     }
@@ -248,8 +267,100 @@ class AdminController extends Controller
             dd("$type");
         }
     }
-    public function editTechnology(Request $request,$id){
+
+    public function AddRedingtonFeatures(Request $request,$type){
+        // dd($type);
+        if($type=='technology'){
+            $validator = Validator::make($request->all(),
+            [
+                'techname' => 'required',
+                'techdescription' => 'required',
+            ],[
+                'techname.required' => 'Please enter technology name',
+                'techdescription.required' => 'Please add description about the technology',
+            ]);
+            if ($validator->fails()) {
+                $messages = $validator->messages();
+                return Redirect::back()->withErrors($messages)->withInput();
+            } else  {
+                DB::beginTransaction();
+                
+                $techId = Technology::insertGetId([
+                    'name' => $request->techname,
+                    'description' => $request->techdescription,
+                ]);
+                DB::commit();
+                return redirect()->back()->with('success','Technology created successfully');
+            }
+
+        }elseif($type=='service'){
+            $validator = Validator::make($request->all(),
+            [
+                'servicename' => 'required',
+                'servicedescription' => 'required',
+            ],[
+                'servicename.required' => 'Please enter service name',
+                'servicedescription.required' => 'Please add description about the service',
+            ]);
+            if ($validator->fails()) {
+                $messages = $validator->messages();
+                return Redirect::back()->withErrors($messages)->withInput();
+            } else  {
+                DB::beginTransaction();
+                
+                $serviceId = Service::insertGetId([
+                    'name' => $request->servicename,
+                    'description' => $request->servicedescription,
+                ]);
+                DB::commit();
+                return redirect()->back()->with('success','Service created successfully');
+            }
+        }else{
+            dd($type);
+        }
         
+    }
+
+    public function editRedingtonTechnology(Request $request,$id){
+        $validator = Validator::make($request->all(),
+                [
+                    'editname' => 'required',
+                    'editdescription' => 'required',
+                ],[
+                    'editname.required' => 'Please enter technology name',
+                    'editdescription.required' => 'Please add description about the technology',
+                ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $inputData = [
+            'name' => $request->editname,
+            'description' => $request->editdescription
+        ];
+        Technology::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', $request->editname.' updated successfully');
+    }
+
+    public function editRedingtonService(Request $request,$id){
+        $validator = Validator::make($request->all(),
+                [
+                    'editname' => 'required',
+                    'editdescription' => 'required',
+                ],[
+                    'editname.required' => 'Please enter service name',
+                    'editdescription.required' => 'Please add description about the service',
+                ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $inputData = [
+            'name' => $request->editname,
+            'description' => $request->editdescription
+        ];
+        Service::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', $request->editname.' updated successfully');
     }
     public function logout(Request $request)
     {
