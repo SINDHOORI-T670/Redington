@@ -86,18 +86,6 @@
                                                 
                                             </div>
                                             <div class="form-group row">
-                                                <label class="col-md-3 label-control required" for="projectinput4">Job Position</label>
-                                                <div class="col-md-9">
-                                                    <input type="text" id="post" class="form-control" placeholder="Job Position" name="post" value="{{ old('post') }}">
-                                                    @if ($errors->has('post'))
-                                                        <span class="help-block">
-                                                            <strong class="error">{{ $errors->first('post') }}</strong>
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                
-                                            </div>
-                                            <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="projectinput4">Contact Number</label>
                                                 <div class="col-md-9">
                                                     <input type="text" id="phone" class="form-control" placeholder="Contact Number" name="phone" value="{{ $user->phone }}">
@@ -122,7 +110,7 @@
                                             </div> --}}
 
                                             <div class="form-group row">
-                                                <label class="col-md-3 label-control required">Profile Image</label>
+                                                <label class="col-md-3 label-control">Profile Image</label>
                                                 <div class="col-md-9">
                                                     <label id="projectinput6" class="file center-block">
                                                         <input type="file"  name="image" id="image" accept=".jpg,.png,.jpeg" onchange="readURL(this);">
@@ -134,6 +122,42 @@
                                                         <strong class="error">{{ $errors->first('image') }}</strong>
                                                     </span>
                                                 @endif
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="projectinput4">Company</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="company" class="form-control" placeholder="Company" name="company" value="{{$user->company}}">
+                                                    @if ($errors->has('company'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('company') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="projectinput4">Designation</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="post" class="form-control" placeholder="Designation" name="post" value="{{ $user->post }}">
+                                                    @if ($errors->has('post'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('post') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="projectinput4">LinkedIn Url</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="url" class="form-control" placeholder="LinkedIn Url" name="url" value="{{$user->linkedin}}">
+                                                    @if ($errors->has('url'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('url') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
                                                 
                                             <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>

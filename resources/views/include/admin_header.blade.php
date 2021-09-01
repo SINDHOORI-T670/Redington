@@ -309,7 +309,7 @@
         </li>
 
         {{-- Technologies --}}
-        <li class=" nav-item"><a href="{{url('admin/list/Redington/technologies')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Technologies</span></a>
+        <li class=" nav-item"><a href="{{url('admin/list/Redington/technologies')}}"><i class="icon-screen-desktop"></i><span class="menu-title" data-i18n="nav.chat-application.main">Technologies</span></a>
         </li>
 
 
@@ -337,6 +337,10 @@
 
         {{-- Promotions --}}
         <li class=" nav-item"><a href="#"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Promotions</span></a>
+        </li>
+
+        {{-- Rewards --}}
+        <li class=" nav-item"><a href="#"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
         </li>
 
         {{-- Blogs --}}

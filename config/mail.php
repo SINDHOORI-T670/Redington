@@ -15,6 +15,8 @@ return [
 
     'default' => env('MAIL_MAILER', 'smtp'),
 
+    'banned_servers' => ['yahoo.com', 'gmail.com'],
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

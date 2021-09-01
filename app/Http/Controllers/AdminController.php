@@ -131,12 +131,11 @@ class AdminController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required',
-                    // 'post' => 'required',
                     'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i|unique:users'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    // 'post.required' => 'Please enter job position',
+                    'email.required' => 'Please enter email',
                     'email.regex' => 'Domain not valid for registration(example@redington.com).'
                 ]);
             }elseif($request->type==3){
@@ -144,25 +143,21 @@ class AdminController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required',
-                    // 'post' => 'required',
-                    'email' => 'required|email|max:255|regex:/(.*)@myemail\.com/i|unique:users'
+                    'email' => 'required|email|max:255|unique:users'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    // 'post.required' => 'Please enter job position',
-                    'email.regex' => 'Domain not valid for registration(Business email only,example@myemail.com).'
+                    'email.required' => 'Please enter email'
                 ]);
             }else{
                 $validator = Validator::make($request->all(),
                 [
                     'name' => 'required',
                     'phone' => 'required',
-                    // 'post' => 'required',
                     'email' => 'required|email|max:255|unique:users'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    // 'post.required' => 'Please enter job position',
                     'email.required' => 'Please enter email address'
                 ]);
             }
@@ -193,11 +188,11 @@ class AdminController extends Controller
                 'verify_status'=>1,
                 'image'=>$fileName,
                 'password' => Hash::make(123456),
+                'company'=> $request->company,
+                'post'=> $request->post,
+                'linkedin' => $request->linkedin,
             ]);
             $check=UserSpec::where('user_id',$userId)->get();
-            // if(isset($check)){
-
-            // }
             $feature = UserSpec::insertGetId([
                 'user_id' => $userId,
                 'service_id' => implode(",",$request->services),
@@ -222,6 +217,13 @@ class AdminController extends Controller
     }
 
     public function updateUser(Request $request){
+        $domain = explode("@", $request->email);
+        $domain = $domain[(count($domain)-1)];
+        $blacklist = array('gmail.com', 'yahoo.com', 'outlook.com');
+        if (in_array($domain, $blacklist)) {
+            $messages = ['email'=> 'Domain not valid for E-mail,use only business email'];
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
         $fileName = "";
             if ($request->file('image') != "") {
                 $userFile = User::find($request->id);
@@ -238,15 +240,18 @@ class AdminController extends Controller
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'email' => $request->email,
-                'image' => $fileName
+                'image' => $fileName,
+                'company'=> $request->company,
+                'post'=> $request->post,
+                'linkedin' => $request->url,
             ];
             User::where('id',$request->id)->update($inputData);
             $check = UserSpec::where('user_id',$request->id)->count();
             if($check==0){
                 $feature = UserSpec::insertGetId([
                     'user_id' => $request->id,
-                    'service_id' => implode(",",$request->services),
-                    'technology_id' => implode(",",$request->technologies),
+                    'service_id' => isset($request->services)?implode(",",$request->services):null,
+                    'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
                 ]);
             }else{
                 $feature =[
@@ -260,8 +265,16 @@ class AdminController extends Controller
        
     }
 
-    public function deleteUser($id){
-        User::where('id',$id)->delete();
+    public function activeUser($id){
+        // User::where('id',$id)->delete();
+        $status="";
+        $user=User::find($id);
+        if($user->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        User::where('id',$id)->update(['status'=> $status]);
         return redirect()->back()->with('success','User deleted successfully');
     }
     

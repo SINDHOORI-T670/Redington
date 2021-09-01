@@ -50,11 +50,16 @@ table.dataTable tbody td {
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->phone}}</td>
-                                        <td>{{($user->status==1)?"Active":"Inactive"}}</td>
+                                        <td><h4 @if($user->status==1) class="success text-center" @else class="danger text-center" @endif>{{($user->status==1)?"Active":"Inactive"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
-                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $user->id }}','{{ $user->name }}');"><i class="icon-trash"></i> Delee</button>
+                                            {{-- <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $user->id }}','{{ $user->name }}');"><i class="icon-trash"></i> Delee</button>
                                             <form id="resource-delete-{{ $user->id }}" action="{{url('admin/delete/user/')}}/{{$user->id}}" method="get">
+                                                {{ csrf_field() }}
+                                            </form> --}}
+
+                                            <button @if($user->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $user->id }}','{{ $user->name }}','{{ $user->status }}');"> @if($user->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
+                                            <form id="resource-active-{{ $user->id }}" action="{{url('admin/active/user/')}}/{{$user->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
@@ -85,13 +90,18 @@ table.dataTable tbody td {
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
 <script>
-    function confirmDelete(id,name) {
+    function confirmDelete(id,name,status) {
+        if(status==0){
+            var text="active";
+        }else{
+            var text="inactive";
+        }
         Swal.fire({
             title: 'Are you sure?',
-            text: 'Do you want to remove this user '+name+'?',
+            text: 'Do you want to '+text+' this user '+name+'?',
             showDenyButton: false,
             showCancelButton: true,
-            confirmButtonText: `Ok Delete`,
+            confirmButtonText: `Ok`,
             cancelButtonText: `Cancel`,
         }).then((result) => {
             if (result.isConfirmed) {

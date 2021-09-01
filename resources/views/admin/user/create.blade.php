@@ -55,7 +55,7 @@
                             </div>
                             <div class="card-content collpase show">
                                 <div class="card-body">
-                                    <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/save/user')}}" method="post"> 
+                                    <form class="form form-horizontal" id="userform" enctype="multipart/form-data" action="{{url('admin/save/user')}}" method="post"> 
                                         @csrf
                                         <input type="hidden" name="type" value={{$type}}>
                                         <div class="form-body">
@@ -98,17 +98,42 @@
                                                 </div>
                                                 
                                             </div>
-                                            {{-- <div class="form-group row">
-                                                <label class="col-md-3 label-control required" for="projectinput4">Job Position</label>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="projectinput4">Company</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" id="post" class="form-control" placeholder="Job Position" name="post" value="{{ old('post') }}">
+                                                    <input type="text" id="company" class="form-control" placeholder="Company" name="company" value="{{ old('company') }}">
+                                                    @if ($errors->has('company'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('company') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="projectinput4">Designation</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="post" class="form-control" placeholder="Designation" name="post" value="{{ old('post') }}">
                                                     @if ($errors->has('post'))
                                                         <span class="help-block">
                                                             <strong class="error">{{ $errors->first('post') }}</strong>
                                                         </span>
                                                     @endif
                                                 </div>
-                                            </div> --}}
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="projectinput4">LinkedIn Url</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="url" class="form-control" placeholder="LinkedIn Url" name="url" value="{{ old('url') }}">
+                                                    @if ($errors->has('url'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('url') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
                                             
 
                                             {{-- <div class="form-group row">
@@ -124,7 +149,7 @@
                                             </div> --}}
 
                                             <div class="form-group row">
-                                                <label class="col-md-3 label-control required">Profile Image</label>
+                                                <label class="col-md-3 label-control">Profile Image</label>
                                                 <div class="col-md-9">
                                                     <label id="projectinput6" class="file center-block">
                                                         <input type="file"  name="image" id="image" accept=".jpg,.png,.jpeg" onchange="readURL(this);">
@@ -171,7 +196,7 @@
                                             <a href="{{url('admin/list/user')}}/{{$type}}" class="btn btn-warning mr-1">
                                                 <i class="ft-x"></i> Cancel
                                             </a>
-                                            <button type="submit" class="btn btn-primary">
+                                            <button type="submit" class="btn btn-primary" id="submit">
                                                 <i class="ft-check"></i> Save
                                             </button>
                                         </div>
@@ -192,7 +217,46 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
+
 <script type="text/javascript">
+    $("#submit").prop("disabled", "disabled");
+    var $userform = $("#userform");
+
+    $("input").on("blur keyup", function() {
+        if ($userform.valid()) {
+            $("#submit").prop("disabled", false);
+        } else {
+            $("#submit").prop("disabled", "disabled");
+        }
+    });
+    // Non free validation
+    $.validator.addMethod(
+                "nonfreeemail",
+                function(value) {
+                    return /^([\w-.]+@(?!gmail\.com)(?!yahoo\.com)(?!outlook\.com)([\w-]+.)+[\w-]{2,4})?$/.test(
+                        value
+                    );
+                },
+                "Please use your non-free email."
+            );
+    // Actual form
+    $userform.validate({
+        errorElement: "div",
+        rules: {
+            email: {
+                required: true,
+                email: true,
+                nonfreeemail: true
+            },
+        },
+        messages: {
+            email: {
+                required: "Email is Mandatory",
+                email: "Enter Valid Email",
+                nonfreeemail: "Please use your Business email"
+            },
+        }
+    });
     $('.select2-multi').select2();
     function readURL(input) {
         if (input.files && input.files[0]) {

@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 
-
+Route::get('/login','GeneralController@adminLogin')->name('login');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
@@ -34,7 +34,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/save/user','AdminController@saveUser');
     Route::get('/edit/user/{id}','AdminController@editUser');
     Route::post('/update/user','AdminController@updateUser');
-    Route::get('/delete/user/{id}','AdminController@deleteUser');
+    Route::get('/active/user/{id}','AdminController@activeUser');
     Route::get('list/Redington/{type}','AdminController@ListRedingtonFeatures');
     Route::post('add/new/Redington/{type}','AdminController@AddRedingtonFeatures');
     Route::post('/edit/Redington/technology/{id}','AdminController@editRedingtonTechnology');
