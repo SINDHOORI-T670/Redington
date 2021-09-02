@@ -15,6 +15,7 @@ use App\Models\Service;
 use App\Models\Technology;
 use App\Models\UserSpec;
 use App\Models\Reward;
+use App\Models\Redeem;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -421,6 +422,20 @@ class AdminController extends Controller
         DB::commit();
         return redirect('admin/list/rewards')->with('success', 'Success');
 
+    }
+
+    public function RedeemHistory($id){
+        $user = User::find($id);
+        $totalrewards = Reward::where('partner_id',$id)->selectRaw('sum(rewards.point) as score')->get();
+        $totalredeems = Redeem::where('partner_id',$id)->selectRaw('sum(redeems.amount) as score')->get();
+        // dd($totalrewards);
+        $redeems = Redeem::where('partner_id',$id)->get();
+        return view('admin.rewards.redeemhistory',compact('redeems','user'));
+    }
+
+    public function Createredeem($id){
+        $user = User::find($id);
+        return view('admin.rewards.redeem',compact('user'));
     }
 
     public function logout(Request $request)
