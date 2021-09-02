@@ -24,7 +24,7 @@
                             </div><br><br><br>
                             <div class="card-content collpase show">
                                 <div class="card-body">
-                                    <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/save/reward')}}" method="post"> 
+                                    <form class="form form-horizontal" action="{{url('admin/save/reward')}}" method="post"> 
                                         @csrf
                                         <div class="form-body">
                                             <div class="form-group row">
@@ -56,9 +56,9 @@
                                         </div>
 
                                         <div class="form-actions center">
-                                            <button type="button" class="btn btn-warning mr-1">
+                                            <a href="{{url('admin/list/rewards')}}" class="btn btn-warning mr-1">
                                                 <i class="ft-x"></i> Cancel
-                                            </button>
+                                            </a>
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="fa fa-check-square-o"></i> Save
                                             </button>

@@ -32,7 +32,7 @@
                                     <div class="pb-1">
                                         <div class="clearfix mb-1">
                                             <i class="icon-star font-large-1 success float-left mt-1"></i>
-                                            <span class="font-large-2 text-bold-300 success float-right">{{$totalrewards->scroe}}</span>
+                                            <span class="font-large-2 text-bold-300 success float-right">{{isset($total)?$total->total_reward:0}} AED</span>
                                         </div>
                                         <div class="clearfix">
                                             <span class="text-muted">Rewards</span>
@@ -40,14 +40,15 @@
                                         </div>
                                     </div>
                                     <div class="progress mb-0" style="height: 7px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
+                                &nbsp;&nbsp;&nbsp;
                                 <div class="col-lg-3 col-sm-12">
                                     <div class="pb-1">
                                         <div class="clearfix mb-1">
                                             <i class="icon-wallet font-large-1 blue-grey float-left mt-1"></i>
-                                            <span class="font-large-2 text-bold-300 warning float-right">{{$totalredeems->score}}</span>
+                                            <span class="font-large-2 text-bold-300 warning float-right">{{isset($total)?$total->total_redeem:0}} AED</span>
                                         </div>
                                         <div class="clearfix">
                                             <span class="text-muted">Redeem</span>
@@ -55,7 +56,7 @@
                                         </div>
                                     </div>
                                     <div class="progress mb-0" style="height: 7px;">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 100%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>

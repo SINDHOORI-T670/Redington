@@ -44,5 +44,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('save/reward','AdminController@Savereward');
     Route::get('redeem/history/{id}','AdminController@RedeemHistory');
     Route::get('create/partner/redeem/{id}','AdminController@CreateRedeem');
+    Route::post('save/redeem','AdminController@SaveRedeem');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

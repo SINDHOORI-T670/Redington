@@ -16,6 +16,7 @@ use App\Models\Technology;
 use App\Models\UserSpec;
 use App\Models\Reward;
 use App\Models\Redeem;
+use App\Models\Redeemdeduction;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -419,6 +420,27 @@ class AdminController extends Controller
             'partner_id' => $request->partner,
             'point' => $request->point
         ]);
+
+        $update = Redeemdeduction::where('partner_id',$request->partner)->first();
+        if(isset($update)){
+            // dd("hghg");
+            $inputData = [
+                'total_reward' => ($update->total_reward + $request->point)
+            ];
+            // dd($inputData);
+            Redeemdeduction::where('partner_id',$request->partner)->update($inputData);
+        }else{
+            // dd("hbnb");
+            $totalrewards = Reward::where('partner_id',$request->partner)->selectRaw('sum(rewards.point) as score')->get();
+            $totalredeems = Redeem::where('partner_id',$request->partner)->selectRaw('sum(redeems.amount) as score')->get();
+            $score1 = isset($totalrewards[0]->score)?$totalrewards[0]->score:0;
+            $score2 = isset($totalredeems[0]->score)?$totalredeems[0]->score:0;
+            $redeemId = Redeemdeduction::insertGetId([
+                'total_reward' => ($score1 - $request->amount),
+                'partner_id' => $request->partner,
+                'total_redeem' => $score2 + $request->amount
+            ]);
+        }
         DB::commit();
         return redirect('admin/list/rewards')->with('success', 'Success');
 
@@ -426,11 +448,10 @@ class AdminController extends Controller
 
     public function RedeemHistory($id){
         $user = User::find($id);
-        $totalrewards = Reward::where('partner_id',$id)->selectRaw('sum(rewards.point) as score')->get();
-        $totalredeems = Redeem::where('partner_id',$id)->selectRaw('sum(redeems.amount) as score')->get();
-        // dd($totalrewards);
+        $total = Redeemdeduction::where('partner_id',$id)->first();
+        // dd($totalrewards[0]->score);
         $redeems = Redeem::where('partner_id',$id)->get();
-        return view('admin.rewards.redeemhistory',compact('redeems','user'));
+        return view('admin.rewards.redeemhistory',compact('redeems','user','total'));
     }
 
     public function Createredeem($id){
@@ -438,6 +459,60 @@ class AdminController extends Controller
         return view('admin.rewards.redeem',compact('user'));
     }
 
+    public function SaveRedeem(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+            [
+                'amount' => 'required'
+            ],[
+                'amount.required' => 'Please enter redeem amount'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+        $rewards = Reward::where('partner_id',$request->id)->count();
+        $check = Redeemdeduction::where('partner_id',$request->id)->first();
+        if($request->amount>$check->total_reward){
+            $messages = ['greater'=> 'There is not much points to redeem from the rewards'];
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        if($rewards!=0){
+            $redeemId = Redeem::insertGetId([
+                'amount' => $request->amount,
+                'partner_id' => $request->id,
+                'description' => isset($request->description)?$request->description:""
+            ]);
+            
+            $deduction = Redeemdeduction::where('partner_id',$request->id)->first();
+            if(isset($deduction)){
+                $inputData = [
+                    'total_reward' => $deduction->total_reward - $request->amount,
+                    'total_redeem' => $deduction->total_redeem + $request->amount
+                ];
+                // dd($inputData);
+                Redeemdeduction::where('id',$deduction->id)->update($inputData);
+            }else{
+                $totalrewards = Reward::where('partner_id',$request->id)->selectRaw('sum(rewards.point) as score')->get();
+                $totalredeems = Redeem::where('partner_id',$request->id)->selectRaw('sum(redeems.amount) as score')->get();
+                $score1 = isset($totalrewards[0]->score)?$totalrewards[0]->score:0;
+                $score2 = isset($totalredeems[0]->score)?$totalredeems[0]->score:0;
+                $redeemId = Redeemdeduction::insertGetId([
+                    'total_reward' => ($score1 - $request->amount),
+                    'partner_id' => $request->id,
+                    'total_redeem' => $score2 + $request->amount
+                ]);
+            }
+            
+            DB::commit();
+            return redirect('admin/redeem/history/'.$request->id)->with('success', 'Success');
+    
+        }else{
+            $messages = ['check'=> 'There is no rewards for redeem,Please try again'];
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        
+    }
     public function logout(Request $request)
     {
         Auth::logout();
