@@ -53,6 +53,10 @@ table.dataTable tbody td {
                                         <td><h4 @if($user->status==1) class="success text-center" @else class="danger text-center" @endif>{{($user->status==1)?"Active":"Inactive"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
+                                            @if($user->type==3)
+                                            <a class="btn btn-secondary text-white tab-order" href="{{url('admin/redeem/history/')}}/{{$user->id}}"><i class="fa fa-money"></i> Redeem History</a>
+
+                                            @endif
                                             {{-- <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $user->id }}','{{ $user->name }}');"><i class="icon-trash"></i> Delee</button>
                                             <form id="resource-delete-{{ $user->id }}" action="{{url('admin/delete/user/')}}/{{$user->id}}" method="get">
                                                 {{ csrf_field() }}

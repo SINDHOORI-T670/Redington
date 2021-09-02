@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Service;
 use App\Models\Technology;
 use App\Models\UserSpec;
+use App\Models\Reward;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -385,6 +386,43 @@ class AdminController extends Controller
         Service::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', $request->editname.' updated successfully');
     }
+
+    public function ListRewards(){
+        $rewards = Reward::all();
+        return view('admin.rewards.list',compact('rewards'));
+
+    }
+
+    public function createReward(){
+        $users = User::where('type',3)->get();
+        return view('admin.rewards.create',compact('users'));
+    }
+
+    public function Savereward(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'title' => 'required',
+                'partner' => 'required',
+                'point' => 'required'
+            ],[
+                'title.required' => 'Please enter title',
+                'partner.required' => 'Please select the partner',
+                'point.required' => 'Please enter points'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+        $rewardId = Reward::insertGetId([
+            'heading' => $request->title,
+            'partner_id' => $request->partner,
+            'point' => $request->point
+        ]);
+        DB::commit();
+        return redirect('admin/list/rewards')->with('success', 'Success');
+
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

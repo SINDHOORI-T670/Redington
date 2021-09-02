@@ -1,0 +1,107 @@
+@extends('layouts.adminlay')
+@section('content')
+<style>
+    .required:after {
+        content: "*";
+        color: red;
+    }
+    .error{
+        color:red;
+    }
+</style>
+<div class="app-content content">
+    <div class="content-wrapper">
+        <br>
+        @include('alert.messages')
+        <div class="content-body">
+            <section id="horizontal-form-layouts">
+                <div class="row justify-content-md-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title" id="horz-layout-card-center">Add Reward</h4>
+                                <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
+                            </div><br><br><br>
+                            <div class="card-content collpase show">
+                                <div class="card-body">
+                                    <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/save/reward')}}" method="post"> 
+                                        @csrf
+                                        <div class="form-body">
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required" for="eventRegInput1">Title</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="Reward Title" name="title">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required" for="eventRegInput1">Partner</label>
+                                                <div class="col-md-9">
+                                                    <select name="partner" class="form-control">
+                                                        <option value="">Select partner</option>   
+                                                        @foreach($users as $partner) 
+                                                            <option value="{{$partner->id}}">{{$partner->name}}</option>
+                                                        @endforeach
+                                                    <select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required" for="eventRegInput4">Point</label>
+                                                <div class="col-md-9">
+                                                    <input type="text" id="eventRegInput4" class="form-control" placeholder="Reward Point" name="point">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-actions center">
+                                            <button type="button" class="btn btn-warning mr-1">
+                                                <i class="ft-x"></i> Cancel
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa fa-check-square-o"></i> Save
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js" integrity="sha512-UdIMMlVx0HEynClOIFSyOrPggomfhBKJE28LKl8yR3ghkgugPnG6iLfRfHwushZl1MOPSY6TsuBDGPK2X4zYKg==" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+
+<script type="text/javascript">
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+            $('#profile').attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    var phones = [{ "mask": "+(###) ########"},{ "mask": "+(###) ########"}];
+            $('#phone').inputmask({ 
+                mask: phones, 
+                greedy: false, 
+                definitions: { '#': { validator: "[0-9]", cardinality: 1}} ,
+                
+            });
+    console.clear();
+
+
+    
+</script>
+@endsection

@@ -340,7 +340,7 @@
         </li>
 
         {{-- Rewards --}}
-        <li class=" nav-item"><a href="#"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
+        <li class=" nav-item"><a href="{{url('admin/list/rewards')}}"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
         </li>
 
         {{-- Blogs --}}

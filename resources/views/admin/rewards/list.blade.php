@@ -3,10 +3,10 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
 <style>
-table.dataTable tbody td {
-    word-break: break-word;
-    vertical-align: top;
-}
+    table.dataTable tbody td {
+        word-break: break-word;
+        vertical-align: top;
+    }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -20,7 +20,7 @@ table.dataTable tbody td {
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                {{-- <li><a href="{{url('admin/create/partner/reward')}}" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add reward</span></a></li> --}}
+                                <li><a href="{{url('admin/create/partner/reward')}}" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add reward</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -30,23 +30,17 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
+                                        <th>Heading</th>
                                         <th>Partner</th>
                                         <th>reward</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($rewards as $reward)
                                     <tr role="row" class="odd">
+                                        <td>{{$reward->heading}}</td>
                                         <td>{{$reward->partner->name}}</td>
-                                        <td>{{$reward->point}}</td>
-                                        <td>
-                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$reward->id}}"><i class="icon-pencil"></i> Redeem</a>
-                                            {{-- <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $reward->id }}','{{ $reward->name }}');"><i class="icon-trash"></i> Delee</button>
-                                            <form id="resource-delete-{{ $reward->id }}" action="{{url('admin/delete/user/')}}/{{$reward->id}}" method="get">
-                                                {{ csrf_field() }}
-                                            </form> --}}
-                                        </td>
+                                        <td>{{$reward->point}} <b>AED</b></td>
                                     </tr>
                                     @empty
                                     @endforelse
