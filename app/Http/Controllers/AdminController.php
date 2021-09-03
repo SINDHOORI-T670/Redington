@@ -116,14 +116,14 @@ class AdminController extends Controller
 
     public function listUser(Request $request){
         $type = $request->type;
-        $users = User::where('type',$request->type)->get();
+        $users = User::where('type',$request->type)->latest()->get();
         return view('admin.user.list',compact('users','type'));
     }
 
     public function createUser(Request $request){
         $type = $request->type;
-        $services= Service::all();
-        $technologies= Technology::all();
+        $services= Service::latest()->get();
+        $technologies= Technology::latest()->get();
         return view('admin.user.create',compact('type','services','technologies'));
     }
 
@@ -194,12 +194,18 @@ class AdminController extends Controller
                 'company'=> $request->company,
                 'post'=> $request->post,
                 'linkedin' => $request->linkedin,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
             ]);
             $check=UserSpec::where('user_id',$userId)->get();
             $feature = UserSpec::insertGetId([
                 'user_id' => $userId,
-                'service_id' => implode(",",$request->services),
-                'technology_id' => implode(",",$request->technologies),
+                'service_id' => isset($request->services)?implode(",",$request->services):null,
+                'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
             ]);
             DB::commit();
             $usertype = (
@@ -255,6 +261,9 @@ class AdminController extends Controller
                     'user_id' => $request->id,
                     'service_id' => isset($request->services)?implode(",",$request->services):null,
                     'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
                 ]);
             }else{
                 $feature =[
@@ -283,11 +292,11 @@ class AdminController extends Controller
     
     public function ListRedingtonFeatures($type){
         if($type=='services'){
-            $services = Service::all();
+            $services = Service::latest()->get();
             // dd($services);
             return view('admin.service.list',compact('services'));
         }elseif($type=='technologies'){
-            $technologys = Technology::all();
+            $technologys = Technology::latest()->get();
             return view('admin.technology.list',compact('technologys'));
         }else{
             dd("$type");
@@ -314,6 +323,8 @@ class AdminController extends Controller
                 $techId = Technology::insertGetId([
                     'name' => $request->techname,
                     'description' => $request->techdescription,
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
                 ]);
                 DB::commit();
                 return redirect()->back()->with('success','Technology created successfully');
@@ -337,6 +348,9 @@ class AdminController extends Controller
                 $serviceId = Service::insertGetId([
                     'name' => $request->servicename,
                     'description' => $request->servicedescription,
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
                 ]);
                 DB::commit();
                 return redirect()->back()->with('success','Service created successfully');
@@ -390,7 +404,7 @@ class AdminController extends Controller
     }
 
     public function ListRewards(){
-        $rewards = Reward::all();
+        $rewards = Reward::latest()->get();
         return view('admin.rewards.list',compact('rewards'));
 
     }
@@ -404,11 +418,11 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(),
             [
                 'title' => 'required',
-                'partner' => 'required',
+                // 'partner' => 'required',
                 'point' => 'required'
             ],[
                 'title.required' => 'Please enter title',
-                'partner.required' => 'Please select the partner',
+                // 'partner.required' => 'Please select the partner',
                 'point.required' => 'Please enter points'
             ]);
         if ($validator->fails()) {
@@ -417,8 +431,11 @@ class AdminController extends Controller
         } 
         $rewardId = Reward::insertGetId([
             'heading' => $request->title,
-            'partner_id' => $request->partner,
-            'point' => $request->point
+            // 'partner_id' => $request->partner,
+            'point' => $request->point,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
         ]);
 
         $update = Redeemdeduction::where('partner_id',$request->partner)->first();
@@ -431,14 +448,17 @@ class AdminController extends Controller
             Redeemdeduction::where('partner_id',$request->partner)->update($inputData);
         }else{
             // dd("hbnb");
-            $totalrewards = Reward::where('partner_id',$request->partner)->selectRaw('sum(rewards.point) as score')->get();
+            $totalrewards = PartnerReward::where('partner_id',$request->partner)->selectRaw('sum(rewards.point) as score')->get();
             $totalredeems = Redeem::where('partner_id',$request->partner)->selectRaw('sum(redeems.amount) as score')->get();
             $score1 = isset($totalrewards[0]->score)?$totalrewards[0]->score:0;
             $score2 = isset($totalredeems[0]->score)?$totalredeems[0]->score:0;
             $redeemId = Redeemdeduction::insertGetId([
                 'total_reward' => ($score1 - $request->amount),
                 'partner_id' => $request->partner,
-                'total_redeem' => $score2 + $request->amount
+                'total_redeem' => $score2 + $request->amount,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
             ]);
         }
         DB::commit();
@@ -450,7 +470,7 @@ class AdminController extends Controller
         $user = User::find($id);
         $total = Redeemdeduction::where('partner_id',$id)->first();
         // dd($totalrewards[0]->score);
-        $redeems = Redeem::where('partner_id',$id)->get();
+        $redeems = Redeem::where('partner_id',$id)->latest()->get();
         return view('admin.rewards.redeemhistory',compact('redeems','user','total'));
     }
 
@@ -481,7 +501,10 @@ class AdminController extends Controller
             $redeemId = Redeem::insertGetId([
                 'amount' => $request->amount,
                 'partner_id' => $request->id,
-                'description' => isset($request->description)?$request->description:""
+                'description' => isset($request->description)?$request->description:"",
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+    
             ]);
             
             $deduction = Redeemdeduction::where('partner_id',$request->id)->first();

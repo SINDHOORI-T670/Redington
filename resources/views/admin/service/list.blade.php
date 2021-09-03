@@ -48,10 +48,10 @@
                                         <td>{{$service->name}}</td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editServiceModal{{$service->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $service->id }}','{{ $service->name }}');"><i class="icon-trash"></i> Delee</button>
+                                            {{-- <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $service->id }}','{{ $service->name }}');"><i class="icon-trash"></i> Delee</button>
                                             <form id="resource-delete-{{ $service->id }}" action="{{url('admin/delete/user/')}}/{{$service->id}}" method="get">
                                                 {{ csrf_field() }}
-                                            </form>
+                                            </form> --}}
                                         </td>
                                     </tr>
                                     <div class="modal fade text-left show" id="editServiceModal{{$service->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">

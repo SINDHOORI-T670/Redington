@@ -48,10 +48,10 @@
                                         <td>{{$technology->name}}</td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editTechnologyModal{{$technology->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $technology->id }}','{{ $technology->name }}');"><i class="icon-trash"></i> Delee</button>
+                                            {{-- <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $technology->id }}','{{ $technology->name }}');"><i class="icon-trash"></i> Delee</button>
                                             <form id="resource-delete-{{ $technology->id }}" action="{{url('admin/delete/user/')}}/{{$technology->id}}" method="get">
                                                 {{ csrf_field() }}
-                                            </form>
+                                            </form> --}}
                                         </td>
                                     </tr>
                                     <div class="modal fade text-left show" id="editTechnologyModal{{$technology->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
