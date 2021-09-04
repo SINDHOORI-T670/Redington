@@ -18,6 +18,8 @@ use App\Models\Reward;
 use App\Models\Redeem;
 use App\Models\Redeemdeduction;
 use App\Models\PartnerReward;
+use App\Models\Resource;
+use App\Models\SubResource;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -634,6 +636,137 @@ class AdminController extends Controller
         $reward = Reward::find($request->reward_id);
         return $reward->point;
     }
+
+    public function resources(){
+        $list = Resource::all();
+        return view('admin.resource.list',compact('list'));
+    }
+
+    public function addResource(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+            [
+                'resourcename' => 'required',
+                'type' => 'required'
+            ],[
+                'resourcename.required' => 'Please enter resource name',
+                'type.required' => 'Please select user type '
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+        $resourceId = Resource::insertGetId([
+            'name' => $request->resourcename,
+            'type'=>implode(',',$request->type),
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Resource added successfully');
+    }
+
+    public function editResource(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required',
+                'type' => 'required'
+            ],[
+                'editname.required' => 'Please enter resource name',
+                'type.required' => 'Please select user type '
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+
+        $inputData = [
+            'name' => $request->editname,
+            'type' => implode(',',$request->type)
+        ];
+        Resource::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Resource added successfully');
+    }
+
+    public function activeResource($id){
+        $status="";
+        $resource=Resource::find($id);
+        if($resource->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Resource::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Resource status updated successfully');
+    }
+
+    public function resources(){
+        $list = Resource::all();
+        return view('admin.resource.list',compact('list'));
+    }
+
+    public function addSubResource(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+            [
+                'resourcename' => 'required',
+                'type' => 'required'
+            ],[
+                'resourcename.required' => 'Please enter resource name',
+                'type.required' => 'Please select user type '
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+        $resourceId = Resource::insertGetId([
+            'name' => $request->resourcename,
+            'type'=>implode(',',$request->type),
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Resource added successfully');
+    }
+
+    public function editSubResource(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required',
+                'type' => 'required'
+            ],[
+                'editname.required' => 'Please enter resource name',
+                'type.required' => 'Please select user type '
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+
+        $inputData = [
+            'name' => $request->editname,
+            'type' => implode(',',$request->type)
+        ];
+        Resource::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'SubResource added successfully');
+    }
+
+    public function activeSubResource($id){
+        $status="";
+        $resource=SubResource::find($id);
+        if($resource->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Resource::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','SubResource status updated successfully');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRewardsTable extends Migration
+class CreateSubResourcesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateRewardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rewards', function (Blueprint $table) {
+        Schema::create('sub_resources', function (Blueprint $table) {
             $table->id();
-            $table->integer('partner_id')->nullable();
-            $table->integer('point');
+            $table->integer('resource_id');
+            $table->integer('heading');
+            $table->text('details')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateRewardsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rewards');
+        Schema::dropIfExists('sub_resources');
     }
 }

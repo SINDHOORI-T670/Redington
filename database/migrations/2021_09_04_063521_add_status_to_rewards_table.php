@@ -14,7 +14,7 @@ class AddStatusToRewardsTable extends Migration
     public function up()
     {
         Schema::table('rewards', function (Blueprint $table) {
-            $table->boolean('status');
+            $table->boolean('status')->default(0);
         });
     }
 

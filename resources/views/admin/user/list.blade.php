@@ -24,6 +24,13 @@ table.dataTable tbody td {
     .select2-container{
         display: inline !important;
     }
+    .required:after {
+        content: "*";
+        color: red;
+    }
+    .error{
+        color:red;
+    }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">

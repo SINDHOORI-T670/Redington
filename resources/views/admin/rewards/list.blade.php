@@ -7,6 +7,13 @@
         word-break: break-word;
         vertical-align: top;
     }
+    .required:after {
+        content: "*";
+        color: red;
+    }
+    .error{
+        color:red;
+    }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
