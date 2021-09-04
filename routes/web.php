@@ -42,8 +42,12 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/list/rewards','AdminController@ListRewards');
     Route::get('create/partner/reward','AdminController@createReward');
     Route::post('save/reward','AdminController@Savereward');
+    Route::get('active/reward/{id}','AdminController@activeReward');
     Route::get('redeem/history/{id}','AdminController@RedeemHistory');
     Route::get('create/partner/redeem/{id}','AdminController@CreateRedeem');
     Route::post('save/redeem','AdminController@SaveRedeem');
+    Route::get('reward/point','AdminController@getRewardPoint')->name('getRewardPoint');
+    Route::get('reward/history/{id}','AdminController@RewardHistory');
+    Route::post('Redington/Apply/Rewards','AdminController@SaveRewardforPartner');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });
