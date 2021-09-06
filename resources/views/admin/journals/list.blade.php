@@ -40,11 +40,11 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Resources</h4>
+                        <h4 class="card-title">Value Journals</h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                <li><a data-toggle="modal" data-target="#createResourceModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Resource</span></a></li>
+                                <li><a data-toggle="modal" data-target="#createvaluejournaleModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Value Journals</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -54,42 +54,39 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
-                                        <th>Resource</th>
-                                        <th>User Type</th>
+                                        <th>Title</th>
+                                        <th>Image</th>
+                                        <th>date</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($list as $item)
                                     <tr role="row" class="odd">
-                                        <td>{{$item->name}}</td>
+                                        <td>{{$item->title}}</td>
+                                        <td><img src="@if($item->image){{} url('public/uploads/value_journals')}}/{{$item->image}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td>
                                         <td>
-                                            <ul class="list-inline mb-0 text-success">
-                                                @forelse(explode(',',$item->type) as $type)
-                                                    <li> @if($type==2) Customer @elseif($type==3) Partner @else Employee @endif</li>
-                                                @empty 
-                                                @endforelse
-                                            </ul>
+                                            {{$item->date}}
                                         </td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editResourceModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/subresource/list')}}/{{$item->id}}"><i class="icon-pencil"></i> Sub Resources</a>
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editvaluejournalModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
                                             <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
-                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/resource/')}}/{{$item->id}}" method="get">
+                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/journals/')}}/{{$item->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
                                     </tr>
-                                    <div class="modal fade text-left show" id="editResourceModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                    <div class="modal fade text-left show" id="editvaluejournalModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Edit Resource</h3>
+                                              <h3 class="modal-title" id="myModalLabel35"> Edit Value Journal</h3>
                                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/edit/resource')}}/{{$item->id}}">
+                                            <form method="POST" action="{{url('admin/edit/value_journals')}}/{{$item->id}}">
                                                 @csrf
                                               <div class="modal-body">
                                                     <fieldset class="form-group floating-label-form-group">
@@ -130,24 +127,24 @@ table.dataTable tbody td {
                             </table>
                         </div>
                     </div>
-                    <div class="modal fade text-left show" id="createResourceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                    <div class="modal fade text-left show" id="createvaluejournaleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h3 class="modal-title" id="myModalLabel35"> Create Resource</h3>
+                              <h3 class="modal-title" id="myModalLabel35"> Create Value Journal</h3>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                               </button>
                             </div>
-                            <form method="POST" action="{{url('admin/add/resource')}}">
+                            <form method="POST" action="{{url('admin/add/value_journals')}}">
                                 @csrf
                               <div class="modal-body">
                                   <fieldset class="form-group floating-label-form-group">
-                                      <label for="email" class="label-control required">Resource Name</label>
-                                      <input type="text" class="form-control" id="resourcename" name="resourcename" placeholder="Resource Name">
-                                        @if ($errors->has('resourcename'))
+                                      <label class="label-control required">Title</label>
+                                      <input type="text" class="form-control" id="to" name="name" placeholder="Resource Name">
+                                        @if ($errors->has('name'))
                                             <span class="help-block">
-                                                <strong class="error">{{ $errors->first('resourcename') }}</strong>
+                                                <strong class="error">{{ $errors->first('name') }}</strong>
                                             </span>
                                         @endif
                                   </fieldset>
@@ -197,7 +194,6 @@ table.dataTable tbody td {
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script>
-    $('.select2-multi').select2();
     function confirmDelete(id,name,status) {
         if(status==0){
             var text="inactive";

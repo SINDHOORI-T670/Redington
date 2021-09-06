@@ -795,6 +795,10 @@ class AdminController extends Controller
         return redirect()->back()->with('success','SubResource status updated successfully');
     }
 
+    public function ValueJournalList(){
+        $list = ValueJournal::all();
+        return view('admin.value.journals.list',compact('list'));
+    }
     public function logout(Request $request)
     {
         Auth::logout();
