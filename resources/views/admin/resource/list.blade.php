@@ -64,6 +64,7 @@ table.dataTable tbody td {
                                         <td>{{$item->name}}</td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editResourceModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
+                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/subresource/list')}}/{{$item->id}}"><i class="icon-pencil"></i> Sub Resources</a>
                                             <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
                                             <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/resource/')}}/{{$item->id}}" method="get">
                                                 {{ csrf_field() }}

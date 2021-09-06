@@ -16,7 +16,7 @@ class CreateSubResourcesTable extends Migration
         Schema::create('sub_resources', function (Blueprint $table) {
             $table->id();
             $table->integer('resource_id');
-            $table->integer('heading');
+            $table->string('heading');
             $table->text('details')->nullable();
             $table->string('file')->nullable();
             $table->timestamps();

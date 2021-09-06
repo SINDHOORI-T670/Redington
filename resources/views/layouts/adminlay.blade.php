@@ -42,6 +42,8 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    {{-- <script src="{{asset('admin/app-assets/vendors/js/editors/ckeditor/ckeditor.js')}}"></script>
+    <script src="{{asset('admin/app-assets/js/scripts/editors/editor-ckeditor.min.js')}}"></script> --}}
     <!-- BEGIN VENDOR JS-->
     <script src="{{asset('admin/app-assets/vendors/js/vendors.min.js')}}"></script>
     <!-- BEGIN VENDOR JS-->

@@ -53,5 +53,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/resource','AdminController@addResource');
     Route::post('edit/resource/{id}','AdminController@editResource');
     Route::get('active/resource/{id}','AdminController@activeResource');
+    Route::get('subresource/list/{id}','AdminController@subresources');
+    Route::post('add/subresource','AdminController@addsubResource');
+    Route::post('edit/subresource/{id}','AdminController@editsubResource');
+    Route::get('active/subresource/{id}','AdminController@activesubResource');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

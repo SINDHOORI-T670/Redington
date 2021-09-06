@@ -702,28 +702,43 @@ class AdminController extends Controller
         return redirect()->back()->with('success','Resource status updated successfully');
     }
 
-    public function resources(){
-        $list = Resource::all();
-        return view('admin.resource.list',compact('list'));
+    public function subresources($id){
+        $list = SubResource::where('resource_id',$id)->get();
+        $resource = $id;
+        return view('admin.resource.sublist',compact('list','resource'));
     }
 
-    public function addSubResource(Request $request){
+    public function addsubResource(Request $request){
         // dd($request->all());
         $validator = Validator::make($request->all(),
             [
-                'resourcename' => 'required',
-                'type' => 'required'
+                'name' => 'required'
             ],[
-                'resourcename.required' => 'Please enter resource name',
-                'type.required' => 'Please select user type '
+                'name.required' => 'Please enter sub resource name'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         } 
-        $resourceId = Resource::insertGetId([
-            'name' => $request->resourcename,
-            'type'=>implode(',',$request->type),
+        // $fileName = [];
+        if ($request->file('file') != "") {
+            foreach ($request->file('file') as $file) {
+                // $file = $request->file('file');
+                $name = $file->getClientOriginalName();
+                // $file1 = $file->getClientOriginalName(); //Get Image Name
+
+                // $extension = $file->getClientOriginalExtension();  //Get Image Extension
+                
+                // $name = $file1.'.'.$extension;  //Concatenate both to get FileName (eg: file.jpg)
+                $file->move('uploads/subresource/', $name);
+                $fileName[] = $name;
+            }
+        }
+        $resourceId = SubResource::insertGetId([
+            'resource_id' => $request->resource_id,
+            'heading' => $request->name,
+            'details'=>$request->detail1,
+            'file' => isset($fileName)?implode(',',$fileName):null,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -733,29 +748,42 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Resource added successfully');
     }
 
-    public function editSubResource(Request $request,$id){
+    public function editsubResource(Request $request,$id){
         $validator = Validator::make($request->all(),
             [
-                'editname' => 'required',
-                'type' => 'required'
+                'name' => 'required'
             ],[
-                'editname.required' => 'Please enter resource name',
-                'type.required' => 'Please select user type '
+                'name.required' => 'Please enter sub resource name'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         } 
+        // $fileName = [];
+        if ($request->file('file') != "") {
+            foreach ($request->file('file') as $file) {
+                // $file = $request->file('file');
+                $name = $file->getClientOriginalName();
+                // $file1 = $file->getClientOriginalName(); //Get Image Name
 
+                // $extension = $file->getClientOriginalExtension();  //Get Image Extension
+                
+                // $name = $file1.'.'.$extension;  //Concatenate both to get FileName (eg: file.jpg)
+                $file->move('uploads/subresource/', $name);
+                $fileName[] = $name;
+            }
+        }
+        $sub= SubResource::find($id);
         $inputData = [
-            'name' => $request->editname,
-            'type' => implode(',',$request->type)
+            'heading' => $request->name,
+            'details' => $request->detail2,
+            'file' => isset($fileName) ? implode(',',(array) $fileName) : $sub->file,
         ];
-        Resource::where('id',$id)->update($inputData);
-        return redirect()->back()->with('success', 'SubResource added successfully');
+        SubResource::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'SubResource updated successfully');
     }
 
-    public function activeSubResource($id){
+    public function activesubResource($id){
         $status="";
         $resource=SubResource::find($id);
         if($resource->status==0){
@@ -763,7 +791,7 @@ class AdminController extends Controller
         }else{
             $status=0;
         }
-        Resource::where('id',$id)->update(['status'=> $status]);
+        SubResource::where('id',$id)->update(['status'=> $status]);
         return redirect()->back()->with('success','SubResource status updated successfully');
     }
 
