@@ -41,7 +41,7 @@
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control" for="eventRegInput1">Name</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="name" name="name" value={{Auth::User()->name}}>
+                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="name" name="name" value="{{Auth::User()->name}}">
                                                 </div>
                                             </div>
 

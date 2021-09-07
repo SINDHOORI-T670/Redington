@@ -57,6 +57,9 @@ class AdminController extends Controller
                 $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
                 $file->move('uploads/profiles/', $fileName);
                 $fileName = 'uploads/profiles/'.$fileName;
+            }else{
+                $userFile = User::find(Auth::User()->id);
+                $fileName=$userFile->image;
             }
         $data = [
             'name' => $request->name,
@@ -122,7 +125,7 @@ class AdminController extends Controller
 
     public function listUser(Request $request){
         $type = $request->type;
-        $users = User::where('type',$request->type)->latest()->get();
+        $users = User::where('type',$request->type)->latest()->paginate(2);
         $rewards = Reward::where('status',0)->get();
         return view('admin.user.list',compact('users','type','rewards'));
     }
@@ -808,8 +811,8 @@ class AdminController extends Controller
             [
                 'title' => 'required',
                 'image' => 'required',
-                'detail3' => 'required',
-                'detail4' => 'required',
+                'detail1' => 'required',
+                'detail2' => 'required',
                 'date' => 'required'
             ],[
                 'title.required' => 'Please enter value journal title',

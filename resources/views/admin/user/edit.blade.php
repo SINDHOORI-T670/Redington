@@ -211,6 +211,46 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script type="text/javascript">
     $('.select2-multi').select2();
+    var user = '{{$user->type}}';
+    if(user!=2){
+        $("#submit").prop("disabled", "disabled");
+        var $userform = $("#userform");
+        $("input").on("blur keyup", function() {
+            if ($userform.valid()) {
+                $("#submit").prop("disabled", false);
+            } else {
+                $("#submit").prop("disabled", "disabled");
+            }
+        });
+        // Non free validation
+        $.validator.addMethod(
+                    "nonfreeemail",
+                    function(value) {
+                        return /^([\w-.]+@(?!gmail\.com)(?!yahoo\.com)(?!outlook\.com)([\w-]+.)+[\w-]{2,4})?$/.test(
+                            value
+                        );
+                    },
+                    "Please use your non-free email."
+                );
+        // Actual form
+        $userform.validate({
+            errorElement: "div",
+            rules: {
+                email: {
+                    required: true,
+                    email: true,
+                    nonfreeemail: true
+                },
+            },
+            messages: {
+                email: {
+                    required: "Email is Mandatory",
+                    email: "Enter Valid Email",
+                    nonfreeemail: "Please use your Business email"
+                },
+            }
+        });
+    }
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
