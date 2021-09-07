@@ -65,13 +65,14 @@ table.dataTable tbody td {
                                     @forelse($list as $item)
                                     <tr role="row" class="odd">
                                         <td>{{$item->title}}</td>
-                                        <td><img src="@if($item->image){{} url('public/uploads/value_journals')}}/{{$item->image}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td>
+                                        <td><img  height="80" width="140" src="@if($item->image){{url($item->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td>
                                         <td>
-                                            {{$item->date}}
+                                            {{\Carbon\Carbon::parse($item->journal_date)->format('d/m/Y')}}
                                         </td>
+                                        <td><h4 @if($item->status==1) class="danger text-center" @else class="success text-center" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editvaluejournalModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
+                                            <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->title }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
                                             <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/journals/')}}/{{$item->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
@@ -86,32 +87,58 @@ table.dataTable tbody td {
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/edit/value_journals')}}/{{$item->id}}">
+                                            <form method="POST" action="{{url('admin/edit/value_journals')}}/{{$item->id}}" enctype="multipart/form-data">
                                                 @csrf
                                               <div class="modal-body">
-                                                    <fieldset class="form-group floating-label-form-group">
-                                                      <label for="email" class="label-control required">Resource Name</label>
-                                                      <input type="text" class="form-control" id="editname" name="editname" value="{{$item->name}}">
-                                                        @if ($errors->has('editname'))
-                                                            <span class="help-block">
-                                                                <strong class="error">{{ $errors->first('editname') }}</strong>
-                                                            </span>
-                                                        @endif
-                                                    </fieldset>
-                                                    <fieldset class="form-group floating-label-form-group">
-                                                        <label for="type" class="label-control required">User Type</label>
-                                                        <select name="type[]" id="type" class="form-control select2-multi" multiple>
-                                                              <option value="">Select any type</option>
-                                                              <option value="2" @if(in_array(2,explode(',',$item->type))) selected @else @endif>Customer</option>
-                                                              <option value="3" @if(in_array(3,explode(',',$item->type))) selected @else @endif>Partner</option>
-                                                              <option value="4" @if(in_array(4,explode(',',$item->type))) selected @else @endif>Employee</option>
-                                                        </select>
-                                                          @if ($errors->has('type'))
-                                                              <span class="help-block">
-                                                                  <strong class="error">{{ $errors->first('type') }}</strong>
-                                                              </span>
-                                                          @endif
-                                                      </fieldset>
+                                                <fieldset class="form-group floating-label-form-group">
+                                                    <label class="label-control required">Title</label>
+                                                    <input type="text" class="form-control" id="title" name="title" placeholder="Title" value="{{$item->title}}">
+                                                      @if ($errors->has('title'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('title') }}</strong>
+                                                          </span>
+                                                      @endif
+                                                </fieldset>
+                                                
+                                                <fieldset class="form-group floating-label-form-group">
+                                                  <label class="label-control required">Image</label>
+                                                    <input type="file" class="form-control" id="image" name="image" placeholder="Image">
+                                                      @if ($errors->has('image'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('image') }}</strong>
+                                                          </span>
+                                                      @endif
+                                                </fieldset>
+              
+                                                <fieldset class="form-group floating-label-form-group">
+                                                  <label class="label-control required">Short Description</label>
+                                                  <textarea cols="20" rows="5" class="form-control detail3" id="detail{{$item->id}}" name="detail3" placeholder="Short description about value journal">{!! $item->short !!}</textarea>
+                                                      @if ($errors->has('detail3'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('detail3') }}</strong>
+                                                          </span>
+                                                      @endif
+                                                </fieldset>
+              
+                                                <fieldset class="form-group floating-label-form-group">
+                                                  <label class="label-control required">Details </label>
+                                                  <textarea cols="30" rows="15" class="form-control detail4" id="detail_{{$item->id}}" name="detail4" placeholder="Details about value journal">{!! $item->detail !!}</textarea>
+                                                      @if ($errors->has('detail4'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('detail4') }}</strong>
+                                                          </span>
+                                                      @endif
+                                                </fieldset>
+              
+                                                <fieldset class="form-group floating-label-form-group">
+                                                  <label class="label-control required">Date </label>
+                                                  <input type="date" class="form-control" id="date" name="date" placeholder="Date" value="{{$item->journal_date}}">
+                                                      @if ($errors->has('date'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('date') }}</strong>
+                                                          </span>
+                                                      @endif
+                                                </fieldset>
                                               </div>
                                               <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
@@ -136,31 +163,57 @@ table.dataTable tbody td {
                                 <span aria-hidden="true">×</span>
                               </button>
                             </div>
-                            <form method="POST" action="{{url('admin/add/value_journals')}}">
+                            <form method="POST" action="{{url('admin/add/value_journal')}}" enctype="multipart/form-data">
                                 @csrf
                               <div class="modal-body">
                                   <fieldset class="form-group floating-label-form-group">
                                       <label class="label-control required">Title</label>
-                                      <input type="text" class="form-control" id="to" name="name" placeholder="Resource Name">
-                                        @if ($errors->has('name'))
+                                      <input type="text" class="form-control" id="title" name="title" placeholder="Value Journal Name">
+                                        @if ($errors->has('title'))
                                             <span class="help-block">
-                                                <strong class="error">{{ $errors->first('name') }}</strong>
+                                                <strong class="error">{{ $errors->first('title') }}</strong>
                                             </span>
                                         @endif
                                   </fieldset>
+
                                   <fieldset class="form-group floating-label-form-group">
-                                    <label for="type" class="label-control required">User Type</label>
-                                    <select name="type[]" id="type" class="form-control select2-multi" multiple>
-                                          <option value="">Select any type</option>
-                                          <option value="2">Customer</option>
-                                          <option value="3">Partner</option>
-                                          <option value="4">Employee</option>
-                                    </select>
-                                      @if ($errors->has('type'))
-                                          <span class="help-block">
-                                              <strong class="error">{{ $errors->first('type') }}</strong>
-                                          </span>
-                                      @endif
+                                    <label class="label-control required">Image</label>
+                                      <input type="file" class="form-control" id="image" name="image" placeholder="Image">
+                                        @if ($errors->has('image'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('image') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+
+                                  <fieldset class="form-group floating-label-form-group">
+                                    <label class="label-control required">Short Description</label>
+                                    <textarea cols="20" rows="5" class="form-control detail1" id="detail1" name="detail1" placeholder="Short description about value journal"></textarea>
+                                        @if ($errors->has('detail1'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('detail1') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+
+                                  <fieldset class="form-group floating-label-form-group">
+                                    <label class="label-control required">Details </label>
+                                    <textarea cols="30" rows="15" class="form-control detail2" id="detail2" name="detail2" placeholder="Details about value journal"></textarea>
+                                        @if ($errors->has('detail1'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('detail2') }}</strong>
+                                            </span>
+                                        @endif
+                                  </fieldset>
+
+                                  <fieldset class="form-group floating-label-form-group">
+                                    <label class="label-control required">Date </label>
+                                    <input type="date" class="form-control" id="date" name="date" placeholder="Date">
+                                        @if ($errors->has('date'))
+                                            <span class="help-block">
+                                                <strong class="error">{{ $errors->first('date') }}</strong>
+                                            </span>
+                                        @endif
                                   </fieldset>
                                   
                               </div>
@@ -179,7 +232,7 @@ table.dataTable tbody td {
 </div>
 <!--Import jQuery before export.js-->
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-
+<script src="https://cdn.ckeditor.com/4.14.0/standard-all/ckeditor.js"></script>
 
 <!--Data Table-->
 <script type="text/javascript"  src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
@@ -194,6 +247,14 @@ table.dataTable tbody td {
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script>
+    CKEDITOR.replace( 'detail1' );
+    CKEDITOR.replace( 'detail2' );
+    $('.detail3').each(function () {
+        CKEDITOR.replace($(this).prop('id'));
+    });
+    $('.detail4').each(function () {
+        CKEDITOR.replace($(this).prop('id'));
+    });
     function confirmDelete(id,name,status) {
         if(status==0){
             var text="inactive";

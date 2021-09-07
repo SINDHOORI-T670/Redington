@@ -20,6 +20,9 @@ use App\Models\Redeemdeduction;
 use App\Models\PartnerReward;
 use App\Models\Resource;
 use App\Models\SubResource;
+use App\Models\ValueJournal;
+use App\Models\ValueStory;
+use Carbon\Carbon;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -638,7 +641,7 @@ class AdminController extends Controller
     }
 
     public function resources(){
-        $list = Resource::all();
+        $list = Resource::latest()->get();
         return view('admin.resource.list',compact('list'));
     }
 
@@ -703,7 +706,7 @@ class AdminController extends Controller
     }
 
     public function subresources($id){
-        $list = SubResource::where('resource_id',$id)->get();
+        $list = SubResource::where('resource_id',$id)->latest()->get();
         $resource = $id;
         return view('admin.resource.sublist',compact('list','resource'));
     }
@@ -796,8 +799,219 @@ class AdminController extends Controller
     }
 
     public function ValueJournalList(){
-        $list = ValueJournal::all();
-        return view('admin.value.journals.list',compact('list'));
+        $list = ValueJournal::latest()->get();
+        return view('admin.journals.list',compact('list'));
+    }
+
+    public function storevalueJournal(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'title' => 'required',
+                'image' => 'required',
+                'detail3' => 'required',
+                'detail4' => 'required',
+                'date' => 'required'
+            ],[
+                'title.required' => 'Please enter value journal title',
+                'image.required'=> 'Please add an image for value journals',
+                'detail1.required' => 'Please enter short description',
+                'detail2.required' => 'Please add details about value journals',
+                'date.required' => 'Please add date'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $fileName = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/journals/', $fileName);
+            $fileName = 'uploads/journals/' . $fileName;
+        }
+        $journalId = ValueJournal::insertGetId([
+            'title' => $request->title,
+            'image' => $fileName,
+            'short' => $request->detail1,
+            'detail' => $request->detail2,
+            'journal_date' => Carbon::parse($request->date),
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Value Journal added successfully');
+
+    }
+    public function editvaluejournals($id,Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+        [
+            'title' => 'required',
+            // 'image' => 'required',
+            'detail3' => 'required',
+            'detail4' => 'required',
+            'date' => 'required'
+        ],[
+            'title.required' => 'Please enter value journal title',
+            // 'image.required'=> 'Please add an image for value journals',
+            'detail3.required' => 'Please enter short description',
+            'detail4.required' => 'Please add details about value journals',
+            'date.required' => 'Please add date'
+        ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+
+        $fileName = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/journals/', $fileName);
+            $fileName = 'uploads/journals/' . $fileName;
+        }else{
+            $journal = ValueJournal::find($id);
+            $fileName = $journal->image;
+
+        }
+        $inputData=[
+            'title' => $request->title,
+            'image' => $fileName,
+            'short' => $request->detail1,
+            'detail' => $request->detail2,
+            'journal_date' => Carbon::parse($request->date)
+        ];
+        ValueJournal::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Value Journal Updated successfully');
+
+    }
+
+    public function activejournals($id){
+        $status="";
+        $journal=ValueJournal::find($id);
+        if($journal->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        ValueJournal::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Value journal status updated successfully');
+
+    }
+
+    public function ValuestoriesList(){
+        $list = ValueStory::latest()->get();
+        return view('admin.stories.list',compact('list'));
+    }
+
+    public function storevaluestories(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'title' => 'required',
+                'image' => 'required',
+                'detail1' => 'required',
+                'detail2' => 'required',
+                'date' => 'required',
+                'by' => 'required'
+            ],[
+                'title.required' => 'Please enter value story title',
+                'image.required'=> 'Please add an image for value story',
+                'detail1.required' => 'Please enter short description',
+                'detail2.required' => 'Please add details about value story',
+                'date.required' => 'Please add date',
+                'by.required'=>'Please enter addedby' 
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $fileName = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/stories/', $fileName);
+            $fileName = 'uploads/stories/' . $fileName;
+        }
+        $storyId = ValueStory::insertGetId([
+            'title' => $request->title,
+            'image' => $fileName,
+            'short' => $request->detail1,
+            'detail' => $request->detail2,
+            'journal_date' => Carbon::parse($request->date),
+            'by'=> $request->by,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Data added successfully');
+
+    }
+    public function editvaluestories($id,Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+        [
+            'title' => 'required',
+            // 'image' => 'required',
+            'detail3' => 'required',
+            'detail4' => 'required',
+            'date' => 'required',
+            'by' => 'required'
+        ],[
+            'title.required' => 'Please enter value journal title',
+            // 'image.required'=> 'Please add an image for value journals',
+            'detail3.required' => 'Please enter short description',
+            'detail4.required' => 'Please add details about value journals',
+            'date.required' => 'Please add date',
+            'by.required' => 'Please enter addedby'
+        ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+
+        $fileName = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/journals/', $fileName);
+            $fileName = 'uploads/journals/' . $fileName;
+        }else{
+            $story = ValueStory::find($id);
+            $fileName = $story->image;
+
+        }
+        $inputData=[
+            'title' => $request->title,
+            'image' => $fileName,
+            'short' => $request->detail3,
+            'detail' => $request->detail4,
+            'journal_date' => Carbon::parse($request->date),
+            'by' =>$request->by
+        ];
+        ValueStory::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Data Updated successfully');
+
+    }
+
+    public function activestories($id){
+        $status="";
+        $story=ValueStory::find($id);
+        if($story->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        ValueStory::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Status updated successfully');
+
     }
     public function logout(Request $request)
     {

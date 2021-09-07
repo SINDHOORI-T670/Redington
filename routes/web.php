@@ -59,7 +59,11 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('active/subresource/{id}','AdminController@activesubResource');
     Route::get('value_journals/list','AdminController@ValueJournalList');
     Route::post('add/value_journal','AdminController@storevalueJournal');
-    Route::post('edit/value_journals','AdminController@editvaluejournals');
-    Route::get('active/journals','Admincontroller@activejournals');
+    Route::post('edit/value_journals/{id}','AdminController@editvaluejournals');
+    Route::get('active/journals/{id}','Admincontroller@activejournals');
+    Route::get('value_stories/list','AdminController@ValuestoriesList');
+    Route::post('add/value_stories','AdminController@storevaluestories');
+    Route::post('edit/value_stories/{id}','AdminController@editvaluestories');
+    Route::get('active/stories/{id}','Admincontroller@activestories');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

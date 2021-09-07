@@ -348,11 +348,11 @@
         </li>
 
         {{-- Value Journals --}}
-        <li class=" nav-item"><a href="{{url('admin/value_journals/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
+        <li class=" nav-item"><a href="{{url('admin/value_journals/list')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
         </li>
 
         {{-- Value Stories --}}
-        <li class=" nav-item"><a href="{{url('admin/value_stories/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
+        <li class=" nav-item"><a href="{{url('admin/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
         </li>
         
         {{-- Blogs --}}

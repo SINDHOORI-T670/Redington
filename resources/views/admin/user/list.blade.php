@@ -128,7 +128,7 @@ table.dataTable tbody td {
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->phone}}</td>
-                                        <td><h4 @if($user->status==1) class="success text-center" @else class="danger text-center" @endif>{{($user->status==1)?"Active":"Inactive"}}</h4></td>
+                                        <td><h4 @if($user->status==0) class="success text-center" @else class="danger text-center" @endif>{{($user->status==0)?"Active":"Inactive"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
                                             @if($user->type==3)
@@ -144,7 +144,7 @@ table.dataTable tbody td {
                                                 {{ csrf_field() }}
                                             </form> --}}
 
-                                            <button @if($user->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $user->id }}','{{ $user->name }}','{{ $user->status }}');"> @if($user->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
+                                            <button @if($user->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $user->id }}','{{ $user->name }}','{{ $user->status }}');"> @if($user->status==0) <i class="fa fa-thumbs-o-down"></i> Inctive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
                                             <form id="resource-active-{{ $user->id }}" action="{{url('admin/active/user/')}}/{{$user->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
