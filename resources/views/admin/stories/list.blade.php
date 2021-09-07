@@ -55,7 +55,7 @@ table.dataTable tbody td {
                                 <thead>
                                     <tr role="row">
                                         <th>Title</th>
-                                        <th>Image</th>
+                                        <th>Short Description</th>
                                         <th>date</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -65,7 +65,8 @@ table.dataTable tbody td {
                                     @forelse($list as $item)
                                     <tr role="row" class="odd">
                                         <td>{{$item->title}}</td>
-                                        <td><img  height="80" width="140" src="@if($item->image){{url($item->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td>
+                                        <td>{!! $item->short !!}</td>
+                                        {{-- <td><img  height="80" width="140" src="@if($item->image){{url($item->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td> --}}
                                         <td>{{\Carbon\Carbon::parse($item->journal_date)->format('d/m/Y')}}</td>
                                         <td><h4 @if($item->status==1) class="danger text-center" @else class="success text-center" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
@@ -99,6 +100,7 @@ table.dataTable tbody td {
                                                 </fieldset>
                                                 
                                                 <fieldset class="form-group floating-label-form-group">
+                                                    <img class="card-img-top img-fluid" src="@if($item->image){{url($item->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="{{$item->title}}">
                                                   <label class="label-control required">Image</label>
                                                     <input type="file" class="form-control" id="image" name="image" placeholder="Image">
                                                       @if ($errors->has('image'))

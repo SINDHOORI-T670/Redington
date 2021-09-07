@@ -881,8 +881,8 @@ class AdminController extends Controller
         $inputData=[
             'title' => $request->title,
             'image' => $fileName,
-            'short' => $request->detail1,
-            'detail' => $request->detail2,
+            'short' => $request->detail3,
+            'detail' => $request->detail4,
             'journal_date' => Carbon::parse($request->date)
         ];
         ValueJournal::where('id',$id)->update($inputData);
