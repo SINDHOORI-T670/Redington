@@ -38,7 +38,7 @@
                                 <thead>
                                     <tr role="row">
                                         <th>Service</th>
-                                       
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -46,12 +46,13 @@
                                     @forelse($services as $service)
                                     <tr role="row" class="odd">
                                         <td>{{$service->name}}</td>
+                                        <td><h4 @if($service->status==1) class="danger text-center" @else class="success text-center" @endif>{{($service->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editServiceModal{{$service->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            {{-- <button class="btn btn-danger text-white tab-order" onclick="confirmDelete('resource-delete-{{ $service->id }}','{{ $service->name }}');"><i class="icon-trash"></i> Delee</button>
-                                            <form id="resource-delete-{{ $service->id }}" action="{{url('admin/delete/user/')}}/{{$service->id}}" method="get">
+                                            <button @if($service->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('service-active-{{ $service->id }}','{{ $service->name }}','{{ $service->status }}');"> @if($service->status==0) <i class="fa fa-thumbs-o-down"></i> Inactive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
+                                            <form id="service-active-{{ $service->id }}" action="{{url('admin/active/service/')}}/{{$service->id}}" method="get">
                                                 {{ csrf_field() }}
-                                            </form> --}}
+                                            </form>
                                         </td>
                                     </tr>
                                     <div class="modal fade text-left show" id="editServiceModal{{$service->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
@@ -98,6 +99,9 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                            <div class="pull-right">
+                                {!! $list->render() !!}
+                            </div>
                         </div>
                     </div>
                     <div class="modal fade text-left show" id="createServiceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
@@ -163,10 +167,10 @@
     function confirmDelete(id,name) {
         Swal.fire({
             title: 'Are you sure?',
-            text: 'Do you want to remove this user '+name+'?',
+            text: 'Do you want to remove this service '+name+'?',
             showDenyButton: false,
             showCancelButton: true,
-            confirmButtonText: `Ok Delete`,
+            confirmButtonText: `Ok`,
             cancelButtonText: `Cancel`,
         }).then((result) => {
             if (result.isConfirmed) {
@@ -179,40 +183,40 @@
     $(document).ready(function() {
         $.noConflict();
         
-        $('#DataTables').DataTable({
-            "ordering": false,
-            "info": true,
-            "autoWidth": false,
-            "bInfo": false,
-            "paging": true,
-            "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-            "dom": "Bfrtip",
-            "buttons": [
-                {
-                extend: "copy",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "csv",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "excel",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "print",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "pdf",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-            ],
-        }),
-        $(
-        ".buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel"
-        ).removeClass("dt-button buttons-html5").addClass("btn btn-info square  mr-1 mb-1");
+        // $('#DataTables').DataTable({
+        //     "ordering": false,
+        //     "info": true,
+        //     "autoWidth": false,
+        //     "bInfo": false,
+        //     "paging": true,
+        //     "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
+        //     "dom": "Bfrtip",
+        //     "buttons": [
+        //         {
+        //         extend: "copy",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "csv",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "excel",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "print",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "pdf",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //     ],
+        // }),
+        // $(
+        // ".buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel"
+        // ).removeClass("dt-button buttons-html5").addClass("btn btn-info square  mr-1 mb-1");
     });
 </script>
 

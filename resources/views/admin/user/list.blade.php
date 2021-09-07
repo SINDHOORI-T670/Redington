@@ -144,7 +144,7 @@ table.dataTable tbody td {
                                                 {{ csrf_field() }}
                                             </form> --}}
 
-                                            <button @if($user->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $user->id }}','{{ $user->name }}','{{ $user->status }}');"> @if($user->status==0) <i class="fa fa-thumbs-o-down"></i> Inctive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
+                                            <button @if($user->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $user->id }}','{{ $user->name }}','{{ $user->status }}');"> @if($user->status==0) <i class="fa fa-thumbs-o-down"></i> Inactive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
                                             <form id="resource-active-{{ $user->id }}" action="{{url('admin/active/user/')}}/{{$user->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
@@ -152,9 +152,11 @@ table.dataTable tbody td {
                                     </tr>
                                     @empty
                                     @endforelse
-                                    {!! $users->render() !!}
                                 </tbody>
                             </table>
+                            <div class="pull-right">
+                                {!!$users->render() !!}
+                            </div>
                         </div>
                     </div>
                 </div>

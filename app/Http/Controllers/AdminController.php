@@ -125,7 +125,7 @@ class AdminController extends Controller
 
     public function listUser(Request $request){
         $type = $request->type;
-        $users = User::where('type',$request->type)->latest()->paginate(2);
+        $users = User::where('type',$request->type)->latest()->paginate(20);
         $rewards = Reward::where('status',0)->get();
         return view('admin.user.list',compact('users','type','rewards'));
     }
@@ -302,11 +302,11 @@ class AdminController extends Controller
     
     public function ListRedingtonFeatures($type){
         if($type=='services'){
-            $services = Service::latest()->get();
+            $services = Service::latest()->paginate(20);
             // dd($services);
             return view('admin.service.list',compact('services'));
         }elseif($type=='technologies'){
-            $technologys = Technology::latest()->get();
+            $technologys = Technology::latest()->paginate(20);
             return view('admin.technology.list',compact('technologys'));
         }else{
             dd("$type");
@@ -412,9 +412,34 @@ class AdminController extends Controller
         Service::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', $request->editname.' updated successfully');
     }
+ 
+    public function activeService($id){
+        $status="";
+        $service=Service::find($id);
+        if($service->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Service::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Service status updated successfully');
 
+    }
+
+    public function activeTechnology($id){
+        $status="";
+        $technology=Technology::find($id);
+        if($technology->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Technology::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Technology status updated successfully');
+
+    }
     public function ListRewards(){
-        $rewards = Reward::latest()->get();
+        $rewards = Reward::latest()->paginate(20);
         return view('admin.rewards.list',compact('rewards'));
 
     }
@@ -492,7 +517,7 @@ class AdminController extends Controller
         $user = User::find($id);
         $total = Redeemdeduction::where('partner_id',$id)->first();
         // dd($totalrewards[0]->score);
-        $redeems = Redeem::where('partner_id',$id)->latest()->get();
+        $redeems = Redeem::where('partner_id',$id)->latest()->paginate(20);
         return view('admin.rewards.redeemhistory',compact('redeems','user','total'));
     }
 
@@ -563,7 +588,7 @@ class AdminController extends Controller
         $user = User::find($id);
         $total = Redeemdeduction::where('partner_id',$id)->first();
         // dd($totalrewards[0]->score);
-        $rewards = PartnerReward::where('partner_id',$id)->latest()->get();
+        $rewards = PartnerReward::where('partner_id',$id)->latest()->paginate(20);
         return view('admin.rewards.rewardhistory',compact('rewards','user','total'));
     }
 
@@ -644,7 +669,7 @@ class AdminController extends Controller
     }
 
     public function resources(){
-        $list = Resource::latest()->get();
+        $list = Resource::latest()->paginate(20);
         return view('admin.resource.list',compact('list'));
     }
 
@@ -709,7 +734,7 @@ class AdminController extends Controller
     }
 
     public function subresources($id){
-        $list = SubResource::where('resource_id',$id)->latest()->get();
+        $list = SubResource::where('resource_id',$id)->latest()->paginate(20);
         $resource = $id;
         return view('admin.resource.sublist',compact('list','resource'));
     }
@@ -802,7 +827,7 @@ class AdminController extends Controller
     }
 
     public function ValueJournalList(){
-        $list = ValueJournal::latest()->get();
+        $list = ValueJournal::latest()->paginate(20);
         return view('admin.journals.list',compact('list'));
     }
 
@@ -907,7 +932,7 @@ class AdminController extends Controller
     }
 
     public function ValuestoriesList(){
-        $list = ValueStory::latest()->get();
+        $list = ValueStory::latest()->paginate(20);
         return view('admin.stories.list',compact('list'));
     }
 

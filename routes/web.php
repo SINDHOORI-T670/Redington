@@ -39,6 +39,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/new/Redington/{type}','AdminController@AddRedingtonFeatures');
     Route::post('/edit/Redington/technology/{id}','AdminController@editRedingtonTechnology');
     Route::post('/edit/Redington/service/{id}','AdminController@editRedingtonService');
+    Route::get('/active/service/{id}','AdminController@activeService');
+    Route::get('/active/technology/{id}','AdminController@activeTechnology');
     Route::get('/list/rewards','AdminController@ListRewards');
     Route::get('create/partner/reward','AdminController@createReward');
     Route::post('save/reward','AdminController@Savereward');

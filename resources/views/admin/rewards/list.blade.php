@@ -58,8 +58,12 @@
                                     </tr>
                                     @empty
                                     @endforelse
+                                    
                                 </tbody>
                             </table>
+                            <div class="pull-right">
+                            {!! $rewards->links() !!}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -105,40 +109,40 @@ function confirmDelete(id,name,status) {
     $(document).ready(function() {
         $.noConflict();
         
-        $('#DataTables').DataTable({
-            "ordering": false,
-            "info": true,
-            "autoWidth": false,
-            "bInfo": false,
-            "paging": true,
-            "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
-            "dom": "Bfrtip",
-            "buttons": [
-                {
-                extend: "copy",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "csv",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "excel",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "print",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-                {
-                extend: "pdf",
-                exportOptions: { columns: [":visible :not(:last-child)"] },
-                },
-            ],
-        }),
-        $(
-        ".buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel"
-        ).removeClass("dt-button buttons-html5").addClass("btn btn-info square  mr-1 mb-1");
+        // $('#DataTables').DataTable({
+        //     "ordering": false,
+        //     "info": true,
+        //     "autoWidth": false,
+        //     "bInfo": false,
+        //     "paging": true,
+        //     "lengthMenu": [[25, 50, -1], [25, 50, "All"]],
+        //     "dom": "Bfrtip",
+        //     "buttons": [
+        //         {
+        //         extend: "copy",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "csv",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "excel",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "print",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //         {
+        //         extend: "pdf",
+        //         exportOptions: { columns: [":visible :not(:last-child)"] },
+        //         },
+        //     ],
+        // }),
+        // $(
+        // ".buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel"
+        // ).removeClass("dt-button buttons-html5").addClass("btn btn-info square  mr-1 mb-1");
     });
 </script>
 
