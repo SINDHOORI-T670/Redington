@@ -143,8 +143,8 @@ class AdminController extends Controller
                 $validator = Validator::make($request->all(),
                 [
                     'name' => 'required',
-                    'phone' => 'required',
-                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i|unique:users'
+                    'phone' => 'required|unique:users,phone',
+                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
@@ -155,8 +155,8 @@ class AdminController extends Controller
                 $validator = Validator::make($request->all(),
                 [
                     'name' => 'required',
-                    'phone' => 'required',
-                    'email' => 'required|email|max:255|unique:users'
+                    'phone' => 'required|unique:users,phone',
+                    'email' => 'required|email|max:255'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
@@ -166,8 +166,8 @@ class AdminController extends Controller
                 $validator = Validator::make($request->all(),
                 [
                     'name' => 'required',
-                    'phone' => 'required',
-                    'email' => 'required|email|max:255|unique:users'
+                    'phone' => 'required|unique:users,phone',
+                    'email' => 'required|email|max:255'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
@@ -243,6 +243,18 @@ class AdminController extends Controller
             $messages = ['email'=> 'Domain not valid for E-mail,use only business email'];
             return Redirect::back()->withErrors($messages)->withInput();
         }
+        // $email = '';
+        $phone = '';
+        $phone = $request->phone;
+        $phNoExist = User::where('id','!=',$request->id)->where('phone',$phone)->count();
+        if($phNoExist > 0){
+            return redirect()->back()->with('error', 'Phone number  already exist.Please try with another phone!')->withInput();
+        }
+        // $email = $request->email;
+        // $emailExist = User::where('email',$email)->count();
+        // if($emailExist > 0){
+        //     return redirect()->back()->with('error', 'E-mail already exist.Please try with another E-mail!')->withInput();
+        // }
         $fileName = "";
             if ($request->file('image') != "") {
                 $userFile = User::find($request->id);
