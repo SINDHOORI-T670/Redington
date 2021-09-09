@@ -100,7 +100,7 @@
                                 </tbody>
                             </table>
                             <div class="pull-right">
-                                {!! $list->render() !!}
+                                {!! $services->render() !!}
                             </div>
                         </div>
                     </div>

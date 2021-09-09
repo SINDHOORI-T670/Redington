@@ -40,7 +40,7 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Value Journals</h4>
+                        <h4 class="card-title">Value Journals For <b class="text-primary">{{ucfirst($journal->journal)}}</b></h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
@@ -114,7 +114,7 @@ table.dataTable tbody td {
               
                                                 <fieldset class="form-group floating-label-form-group">
                                                   <label class="label-control required">Short Description</label>
-                                                  <textarea cols="20" rows="5" class="form-control detail3" id="detail{{$item->id}}" name="detail3" placeholder="Short description about value journal">{!! $item->short !!}</textarea>
+                                                  <textarea cols="20" rows="5" class="form-control detail3" id="detail3_{{$item->id}}" name="detail3" placeholder="Short description about value journal">{!! $item->short !!}</textarea>
                                                       @if ($errors->has('detail3'))
                                                           <span class="help-block">
                                                               <strong class="error">{{ $errors->first('detail3') }}</strong>
@@ -124,7 +124,7 @@ table.dataTable tbody td {
               
                                                 <fieldset class="form-group floating-label-form-group">
                                                   <label class="label-control required">Details </label>
-                                                  <textarea cols="30" rows="15" class="form-control detail4" id="detail_{{$item->id}}" name="detail4" placeholder="Details about value journal">{!! $item->detail !!}</textarea>
+                                                  <textarea cols="30" rows="15" class="form-control detail4" id="detail4_{{$item->id}}" name="detail4" placeholder="Details about value journal">{!! $item->detail !!}</textarea>
                                                       @if ($errors->has('detail4'))
                                                           <span class="help-block">
                                                               <strong class="error">{{ $errors->first('detail4') }}</strong>
@@ -171,6 +171,7 @@ table.dataTable tbody td {
                             </div>
                             <form method="POST" action="{{url('admin/add/value_journal')}}" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="j_id" value="{{$journal->id}}">
                               <div class="modal-body">
                                   <fieldset class="form-group floating-label-form-group">
                                       <label class="label-control required">Title</label>

@@ -23,6 +23,7 @@ use App\Models\SubResource;
 use App\Models\ValueJournal;
 use App\Models\ValueStory;
 use Carbon\Carbon;
+use App\Models\Journal;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -838,9 +839,107 @@ class AdminController extends Controller
         return redirect()->back()->with('success','SubResource status updated successfully');
     }
 
-    public function ValueJournalList(){
-        $list = ValueJournal::latest()->paginate(20);
-        return view('admin.journals.list',compact('list'));
+    public function journals(){
+        $list = Journal::latest()->paginate(20);
+        return view('admin.journals.journals',compact('list'));
+    }
+
+    public function addJournal(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'name' => 'required',
+                // 'description' => 'required',
+                // 'file' => 'required',
+                // 'detail2' => 'required',
+                // 'date' => 'required'
+            ],[
+                'name.required' => 'Please enter value journal title',
+                // 'image.required'=> 'Please add an image for value journals',
+                // 'detail1.required' => 'Please enter short description',
+                // 'detail2.required' => 'Please add details about value journals',
+                // 'date.required' => 'Please add date'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $fileName = "";
+        if ($request->file('file') != "") {
+            
+            $file = $request->file('file');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/journals/', $fileName);
+            $fileName = 'uploads/journals/' . $fileName;
+        }
+        $journalId = Journal::insertGetId([
+            'journal' => $request->name,
+            'image' => $fileName,
+            'description' => $request->detail1,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Value Journal added successfully');
+
+    }
+
+    public function editJournal(Request $request,$id){
+            $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required',
+                // 'description' => 'required',
+                // 'file' => 'required',
+                // 'detail2' => 'required',
+                // 'date' => 'required'
+            ],[
+                'editname.required' => 'Please enter value journal title',
+                // 'image.required'=> 'Please add an image for value journals',
+                // 'detail1.required' => 'Please enter short description',
+                // 'detail2.required' => 'Please add details about value journals',
+                // 'date.required' => 'Please add date'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $fileName = "";
+        if ($request->file('image') != "") {
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/journals/', $fileName);
+            $fileName = 'uploads/journals/' . $fileName;
+        }else{
+            $journal = Journal::find($id);
+            $fileName = $journal->image;
+
+        }
+        $inputData=[
+            'journal' => $request->editname,
+            'image' => $fileName,
+            'description' => $request->detail2,
+        ];
+        Journal::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Value Journal Updated successfully');
+
+    }
+    
+    public function activemainjournals($id){
+        $status="";
+        $journal=Journal::find($id);
+        if($journal->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Journal::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Value journal status updated successfully');
+    }
+    public function ValueJournalList($id){
+        $journal = Journal::find($id);
+        $list = ValueJournal::where('journal_id',$id)->latest()->paginate(20);
+        return view('admin.journals.list',compact('list','journal'));
     }
 
     public function storevalueJournal(Request $request){
@@ -876,6 +975,7 @@ class AdminController extends Controller
             'short' => $request->detail1,
             'detail' => $request->detail2,
             'journal_date' => Carbon::parse($request->date),
+            'journal_id' => $request->j_id,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 

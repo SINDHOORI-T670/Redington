@@ -59,7 +59,11 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/subresource','AdminController@addsubResource');
     Route::post('edit/subresource/{id}','AdminController@editsubResource');
     Route::get('active/subresource/{id}','AdminController@activesubResource');
-    Route::get('value_journals/list','AdminController@ValueJournalList');
+    Route::get('journals','AdminController@journals');
+    Route::post('add/journal','AdminController@addJournal');
+    Route::post('edit/journal/{id}','AdminController@editJournal');
+    Route::get('active/main_journals/{id}','Admincontroller@activemainjournals');
+    Route::get('value_journals/list/{id}','AdminController@ValueJournalList');
     Route::post('add/value_journal','AdminController@storevalueJournal');
     Route::post('edit/value_journals/{id}','AdminController@editvaluejournals');
     Route::get('active/journals/{id}','Admincontroller@activejournals');

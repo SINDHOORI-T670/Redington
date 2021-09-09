@@ -348,7 +348,7 @@
         </li>
 
         {{-- Value Journals --}}
-        <li class=" nav-item"><a href="{{url('admin/value_journals/list')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
+        <li class=" nav-item"><a href="{{url('admin/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
         </li>
 
         {{-- Value Stories --}}
