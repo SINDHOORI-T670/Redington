@@ -864,9 +864,9 @@ class AdminController extends Controller
             return Redirect::back()->withErrors($messages)->withInput();
         }
         $fileName = "";
-        if ($request->file('file') != "") {
+        if ($request->file('image') != "") {
             
-            $file = $request->file('file');
+            $file = $request->file('image');
             $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
             $file->move('uploads/journals/', $fileName);
             $fileName = 'uploads/journals/' . $fileName;
