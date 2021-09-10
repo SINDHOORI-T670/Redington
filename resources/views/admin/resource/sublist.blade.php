@@ -31,6 +31,13 @@ table.dataTable tbody td {
     .select2-container{
         display: inline !important;
     }
+    .remove1{
+        display:block;
+        float:right;
+        width:30px;
+        height:29px;
+        background:url(https://web.archive.org/web/20110126035650/http://digitalsbykobke.com/images/close.png) no-repeat center center;
+    }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -64,11 +71,18 @@ table.dataTable tbody td {
                                                             <span>{!! \Illuminate\Support\Str::limit($item->details, 50) !!}</span>
                                                             <br>
                                                             <ul class="list-inline mb-0 text-white">
-                                                                @forelse(explode(',',$item->file) as $file)
-                                                                <li>
-                                                                    <a  class="text-white" href="{{ url('public/uploads/subresource')}}/{{$file}}" title="{{$file}}" target="_blank" download>{{$file}}</a> 
-                                                                @empty 
-                                                                @endforelse
+                                                                @if(isset($item->file))
+                                                                    @forelse(explode(',',$item->file) as $index => $file)
+                                                                        @php 
+                                                                            $type = pathinfo($file, PATHINFO_EXTENSION);
+                                                                            $split[] = explode('.',$file);
+                                                                        @endphp
+                                                                        <li>
+                                                                            <a  class="text-white" href="{{asset('public/uploads/subresource/'.$file.'')}}" title="File{{$index+1}}" download>File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
+                                                                        </li>
+                                                                    @empty 
+                                                                    @endforelse
+                                                                @endif
                                                             </ul>
                                                             <br>
                                                             <ul class="list-inline mb-0 text-white">
@@ -125,12 +139,18 @@ table.dataTable tbody td {
                                                   <input type="file" class="form-control" id="file" name="file[]" placeholder="Subresource files" accept="application/pdf,application/msword,
                                                   application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
                                                   <ul class="list-inline mb-0">  
-                                                    @forelse(explode(',',$item->file) as $file)
-                                                        <li>
-                                                            <a  href="{{ url('public/uploads/subresource')}}/{{$file}}" title="{{$file}}" target="_blank" download>{{$file}}</a> {{ ($loop->last ? '' : ', ') }}    
-                                                        </li>
+                                                    @if(isset($item->file))
+                                                        @forelse(explode(',',$item->file) as $index => $file)
+                                                            @php 
+                                                                $type = pathinfo($file, PATHINFO_EXTENSION);
+                                                            @endphp
+                                                            <li>
+                                                                <a href="{{url('public/uploads/subresource')}}/{{$file}}" title="{{$file}}" target="_blank">File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
+                                                                {{-- <span id="{{$index}}" class="remove1"></span> --}}
+                                                            </li>
                                                         @empty 
-                                                    @endforelse
+                                                        @endforelse
+                                                    @endif
                                                   </ul>
                                                     @if ($errors->has('fie'))
                                                         <span class="help-block">
@@ -237,6 +257,47 @@ table.dataTable tbody td {
         CKEDITOR.replace($(this).prop('id'));
     });
     $('.select2-multi').select2();
+    $(".remove1").click(function(){
+        file = $(this).attr('id');
+        Swal.fire({
+        title: 'Are you sure ?',
+        text: 'This task cannot be revert',
+        showCancelButton: true,
+        confirmButtonText: `Ok Delete`,
+        cancelButtonText: `Cancel`,
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+                $.ajax({
+                    url:"#",
+                    method:"get",
+                    data: {
+                        id: file
+                    },
+                    success: function (data) {
+                    if(data=="deleted"){
+                        Swal.fire({
+                        title: "Done!", 
+                        text: "It was succesfully deleted!",
+                        type: "success"
+                        }).then((result) => {
+                        // Reload the Page
+                        location.reload();
+                        });
+                    }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        Swal.fire({
+                        title: "Error deleting!", 
+                        text: "Please try again",
+                        type: "error"
+                        }).then((result) => {
+                        // Reload the Page
+                        location.reload();
+                        });
+                    }
+                });
+        })
+    });
     function confirmDelete(id,name,status) {
         if(status==0){
             var text="inactive";

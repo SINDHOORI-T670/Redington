@@ -24,6 +24,7 @@ use App\Models\ValueJournal;
 use App\Models\ValueStory;
 use Carbon\Carbon;
 use App\Models\Journal;
+use Illuminate\Support\Arr;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -749,7 +750,20 @@ class AdminController extends Controller
     public function subresources($id){
         $list = SubResource::where('resource_id',$id)->latest()->paginate(20);
         $resource = $id;
-        return view('admin.resource.sublist',compact('list','resource'));
+        $icons = [
+            'pdf' => 'pdf',
+            'doc' => 'word',
+            'docx' => 'word',
+            'xls' => 'excel',
+            'xlsx' => 'excel',
+            'ppt' => 'powerpoint',
+            'pptx' => 'powerpoint',
+            'txt' => 'text',
+            'png' => 'image',
+            'jpg' => 'image',
+            'jpeg' => 'image',
+        ];
+        return view('admin.resource.sublist',compact('list','resource','icons'));
     }
 
     public function addsubResource(Request $request){
@@ -768,7 +782,7 @@ class AdminController extends Controller
         if ($request->file('file') != "") {
             foreach ($request->file('file') as $file) {
                 // $file = $request->file('file');
-                $name = $file->getClientOriginalName();
+                $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
                 // $file1 = $file->getClientOriginalName(); //Get Image Name
 
                 // $extension = $file->getClientOriginalExtension();  //Get Image Extension
@@ -807,7 +821,7 @@ class AdminController extends Controller
         if ($request->file('file') != "") {
             foreach ($request->file('file') as $file) {
                 // $file = $request->file('file');
-                $name = $file->getClientOriginalName();
+                $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
                 // $file1 = $file->getClientOriginalName(); //Get Image Name
 
                 // $extension = $file->getClientOriginalExtension();  //Get Image Extension
@@ -817,11 +831,18 @@ class AdminController extends Controller
                 $fileName[] = $name;
             }
         }
+        
         $sub= SubResource::find($id);
+        if(isset($sub->file)){
+            $array = implode(',',(array) $fileName).','.$sub->file;
+        }else{
+            $array = implode(',',(array) $fileName);
+        }
+        // dd($array);
         $inputData = [
             'heading' => $request->name,
             'details' => $request->detail2,
-            'file' => isset($fileName) ? implode(',',(array) $fileName) : $sub->file,
+            'file' => $array,
         ];
         SubResource::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'SubResource updated successfully');
