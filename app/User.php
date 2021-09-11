@@ -36,4 +36,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $with = ['poc','regionConnect'];
+    public function poc()
+    {
+        return $this->belongsTo('App\Models\Poc','poc_id','id');
+    }
+    public function regionConnect()
+    {
+        return $this->belongsTo('App\Models\RegionConnection','id','user_id');
+    }
 }

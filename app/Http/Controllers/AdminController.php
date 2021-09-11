@@ -26,6 +26,11 @@ use Carbon\Carbon;
 use App\Models\Journal;
 use File;
 use Response;
+use App\Models\Brand;
+use App\Models\Region;
+use App\Models\Poc;
+use App\Models\RegionConnection;
+
 class AdminController extends Controller
 {
     public function __construct(){
@@ -129,15 +134,19 @@ class AdminController extends Controller
     public function listUser(Request $request){
         $type = $request->type;
         $users = User::where('type',$request->type)->latest()->paginate(20);
+        // $users = User::where('type',$request->type)->get();
+        // dd($users);
         $rewards = Reward::where('status',0)->get();
-        return view('admin.user.list',compact('users','type','rewards'));
+        $regions = Region::where('status',0)->get();
+        return view('admin.user.list',compact('users','type','rewards','regions'));
     }
 
     public function createUser(Request $request){
         $type = $request->type;
         $services= Service::latest()->get();
         $technologies= Technology::latest()->get();
-        return view('admin.user.create',compact('type','services','technologies'));
+        $pocs = POC::where('status',0)->latest()->get();
+        return view('admin.user.create',compact('type','services','technologies','pocs'));
     }
 
     public function createValidation($request)
@@ -147,12 +156,14 @@ class AdminController extends Controller
                 [
                     'name' => 'required',
                     'phone' => 'required|unique:users,phone',
-                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i'
+                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i',
+                    'poc' => 'required'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
                     'email.required' => 'Please enter email',
-                    'email.regex' => 'Domain not valid for registration(example@redington.com).'
+                    'email.regex' => 'Domain not valid for registration(example@redington.com).',
+                    'poc.required' => 'Please select type'
                 ]);
             }elseif($request->type==3){
                 $validator = Validator::make($request->all(),
@@ -200,13 +211,14 @@ class AdminController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'type'=>$request->type,
-                'status'=>1,
+                'status'=>0,
                 'verify_status'=>1,
                 'image'=>$fileName,
                 'password' => Hash::make(123456),
                 'company'=> $request->company,
                 'post'=> $request->post,
                 'linkedin' => $request->linkedin,
+                'poc_id'=>$request->poc,
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -235,17 +247,35 @@ class AdminController extends Controller
         $services= Service::all();
         $technologies= Technology::all();
         $userspecs=UserSpec::where('user_id',$request->id)->first();
-        return view('admin.user.edit',compact('user','services','technologies','userspecs'));
+        $pocs = POC::where('status',0)->latest()->get();
+        return view('admin.user.edit',compact('user','services','technologies','userspecs','pocs'));
     }
 
     public function updateUser(Request $request){
-        $domain = explode("@", $request->email);
-        $domain = $domain[(count($domain)-1)];
-        $blacklist = array('gmail.com', 'yahoo.com', 'outlook.com');
-        if (in_array($domain, $blacklist)) {
-            $messages = ['email'=> 'Domain not valid for E-mail,use only business email'];
+        $validator = Validator::make($request->all(),
+                [
+                    'name' => 'required',
+                    'phone' => 'required',
+                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i',
+                    'poc' => 'required'
+                ],[
+                    'name.required' => 'Please enter name',
+                    'phone.required' => 'Please enter phone number',
+                    'email.required' => 'Please enter email',
+                    'email.regex' => 'Domain not valid for registration(example@redington.com).',
+                    'poc.required' => 'Please select type'
+                ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         }
+        // $domain = explode("@", $request->email);
+        // $domain = $domain[(count($domain)-1)];
+        // $blacklist = array('gmail.com', 'yahoo.com', 'outlook.com');
+        // if (in_array($domain, $blacklist)) {
+        //     $messages = ['email'=> 'Domain not valid for E-mail,use only business email'];
+        //     return Redirect::back()->withErrors($messages)->withInput();
+        // }
         // $email = '';
         $phone = '';
         $phone = $request->phone;
@@ -278,8 +308,12 @@ class AdminController extends Controller
                 'company'=> $request->company,
                 'post'=> $request->post,
                 'linkedin' => $request->url,
+                'poc_id'=>$request->poc
             ];
             User::where('id',$request->id)->update($inputData);
+            // if($request->poc_id!=2){
+            //     $regionData = RegionConnection::where('user_id',$request->id)->delete();
+            // }
             $check = UserSpec::where('user_id',$request->id)->count();
             if($check==0){
                 $feature = UserSpec::insertGetId([
@@ -315,6 +349,45 @@ class AdminController extends Controller
         return redirect()->back()->with('success','User status updated successfully');
     }
     
+    public function AssignRegion(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'region' => 'required',
+                'check' => 'required',
+            ],[
+                'region.required' => 'Please select any region',
+                'check.required' => 'Please choose some employees',
+            ]);
+            if ($validator->fails()) {
+                $messages = $validator->messages();
+                return Redirect::back()->withErrors($messages)->withInput();
+            }
+        $users=$request->check;
+        if((isset($users)) && (isset($request->region))){
+            foreach(explode(",",$users) as $user){
+                $regionData = RegionConnection::where('user_id',$user)->get();
+                // dd($regionData);
+                if(count($regionData)>0){
+                    RegionConnection::where('user_id',$user)->update(['region_id' => $request->region]);
+                   
+                }else{
+                    $RegConID = RegionConnection::insertGetId([
+                        'user_id' => $user,
+                        'region_id' => $request->region,
+                        "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                        "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        
+                    ]);
+                    DB::commit();
+                
+                }
+            }
+            return redirect()->back()->with('success', 'Region assigned successfully');
+        }
+        else{
+            return redirect()->back()->with('error', 'Something went wrong,please try again !!!');
+        }
+    }
     public function ListRedingtonFeatures($type){
         if($type=='services'){
             $services = Service::latest()->paginate(20);
@@ -1177,6 +1250,104 @@ class AdminController extends Controller
         }
         ValueStory::where('id',$id)->update(['status'=> $status]);
         return redirect()->back()->with('success','Status updated successfully');
+
+    }
+
+    public function BrandList(){
+        $list = Brand::latest()->paginate(20);
+        return view('admin.brands.list',compact('list'));
+    }
+
+    public function addBrand(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'name' => 'required'
+            ],[
+                'name.required' => 'Please enter brand name',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $brandId = Brand::insertGetId([
+            'name' => $request->name,
+            'status' => $request->status,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Brand details added successfully');
+
+    }
+
+    public function editBrand(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required'
+            ],[
+                'editname.required' => 'Please enter brand name',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $inputData=[
+            'name' => $request->editname,
+            'status' => $request->status,
+        ];
+        Brand::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Data Updated successfully');
+
+    }
+
+    public function RegionList(){
+        $list = Region::latest()->paginate(20);
+        return view('admin.regions.list',compact('list'));
+    }
+
+    public function addRegion(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'name' => 'required'
+            ],[
+                'name.required' => 'Please enter region name',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $regionId = Region::insertGetId([
+            'name' => $request->name,
+            'status' => $request->status,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'New region added successfully');
+
+    }
+
+    public function editRegion(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required'
+            ],[
+                'editname.required' => 'Please enter region name',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $inputData=[
+            'name' => $request->editname,
+            'status' => $request->status,
+        ];
+        Region::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Data Updated successfully');
 
     }
     public function logout(Request $request)

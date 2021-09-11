@@ -53,6 +53,7 @@ table.dataTable tbody td {
                             <ul class="list-inline mb-0">
                                 <li><a href="{{url('admin/create/user')}}/{{$type}}" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add {{$usertype}}</span></a></li>
                                 @if($type==3)<li><a href="#" class="btn btn-warning mr-1 mb-1 ladda-button" data-style="expand-left" data-toggle="modal" data-target="#ApplyRewardModal"><i class="ft-plus white"></i> <span class="ladda-label">Apply Reward</span></a></li>@endif
+                                @if($type==4)<li><a href="#" class="btn btn-warning mr-1 mb-1 ladda-button" data-style="expand-left" data-toggle="modal" data-target="#editpocModal"><i class="ft-plus white"></i> <span class="ladda-label">Region Assign</span></a></li>@endif
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -115,22 +116,36 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
+                                        <th>#</th>
                                         <th>Name</th>
                                         <th>E-mail</th>
                                         <th>Phone</th>
+                                        @if($user->type==4)
+                                        <th>Type</th>
+                                        <th>Region</th>
+                                        @endif
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($users as $user)
+                                    @forelse($users as $index => $user)
                                     <tr role="row" class="odd">
+                                        @if($user->type==4)
+                                        <td><input type="checkbox" name="users[]" id="{{$user->id}}" @if($user->status==1) disabled @else @endif><label for="{{$user->id}}" class="block"></label></td>
+                                        @elseif($user->type==2 || $user->type==3) 
+                                        <td>{{$index+1}}</td>
+                                        @endif
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->phone}}</td>
+                                        @if($user->type==4)
+                                        <td>{{isset($user->poc)?$user->poc->name:"--"}}</td>
+                                        <td>{{isset($user->regionConnect)?$user->regionConnect->region->name:"--"}}</td>
+                                        @endif
                                         <td><h4 @if($user->status==0) class="success text-center" @else class="danger text-center" @endif>{{($user->status==0)?"Active":"Inactive"}}</h4></td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
+                                            <a class="btn btn-primary text-white  tab-order" href="{{url('admin/edit/user/')}}/{{$user->id}}"><i class="icon-pencil"></i> Edit</a>
                                             @if($user->type==3)
                                             {{-- <a class="btn btn-secondary text-white tab-order " href="{{url('admin/redeem/history/')}}/{{$user->id}}"><i class="fa fa-money"></i> Redeem History</a> --}}
                                             <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings mr-1"></i>History</button>
@@ -154,6 +169,42 @@ table.dataTable tbody td {
                                     @endforelse
                                 </tbody>
                             </table>
+                            <div id="editpocModal" class="modal fade text-left show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h3 class="modal-title" id="myModalLabel35"> Assign Region</h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">×</span>
+                                        </button>
+                                      </div>
+                                      <form method="POST" action="{{url('admin/assign/region')}}">
+                                        @csrf
+                                        <input type="hidden" name="check" id="check">
+                                      <div class="modal-body">
+                                            <fieldset class="form-group floating-label-form-group">
+                                              <label for="email" class="label-control required">Type</label>
+                                              <input type="text" class="form-control" name="poc" value="POC" readonly>
+                                               
+                                            </fieldset>
+                                            <fieldset class="form-group floating-label-form-group">
+                                                <label for="email" class="label-control">Region</label>
+                                                <select class="form-control" name="region">
+                                                    @forelse($regions as $region)
+                                                        <option value="{{$region->id}}">{{ucfirst($region->name)}}</option>
+                                                    @empty 
+                                                    @endforelse
+                                                </select>
+                                            </fieldset>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                          <input type="submit" class="btn btn-outline-primary btn-lg" value="Assign">
+                                      </div>
+                                    </form>
+                                    </div>
+                                  </div>
+                            </div>
                             <div class="pull-right">
                                 {!!$users->render() !!}
                             </div>
@@ -201,7 +252,20 @@ table.dataTable tbody td {
             } 
         })
     }
-    
+    $('input[type=checkbox]').change(function()
+	{
+		loadCheck();
+	});
+	function loadCheck() {
+		$('#check').val('');
+		var checkboxes = $('input[name="users[]"]:checked');
+		var data = [];
+		var len = checkboxes.length;
+		for (var i=0; i<len; i++) {
+			data[i] = checkboxes[i].id;
+		}
+		$('#check').val(data);
+	}
     $(document).ready(function() {
         $.noConflict();
         $(document).on('change', '#rewards', function() {

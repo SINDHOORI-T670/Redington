@@ -30,6 +30,12 @@
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/css/plugins/calendars/clndr.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/fonts/meteocons/style.min.css')}}">
     <!-- END Page Level CSS-->
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/datatable/datatables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/extensions/responsive.dataTables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/extensions/colReorder.dataTables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/extensions/buttons.dataTables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/datatable/buttons.bootstrap4.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/extensions/fixedHeader.dataTables.min.css')}}">
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin/assets/css/style.css')}}">
     <!-- END Custom CSS-->
@@ -69,6 +75,14 @@
     <!-- END PAGE LEVEL JS-->
     <script src="{{asset('admin/app-assets/js/scripts/modal/components-modal.min.js')}}"></script>
 
+    <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/datatables.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/vendors/js/tables/buttons.colVis.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/dataTables.colReorder.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/dataTables.buttons.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/buttons.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/dataTables.fixedHeader.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/js/scripts/tables/datatables-extensions/datatable-responsive.min.js')}}"></script>
   </body>
   <!-- END: Body-->
 

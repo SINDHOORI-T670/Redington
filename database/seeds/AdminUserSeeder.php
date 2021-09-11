@@ -19,7 +19,7 @@ class AdminUserSeeder extends Seeder
             'verify_status' => 1,
             'phone' => '+(974) 95478515',
             'type' => 1,
-            'status' => 1
+            'status' => 0
         ]);
     }
 }

@@ -72,5 +72,12 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/value_stories','AdminController@storevaluestories');
     Route::post('edit/value_stories/{id}','AdminController@editvaluestories');
     Route::get('active/stories/{id}','Admincontroller@activestories');
+    Route::get('list/brands','AdminController@BrandList');
+    Route::post('add/brand','AdminController@addBrand');
+    Route::post('edit/brand/{id}','AdminController@editBrand');
+    Route::get('list/regions','AdminController@RegionList');
+    Route::post('add/region','AdminController@addRegion');
+    Route::post('edit/region/{id}','AdminController@editRegion');
+    Route::post('assign/region','AdminController@AssignRegion');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

@@ -134,8 +134,19 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            
-
+                                            @if($type==4)
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required">Type</label>
+                                                <div class="col-md-9">
+                                                    <select class="form-control" name="poc">
+                                                        @forelse ($pocs as $poc)
+                                                            <option value={{$poc->id}}>{{$poc->name}}</option>
+                                                        @empty
+                                                        @endforelse
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            @endif
                                             {{-- <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="projectinput5">Password</label>
                                                 <div class="col-md-9">
@@ -186,9 +197,6 @@
                                                     @empty
                                                     @endforelse
                                                 </select>
-                                                {{-- <div class="col-md-9">
-                                                    <input type="text" name="tec_tags[]" value="{{ old('tags') }}" data-role="tagsinput" class="form-control" />
-                                                </div> --}}
                                             </div>
                                         </div>
             
@@ -220,7 +228,7 @@
 
 <script type="text/javascript">
     var user = '{{$type}}';
-    if(user!=2){
+    if(user==3){
         $("#submit").prop("disabled", "disabled");
         var $userform = $("#userform");
         $("input").on("blur keyup", function() {

@@ -354,6 +354,14 @@
         {{-- Value Stories --}}
         <li class=" nav-item"><a href="{{url('admin/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
         </li>
+
+        {{-- Brands --}}
+        <li class=" nav-item"><a href="{{url('admin/list/brands')}}"><i class="icon-layers"></i><span class="menu-title" data-i18n="nav.chat-application.main">Brands</span></a>
+        </li>
+
+        {{-- Regions --}}
+        <li class=" nav-item"><a href="{{url('admin/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
+        </li>
         
         {{-- Blogs --}}
         {{-- <li class=" nav-item"><a href="#"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Blogs</span></a>

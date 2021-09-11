@@ -54,7 +54,7 @@
                             </div>
                             <div class="card-content collpase show">
                                 <div class="card-body">
-                                    <form class="form form-horizontal" enctype="multipart/form-data" action="{{url('admin/update/user')}}" method="post"> 
+                                    <form class="form form-horizontal" id="userform"  enctype="multipart/form-data" action="{{url('admin/update/user')}}" method="post"> 
                                         @csrf
                                         <input type="hidden" name="id" value="{{$user->id}}">
                                         <div class="form-body">
@@ -108,6 +108,19 @@
                                                     </span>
                                                 @endif
                                             </div> --}}
+                                            @if($user->type==4)
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required">Type</label>
+                                                <div class="col-md-9">
+                                                    <select class="form-control" name="poc">
+                                                        @forelse ($pocs as $poc)
+                                                            <option value={{$poc->id}} @if($user->poc_id==$poc->id) selected @else @endif>{{$poc->name}}</option>
+                                                        @empty
+                                                        @endforelse
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            @endif
 
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control">Profile Image</label>
@@ -188,7 +201,7 @@
                                             <a href="{{url('admin/list/user')}}/{{$user->type}}" class="btn btn-warning mr-1">
                                                 <i class="ft-x"></i> Cancel
                                             </a>
-                                            <button type="submit" class="btn btn-primary">
+                                            <button type="submit" class="btn btn-primary" id="submit">
                                                 <i class="ft-check"></i> Save
                                             </button>
                                         </div>
@@ -212,7 +225,7 @@
 <script type="text/javascript">
     $('.select2-multi').select2();
     var user = '{{$user->type}}';
-    if(user!=2){
+    if(user==3){
         $("#submit").prop("disabled", "disabled");
         var $userform = $("#userform");
         $("input").on("blur keyup", function() {
