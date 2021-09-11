@@ -78,7 +78,7 @@ table.dataTable tbody td {
                                                                             $split[] = explode('.',$file);
                                                                         @endphp
                                                                         <li>
-                                                                            <a  class="text-white" href="{{asset('public/uploads/subresource/'.$file.'')}}" title="File{{$index+1}}" download>File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
+                                                                            <a  class="text-white" href="{{url('admin/downloadfile')}}/{{$file}}" title="File{{$index+1}}" download>File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
                                                                         </li>
                                                                     @empty 
                                                                     @endforelse
@@ -145,7 +145,7 @@ table.dataTable tbody td {
                                                                 $type = pathinfo($file, PATHINFO_EXTENSION);
                                                             @endphp
                                                             <li>
-                                                                <a href="{{url('public/uploads/subresource')}}/{{$file}}" title="{{$file}}" target="_blank">File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
+                                                                <a href="{{url('admin/downloadfile')}}/{{$file}}" title="{{$file}}" target="_blank">File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
                                                                 {{-- <span id="{{$index}}" class="remove1"></span> --}}
                                                             </li>
                                                         @empty 

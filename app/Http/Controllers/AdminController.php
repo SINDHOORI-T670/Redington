@@ -24,7 +24,8 @@ use App\Models\ValueJournal;
 use App\Models\ValueStory;
 use Carbon\Carbon;
 use App\Models\Journal;
-use Illuminate\Support\Arr;
+use File;
+use Response;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -847,7 +848,11 @@ class AdminController extends Controller
         SubResource::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'SubResource updated successfully');
     }
-
+    public function downloadfile($file)
+    {
+        $filepath = public_path('uploads/subresource/'.$file.'');
+        return Response::download($filepath); 
+    }
     public function activesubResource($id){
         $status="";
         $resource=SubResource::find($id);

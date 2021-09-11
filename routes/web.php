@@ -58,6 +58,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('subresource/list/{id}','AdminController@subresources');
     Route::post('add/subresource','AdminController@addsubResource');
     Route::post('edit/subresource/{id}','AdminController@editsubResource');
+    Route::get('/downloadfile/{file}','AdminController@downloadfile');
     Route::get('active/subresource/{id}','AdminController@activesubResource');
     Route::get('journals','AdminController@journals');
     Route::post('add/journal','AdminController@addJournal');
