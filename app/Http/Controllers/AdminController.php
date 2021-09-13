@@ -73,8 +73,8 @@ class AdminController extends Controller
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'image' => $fileName
-            // 'password' => Hash::make($request->password),
+            'image' => $fileName,
+            'password' => Hash::make($request->password),
         ];
         // dd($data);
         User::where('id',Auth::User()->id)->update($data);

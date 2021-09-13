@@ -76,7 +76,9 @@
                                         <label for="remember-me"> Remember Me</label>
                                     </fieldset>
                                 </div>
-                                <div class="col-md-6 col-12 text-center text-md-right"><a href="recover-password.html" class="card-link">Forgot Password?</a></div>
+                                @if (Route::has('password.request'))
+                                    <div class="col-md-6 col-12 text-center text-md-right"><a href="{{ route('password.request') }}" class="card-link">{{ __('Forgot Your Password?') }}?</a></div>
+                                @endif
                             </div>
                             <button type="submit" class="btn btn-info btn-lg btn-block"><i class="ft-unlock"></i> Login</button>
                         </form>
@@ -84,7 +86,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="">
-                        <p class="float-sm-left text-center m-0"><a href="#" class="card-link">Recover password</a></p>
+                        {{-- <p class="float-sm-left text-center m-0"><a href="#" class="card-link">Recover password</a></p> --}}
                         {{-- <p class="float-sm-right text-center m-0">New to Moden Admin? <a href="register-simple.html" class="card-link">Sign Up</a></p> --}}
                     </div>
                 </div>
