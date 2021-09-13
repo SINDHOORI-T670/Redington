@@ -60,6 +60,13 @@
                                             </div>
 
                                             <div class="form-group row">
+                                                <label class="col-md-3 label-control" for="password">Password</label>
+                                                <div class="col-md-9">
+                                                    <input type="password" id="password" class="form-control" name="password"  placeholder="Enter Password">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
                                                 <label class="col-md-3 label-control required">Profile Image</label>
                                                 <div class="col-md-9">
                                                     <label id="projectinput6" class="file center-block">
