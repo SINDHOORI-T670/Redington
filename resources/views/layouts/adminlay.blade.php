@@ -26,7 +26,6 @@
     <!-- BEGIN Page Level CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/css/core/menu/menu-types/vertical-menu.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/css/core/colors/palette-gradient.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/css/core/colors/palette-gradient.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/css/plugins/calendars/clndr.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/fonts/meteocons/style.min.css')}}">
     <!-- END Page Level CSS-->
@@ -38,7 +37,9 @@
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/extensions/fixedHeader.dataTables.min.css')}}">
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin/assets/css/style.css')}}">
+
     <!-- END Custom CSS-->
+    
   </head>
   <body class="vertical-layout vertical-menu 2-columns   menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-col="2-columns">
 
@@ -83,6 +84,7 @@
     <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/buttons.bootstrap4.min.js')}}"></script>
     <script src="{{asset('admin/app-assets/vendors/js/tables/datatable/dataTables.fixedHeader.min.js')}}"></script>
     <script src="{{asset('admin/app-assets/js/scripts/tables/datatables-extensions/datatable-responsive.min.js')}}"></script>
+    <script src="{{asset('admin/app-assets/js/scripts/pages/chat-application.js')}}"></script>
   </body>
   <!-- END: Body-->
 
