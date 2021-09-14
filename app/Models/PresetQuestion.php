@@ -13,9 +13,5 @@ class PresetQuestion extends Model
         return $this->hasMany('App\Models\QueryRequest','query_id','id');
     }
 
-    public function user()
-    {
-        return $this->belongsTo('App\User','from_id','id');
-    }
 
 }

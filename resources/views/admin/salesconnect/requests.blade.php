@@ -40,7 +40,7 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Sales Connects</h4>
+                        <h4 class="card-title">Preset Questions Requests</h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
@@ -54,11 +54,8 @@ table.dataTable tbody td {
                                 <thead>
                                     <tr role="row">
                                         <th>#</th>
-                                        <th>Technology</th>
-                                        <th>Brand</th>
-                                        <th>Region</th>
-                                        <th>POC</th>
-                                        <th>Date & Time</th>
+                                        <th>From</th>
+                                        <th>Request</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -66,20 +63,13 @@ table.dataTable tbody td {
                                     @forelse($list as $index => $item)
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
-                                        <td>{{$item->technology->name}}</td>
-                                        <td>{{$item->brand->name}}</td>
-                                        <td>{{$item->region->name}}</td>
                                         <td>{{$item->user->name}}</td>
-                                        <td>@if($item->status==1){{Carbon\Carbon::parse($item->reschedule->date_time)->format('j F Y h:i A')}}@else{{$item->date_time}}@endif</td>
+                                        <td>{{ \Illuminate\Support\Str::limit($item->request, 50, $end='...')}}</td>
                                         <td>
-                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings mr-1"></i></button>
-                                                <div class="dropdown-menu arrow" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                    <a class="dropdown-item" href="{{url('admin/preset_questions')}}/{{$item->id}}"><i class="fa fa-question mr-1"></i> Preset Questions</a> 
-                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#ReschduleModal{{$item->id}}"><i class="fa fa-calendar mr-1"></i> Reschedule</a>
-                                                </div>
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#ViewRequestModal{{$item->id}}"  href="#"><i class="fa fa-eye"></i> View</a>
                                         </td>
                                     </tr>
-                                    <div class="modal fade text-left show" id="ReschduleModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                    <div class="modal fade text-left show" id="ViewRequestModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
@@ -88,33 +78,24 @@ table.dataTable tbody td {
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/Reschedule')}}/{{$item->id}}">
+                                            <form method="POST" action="#">
                                                 @csrf
                                               <div class="modal-body">
-                                                    <fieldset class="form-group floating-label-form-group">
-                                                      <label for="email" class="label-control required">Date</label>
-                                                      <input type="date" class="form-control" id="date" name="date" >
-                                                        @if ($errors->has('date'))
-                                                            <span class="help-block">
-                                                                <strong class="error">{{ $errors->first('date') }}</strong>
-                                                            </span>
-                                                        @endif
-                                                    </fieldset>
-                                                    <br>
-                                                  <fieldset class="form-group floating-label-form-group">
-                                                      <label for="title1" class="label-control required">Time</label>
-                                                      <input class="form-control" type="time" name="time" id="time" value="08:00">
-                                                        @if ($errors->has('time'))
-                                                            <span class="help-block">
-                                                                <strong class="error">{{ $errors->first('time') }}</strong>
-                                                            </span>
-                                                        @endif
-                                                  </fieldset>
+                                                <fieldset class="form-group floating-label-form-group">
+                                                    <label for="email" class="label-control">Request</label>
+                                                    <textarea class="form-control Query" id="query{{$item->id}}" name="query" rows="10" columns="10" placeholder="Preset Question">{!!$item->request!!}</textarea>
+                                                      @if ($errors->has('query'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('query') }}</strong>
+                                                          </span>
+                                                      @endif
+                                                </fieldset>
+                                                
                                               </div>
-                                              <div class="modal-footer">
+                                              {{-- <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
                                                   <input type="submit" class="btn btn-outline-primary btn-lg" value="Schedule">
-                                              </div>
+                                              </div> --}}
                                             </form>
                                           </div>
                                         </div>

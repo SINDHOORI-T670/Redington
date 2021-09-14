@@ -14,7 +14,7 @@ class AddReadStatusToQueryRequestsTable extends Migration
     public function up()
     {
         Schema::table('query_requests', function (Blueprint $table) {
-            $table->integer('read_status');
+            $table->integer('read_status')->default(0);
         });
     }
 

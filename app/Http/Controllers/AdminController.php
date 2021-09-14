@@ -33,6 +33,7 @@ use App\Models\RegionConnection;
 use App\Models\SalesConnect;
 use App\Models\Reschedule;
 use App\Models\PresetQuestion;
+use App\Models\QueryRequest;
 
 class AdminController extends Controller
 {
@@ -1433,6 +1434,12 @@ class AdminController extends Controller
         }
         PresetQuestion::where('id',$id)->update(['question'=>$request->get('query'),'status'=>$request->status]);
         return redirect()->back()->with('success', 'Preset Question updated successfully');
+    }
+
+    public function QueryRequest($id){
+        $list = QueryRequest::where('query_id',$id)->latest()->paginate(20);
+        QueryRequest::where('query_id',$id)->where('read_status',0)->update(['read_status'=>1]);
+        return view('admin.salesconnect.requests',compact('list'));
     }
     public function logout(Request $request)
     {

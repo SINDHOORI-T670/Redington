@@ -63,6 +63,10 @@ table.dataTable tbody td {
                                 </thead>
                                 <tbody>
                                     @forelse($list as $index => $item)
+                                        @php 
+                                            $count = App\Models\QueryRequest::where('query_id',$item->id)->where('read_status',0)->count();
+                                            
+                                        @endphp
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
                                         <td>{!!$item->question!!}</td>
@@ -72,7 +76,7 @@ table.dataTable tbody td {
                                             <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings mr-1"></i></button>
                                                 <div class="dropdown-menu arrow" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;">
                                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#QueryEditModal{{$item->id}}"><i class="icon-pencil mr-1"></i>Edit</a>
-                                                    <a class="dropdown-item" href="{{url('admin/query_request')}}/{{$item->id}}"><i class="icon-notebook mr-1"></i> Request &nbsp;&nbsp;<span class="float-right primary"><span class="badge badge-pill badge-danger">12</span></span></a> 
+                                                    <a class="dropdown-item" href="{{url('admin/query_request')}}/{{$item->id}}"><i class="icon-notebook mr-1"></i> Request @if($count!=0)&nbsp;&nbsp;<span class="float-right primary"><span class="badge badge-pill badge-danger">{{$count}}</span></span>@else @endif</a> 
                                                     
                                                 </div>
                                         </td>
