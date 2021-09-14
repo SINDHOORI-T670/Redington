@@ -30,6 +30,7 @@ use App\Models\Brand;
 use App\Models\Region;
 use App\Models\Poc;
 use App\Models\RegionConnection;
+use Illuminate\Support\Str;
 use App\Models\SalesConnect;
 use App\Models\Reschedule;
 use App\Models\PresetQuestion;
@@ -223,6 +224,7 @@ class AdminController extends Controller
                 'post'=> $request->post,
                 'linkedin' => $request->linkedin,
                 'poc_id'=>$request->poc,
+                'api_token'=>Str::random(60),
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 

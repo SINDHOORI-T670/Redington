@@ -46,4 +46,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Models\RegionConnection','id','user_id');
     }
+    public function userSpec(){
+        return $this->hasOne('App\Models\UserSpec','id','user_id');
+    }
 }
