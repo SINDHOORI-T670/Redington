@@ -30,6 +30,9 @@ use App\Models\Brand;
 use App\Models\Region;
 use App\Models\Poc;
 use App\Models\RegionConnection;
+use App\Models\SalesConnect;
+use App\Models\Reschedule;
+use App\Models\PresetQuestion;
 
 class AdminController extends Controller
 {
@@ -1349,6 +1352,87 @@ class AdminController extends Controller
         Region::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'Data Updated successfully');
 
+    }
+
+    public function SalesConnects(){
+        $list = SalesConnect::latest()->paginate(20);
+        return view('admin.salesconnect.index',compact('list'));
+    }
+
+    public function Reschedule($id,Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'date' => 'required',
+                'time' => 'required'
+            ],[
+                'time.required' => 'Please enter time',
+                'date.required' => 'Please enter date'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $item = Reschedule::find($id);
+        if(isset($item)){
+            Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
+        }else{
+            SalesConnect::where('id',$id)->update(['status'=>1]);
+            $rescheduleId = Reschedule::insertGetId([
+                'salecon_id' => $id,
+                'date_time' => $request->date.' '.$request->time,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+    
+            ]);
+            
+            DB::commit();
+            
+        }
+        return redirect()->back()->with('success', 'Rescheduled successfully');
+    }
+
+    public function PresetQuestions($id){
+        $sale = $id;
+        $list = PresetQuestion::where('salecon_id',$id)->withCount('request')->latest()->paginate(20);
+        return view('admin.salesconnect.query',compact('list','sale'));
+    }
+
+    public function addsalesquery($id,Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'query' => 'required'
+            ],[
+                'query.required' => 'Please enter question',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $queryId = PresetQuestion::insertGetId([
+            'salecon_id' => $id,
+            'question' => $request->get('query'),
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Preset Question added successfully');
+    }
+
+    public function editsalesquery($id,Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'query' => 'required'
+            ],[
+                'query.required' => 'Please enter question',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        PresetQuestion::where('id',$id)->update(['question'=>$request->get('query'),'status'=>$request->status]);
+        return redirect()->back()->with('success', 'Preset Question updated successfully');
     }
     public function logout(Request $request)
     {

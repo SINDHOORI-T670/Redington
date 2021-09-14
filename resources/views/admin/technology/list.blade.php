@@ -79,7 +79,7 @@
                                                     <br>
                                                   <fieldset class="form-group floating-label-form-group">
                                                       <label for="title1" class="label-control required">Description</label>
-                                                      <textarea class="form-control" id="editdescription" name="editdescription">{{$technology->description}}</textarea>
+                                                      <textarea class="form-control detail2" id="editdescription{{$technology->id}}" name="editdescription">{!!$technology->description!!}</textarea>
                                                         @if ($errors->has('editdescription'))
                                                             <span class="help-block">
                                                                 <strong class="error">{{ $errors->first('editdescription') }}</strong>
@@ -152,7 +152,7 @@
 </div>
 <!--Import jQuery before export.js-->
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-
+<script src="https://cdn.ckeditor.com/4.14.0/standard-all/ckeditor.js"></script>
 
 <!--Data Table-->
 <script type="text/javascript"  src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
@@ -165,7 +165,11 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
 <script>
-    
+    CKEDITOR.replace( 'techdescription' );
+    // CKEDITOR.replace( 'detail2' );
+    $('.detail2').each(function () {
+        CKEDITOR.replace($(this).prop('id'));
+    });
     function confirmDelete(id,name) {
         Swal.fire({
             title: 'Are you sure?',

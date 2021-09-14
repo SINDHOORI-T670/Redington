@@ -79,5 +79,10 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/region','AdminController@addRegion');
     Route::post('edit/region/{id}','AdminController@editRegion');
     Route::post('assign/region','AdminController@AssignRegion');
+    Route::get('/sales_connects','AdminController@SalesConnects');
+    Route::post('/Reschedule/{id}','AdminController@Reschedule');
+    Route::get('/preset_questions/{id}','AdminController@PresetQuestions');
+    Route::post('add/new/query/{id}','AdminController@addsalesquery');
+    Route::post('edit/query/{id}','AdminController@editsalesquery');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });
