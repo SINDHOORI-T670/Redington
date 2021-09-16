@@ -27,3 +27,6 @@ Route::get('/resources','Api\UserApiController@resourceList');
 Route::get('/sub_resource/{id}','Api\UserApiController@subresourceList');
 Route::get('/value_journals','Api\UserApiController@journalList');
 Route::get('/sub_journals/{id}','Api\UserApiController@subJournals');
+Route::get('/value_stories','Api\UserApiController@valuestories');
+Route::get('/brands','Api\UserApiController@brands');
+Route::get('/regions','Api\UserApiController@regions');

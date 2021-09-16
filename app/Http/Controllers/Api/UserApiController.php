@@ -12,6 +12,8 @@ use App\Models\SubResource;
 use App\Models\Journal;
 use App\Models\ValueJournal;
 use App\Models\ValueStory;
+use App\Models\Brand;
+use App\Models\Region;
 class UserApiController extends Controller
 {
     public function api_validation($request){
@@ -113,5 +115,20 @@ class UserApiController extends Controller
     public function subJournals($id){
         $subJournalData = ValueJournal::where('journal_id',$id)->latest()->paginate(20);
         return $subJournalData;
+    }
+    
+    public function valuestories(){
+        $storyData = ValueStory::latest()->paginate(20);
+        return $storyData;
+    }
+
+    public function brands(){
+        $brandData = Brand::latest()->paginate(20);
+        return $brandData;
+    }
+
+    public function regions(){
+        $regionData = Region::latest()->paginate(20);
+        return $regionData;
     }
 }

@@ -15,14 +15,14 @@ class AuthController extends Controller
 {
     public function login(Request $request){
         $validator = Validator::make($request->all(), [
-            'phoneNumber' => 'required',
+            'phone' => 'required',
             'password' => 'required'
         ]);
         if($validator->fails()){
             $response['status']  = 'error';
             $response['message'] = $validator->messages()->first();
         }else{
-            $credentials = $request->only('phoneNumber', 'password');
+            $credentials = $request->only('phone', 'password');
             if(Auth::attempt($credentials)){
                 $response['status']  = 'success';
                 $response['message'] = 'Logged in successfuly';
