@@ -35,7 +35,7 @@ use App\Models\SalesConnect;
 use App\Models\Reschedule;
 use App\Models\PresetQuestion;
 use App\Models\QueryRequest;
-
+use App\Models\ReplyRequest;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -1376,10 +1376,11 @@ class AdminController extends Controller
             return Redirect::back()->withErrors($messages)->withInput();
         }
         $item = Reschedule::find($id);
+        SalesConnect::where('id',$id)->update(['date_time' => $request->date.' '.$request->time,'status'=>1]);
         if(isset($item)){
             Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
         }else{
-            SalesConnect::where('id',$id)->update(['status'=>1]);
+            
             $rescheduleId = Reschedule::insertGetId([
                 'salecon_id' => $id,
                 'date_time' => $request->date.' '.$request->time,
@@ -1443,6 +1444,31 @@ class AdminController extends Controller
         QueryRequest::where('query_id',$id)->where('read_status',0)->update(['read_status'=>1]);
         return view('admin.salesconnect.requests',compact('list'));
     }
+
+    public function replyquery($id,Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'reply' => 'required'
+            ],[
+                'reply.required' => 'Please enter reply',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $replyId = ReplyRequest::insertGetId([
+            'req_id' => $id,
+            'from_id'=>Auth::User()->id,
+            'reply'=>$request->reply,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Reply sended successfully');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

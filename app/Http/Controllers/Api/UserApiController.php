@@ -5,6 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\Models\Service;
+use App\Models\Technology;
+use App\Models\Resource;
+use App\Models\SubResource;
+use App\Models\Journal;
+use App\Models\ValueJournal;
+use App\Models\ValueStory;
 class UserApiController extends Controller
 {
     public function api_validation($request){
@@ -76,5 +83,35 @@ class UserApiController extends Controller
     public function getProfile(Request $request){
         $userData   = User::with('userSpec')->where('id',$request->user_id)->first();
         return $userData;
+    }
+
+    public function serviceList(Request $request){
+        $serviceData = Service::latest()->paginate(20);
+        return $serviceData;
+    }
+
+    public function technologyList(Request $request){
+        $technologyData = Technology::latest()->paginate(20);
+        return $technologyData;
+    }
+
+    public function resourceList(Request $request){
+        $resourceData = Resource::latest()->paginate(20);
+        return $resourceData;
+    }
+
+    public function subresourceList($id){
+        $subresourceData = SubResource::where('resource_id',$id)->latest()->paginate(20);
+        return $subresourceData;
+    }
+
+    public function journalList(){
+        $journalData = Journal::latest()->paginate(20);
+        return $journalData;
+    }
+
+    public function subJournals($id){
+        $subJournalData = ValueJournal::where('journal_id',$id)->latest()->paginate(20);
+        return $subJournalData;
     }
 }

@@ -85,5 +85,6 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/new/query/{id}','AdminController@addsalesquery');
     Route::post('edit/query/{id}','AdminController@editsalesquery');
     Route::get('query_request/{id}','AdminController@QueryRequest');
+    Route::post('query/reply/{id}','AdminController@replyquery');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });

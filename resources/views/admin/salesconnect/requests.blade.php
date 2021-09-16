@@ -31,6 +31,30 @@ table.dataTable tbody td {
     .error{
         color:red;
     }
+    .modal-body{
+        padding: 20px 30px;
+        background-color: #fff;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+  .chats .chat-left .chat-avatar {
+    float: left; }
+  .chats .chat-left .chat-body {
+    margin-right: 0;
+    margin-left: 30px; }
+  .chats .chat-left .chat-content {
+    text-align: left;
+    float: left;
+    margin: 0 0 10px 20px;
+    color: #55595c;
+    background-color: #c1c1c1 !important; }
+    .chats .chat-left .chat-content + .chat-content:before {
+      border-color: transparent; }
+    .chats .chat-left .chat-content:before {
+      right: auto;
+      left: -10px;
+      border-right-color: white;
+      border-left-color: transparent; }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -73,29 +97,73 @@ table.dataTable tbody td {
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Reschedule Sales Connects</h3>
+                                              <h3 class="modal-title" id="myModalLabel35"> Requests From  Sales Connects</h3>
                                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="#">
+                                            <form method="POST" action="{{url('admin/query/reply')}}/{{$item->id}}">
                                                 @csrf
                                               <div class="modal-body">
-                                                <fieldset class="form-group floating-label-form-group">
-                                                    <label for="email" class="label-control">Request</label>
-                                                    <textarea class="form-control Query" id="query{{$item->id}}" name="query" rows="10" columns="10" placeholder="Preset Question">{!!$item->request!!}</textarea>
+                                                {{-- <fieldset class="form-group floating-label-form-group"> --}}
+                                                    {{-- <label for="email" class="label-control">Request</label>
+                                                    <textarea class="form-control Query" id="query{{$item->id}}" name="query" rows="10" columns="10" placeholder="Preset Question"></textarea>
                                                       @if ($errors->has('query'))
                                                           <span class="help-block">
                                                               <strong class="error">{{ $errors->first('query') }}</strong>
+                                                          </span>
+                                                      @endif --}}
+                                                      {{-- <div class="chat-app-window"> --}}
+                                                            <div class="chats">
+                                                                <div class="chat">
+                                                                    <div class="chat-avatar">
+                                                                    <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
+                                                                        <img src="@if($item->user->image){{url($item->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
+                                                                    </a>
+                                                                    </div>
+                                                                    <div class="chat-body">
+                                                                    <div class="chat-content" style="text-align: left">
+                                                                        <p>{!!$item->request!!}</p>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>
+                                                                @if(isset($item->reply))
+                                                                    @foreach($item->reply as $reply)
+                                                                        @if($reply->req_id==$item->id)
+                                                                        <div class="chat chat-left">
+                                                                            <div class="chat-avatar">
+                                                                            <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
+                                                                                <img src="@if($reply->user->image){{url($reply->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
+                                                                            </a>
+                                                                            </div>
+                                                                            <div class="chat-body">
+                                                                            <div class="chat-content">
+                                                                                <p>{!!$reply->reply!!}</p>
+                                                                            </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            </div>
+                                                        {{-- </div> --}}
+                                                {{-- </fieldset> --}}
+                                                
+                                                <fieldset class="form-group floating-label-form-group">
+                                                    <label for="title1" class="label-control required">Reply</label>
+                                                    <textarea class="form-control detail2" id="reply{{$item->id}}" name="reply"></textarea>
+                                                      @if ($errors->has('reply'))
+                                                          <span class="help-block">
+                                                              <strong class="error">{{ $errors->first('reply') }}</strong>
                                                           </span>
                                                       @endif
                                                 </fieldset>
                                                 
                                               </div>
-                                              {{-- <div class="modal-footer">
+                                              <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
-                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Schedule">
-                                              </div> --}}
+                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Save">
+                                              </div>
                                             </form>
                                           </div>
                                         </div>
@@ -116,7 +184,7 @@ table.dataTable tbody td {
 </div>
 <!--Import jQuery before export.js-->
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-
+<script src="https://cdn.ckeditor.com/4.14.0/standard-all/ckeditor.js"></script>
 
 <!--Data Table-->
 <script type="text/javascript"  src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
@@ -132,6 +200,9 @@ table.dataTable tbody td {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script>
     $('.select2-multi').select2();
+    $('.detail2').each(function () {
+        CKEDITOR.replace($(this).prop('id'));
+    });
     function confirmDelete(id,name,status) {
         if(status==0){
             var text="inactive";

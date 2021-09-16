@@ -54,6 +54,7 @@ table.dataTable tbody td {
                                 <thead>
                                     <tr role="row">
                                         <th>#</th>
+                                        <th>User</th>
                                         <th>Technology</th>
                                         <th>Brand</th>
                                         <th>Region</th>
@@ -66,17 +67,23 @@ table.dataTable tbody td {
                                     @forelse($list as $index => $item)
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
+                                        <td>{{$item->from->name}} (@if($item->from->type==2) Customer @elseif($item->from->type==3) Partner @elseif($item->from->type==4) Employee @endif)</td>
                                         <td>{{$item->technology->name}}</td>
                                         <td>{{$item->brand->name}}</td>
                                         <td>{{$item->region->name}}</td>
                                         <td>{{$item->user->name}}</td>
-                                        <td>@if($item->status==1){{Carbon\Carbon::parse($item->reschedule->date_time)->format('j F Y h:i A')}}@else{{$item->date_time}}@endif</td>
+                                        <td>@if($item->status==1) {{Carbon\Carbon::parse($item->reschedule->date_time)->format('j F Y h:i A')}}@else @endif</td>
                                         <td>
-                                            <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings mr-1"></i></button>
+                                            @if($item->status==1)
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#ReschduleModal{{$item->id}}"  href="#" title="Reschedule"><i class="fa fa-calendar"></i></a>
+                                            @else 
+                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/preset_questions')}}/{{$item->id}}" title="Preset Questions"><i class="fa fa-question"></i></a>
+                                            @endif
+                                            {{-- <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings mr-1"></i></button>
                                                 <div class="dropdown-menu arrow" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;">
                                                     <a class="dropdown-item" href="{{url('admin/preset_questions')}}/{{$item->id}}"><i class="fa fa-question mr-1"></i> Preset Questions</a> 
                                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#ReschduleModal{{$item->id}}"><i class="fa fa-calendar mr-1"></i> Reschedule</a>
-                                                </div>
+                                                </div> --}}
                                         </td>
                                     </tr>
                                     <div class="modal fade text-left show" id="ReschduleModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">

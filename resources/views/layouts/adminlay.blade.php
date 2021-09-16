@@ -37,11 +37,11 @@
     <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/vendors/css/tables/extensions/fixedHeader.dataTables.min.css')}}">
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('admin/assets/css/style.css')}}">
-
+    <link rel="stylesheet" type="text/css" href="{{asset('admin/app-assets/css/pages/chat-application.css')}}">
     <!-- END Custom CSS-->
     
   </head>
-  <body class="vertical-layout vertical-menu 2-columns   menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-col="2-columns">
+  <body class="vertical-layout vertical-menu 2-columns chat-application  menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu" data-col="2-columns">
 
     @include('include/admin_header')
     @yield('content')

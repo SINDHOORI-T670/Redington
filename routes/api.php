@@ -21,3 +21,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/login','Api\AuthController@login');
 Route::post('/register','Api\AuthController@register');
 Route::get('/user/api_operations', 'Api\UserApiController@apiOperations');
+Route::get('/services','Api\UserApiController@serviceList');
+Route::get('/technology','Api\UserApiController@technologyList');
+Route::get('/resources','Api\UserApiController@resourceList');
+Route::get('/sub_resource/{id}','Api\UserApiController@subresourceList');
+Route::get('/value_journals','Api\UserApiController@journalList');
+Route::get('/sub_journals/{id}','Api\UserApiController@subJournals');

@@ -19,7 +19,7 @@ class CreateSalesConnectsTable extends Migration
             $table->integer('brand_id');
             $table->integer('region_id');
             $table->integer('poc_user_id');
-            $table->datetime('date_time');
+            $table->datetime('date_time')->nullable();
             $table->boolean('status')->default(0);
             $table->timestamps();
         });

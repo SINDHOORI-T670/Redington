@@ -13,5 +13,7 @@ class PresetQuestion extends Model
         return $this->hasMany('App\Models\QueryRequest','query_id','id');
     }
 
+    
+
 
 }
