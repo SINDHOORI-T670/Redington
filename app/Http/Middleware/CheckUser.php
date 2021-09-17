@@ -30,13 +30,7 @@ class CheckUser
             Session::flash('message','Wrong Password or your account is not yet verified !');
             return redirect('/login');
         }
-        else if(Auth::User()->type == 4 && Auth::User()->verify_status == 1){
-            dd("Hello Employee");
-        }
-        else if(Auth::User()->type == 4 && Auth::User()->verify_status == 0){
-            Session::flash('message','Wrong Password or your account is not yet verified !');
-            return redirect('/login');
-        }
+        
         else{
             return $next($request);
         }

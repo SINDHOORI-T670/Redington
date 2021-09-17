@@ -363,6 +363,10 @@
         <li class=" nav-item"><a href="{{url('admin/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
         </li>
 
+        {{-- Preset Question --}}
+        <li class=" nav-item"><a href="{{url('admin/prest_questions')}}"><i class="icon-question"></i><span class="menu-title" data-i18n="nav.chat-application.main">Preset Questions</span></a>
+        </li>
+
         {{-- Sales Connect --}}
         <li class=" nav-item"><a href="{{url('admin/sales_connects')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
         </li>

@@ -25,11 +25,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if(Auth::User() && Auth::User()->type == 1){
-            return redirect('admin/home');
-        }else{
-            Session::flash('message','Invalid user name or password !');
-            return redirect('admin/login');
+        
+        if(Auth::User() && Auth::User()->type == 4 ){
+            if(Auth::User()->verify_status == 1){
+                dd("Hello Employee");
+            }else{
+                Session::flash('message','Your account not yet verified !');
+                return redirect('login');
+            }
+            
+        }
+        else if(Auth::User()->type == 4 && Auth::User()->verify_status == 0){
+            Session::flash('message','Wrong Password or your account is not yet verified !');
+            return redirect('/login');
         }
     }
 }

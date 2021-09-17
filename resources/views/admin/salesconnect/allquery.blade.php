@@ -44,7 +44,7 @@ table.dataTable tbody td {
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                {{-- <li><a data-toggle="modal" data-target="#createQueryModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Preset Question</span></a></li> --}}
+                                <li><a data-toggle="modal" data-target="#createQueryModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Preset Question</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -55,8 +55,9 @@ table.dataTable tbody td {
                                 <thead>
                                     <tr role="row">
                                         <th>#</th>
+                                        <th>Technology</th>
+                                        <th>Brand</th>
                                         <th>Query</th>
-                                        <th>No.of Requests</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -69,14 +70,15 @@ table.dataTable tbody td {
                                         @endphp
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
+                                        <td>{{isset($item->technology)?$item->technology->name:"--"}}</td>
+                                        <td>{{isset($item->brand)?$item->brand->name:"--"}}</td>
                                         <td>{!!$item->question!!}</td>
-                                        <td>{{$item->request_count}}</td>
                                         <td><h4 @if($item->status==1) class="danger" @else class="success" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
-                                            <a class="btn btn-secondary" href="{{url('admin/query_request')}}/{{$item->id}}"><i class="icon-eye mr-1"></i> Request @if($count!=0)&nbsp;&nbsp;<span class="float-right primary"><span class="badge badge-pill badge-danger">{{$count}}</span></span>@else @endif</a> 
+                                            <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#QueryEditModal{{$item->id}}"><i class="icon-pencil mr-1"></i>Edit</a>
                                         </td>
                                     </tr>
-                                    {{-- <div class="modal fade text-left show" id="QueryEditModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                    <div class="modal fade text-left show" id="QueryEditModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
@@ -88,6 +90,26 @@ table.dataTable tbody td {
                                             <form method="POST" action="{{url('admin/edit/query')}}/{{$item->id}}">
                                                 @csrf
                                               <div class="modal-body">
+                                                <fieldset class="form-group floating-label-form-group">
+                                                    <label for="email" class="label-control required">Technology</label>
+                                                    <select class="form-control" name="tech">
+                                                        @forelse ($techs as $tech)
+                                                            <option value="{{$tech->id}}" @if($tech->id==$item->tech_id) selected @else @endif>{{$tech->name}}</option>
+                                                        @empty
+                                                            
+                                                        @endforelse
+                                                    </select>
+                                                </fieldset>
+                                                <fieldset class="form-group floating-label-form-group">
+                                                    <label for="email" class="label-control required">Brand</label>
+                                                    <select class="form-control" name="brand">
+                                                        @forelse ($brands as $brand)
+                                                            <option value="{{$brand->id}}" @if($brand->id==$item->brand_id) selected @else @endif>{{$brand->name}}</option>
+                                                        @empty
+                                                            
+                                                        @endforelse
+                                                    </select>
+                                                </fieldset>
                                                 <fieldset class="form-group floating-label-form-group">
                                                     <label for="email" class="label-control required">Preset Question</label>
                                                     <textarea class="form-control Query" id="query{{$item->id}}" name="query" placeholder="Preset Question">{!!$item->question!!}</textarea>
@@ -112,7 +134,7 @@ table.dataTable tbody td {
                                             </form>
                                           </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     @empty
                                     @endforelse
                                 </tbody>
@@ -120,7 +142,7 @@ table.dataTable tbody td {
                             <div class="pull-right">
                                 {!!$list->render() !!}
                             </div>
-                            {{-- <div class="modal fade text-left show" id="createQueryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                            <div class="modal fade text-left show" id="createQueryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
                                 <div class="modal-dialog" role="document">
                                   <div class="modal-content">
                                     <div class="modal-header">
@@ -129,9 +151,29 @@ table.dataTable tbody td {
                                         <span aria-hidden="true">×</span>
                                       </button>
                                     </div>
-                                    <form method="POST" action="{{url('admin/add/new/query')}}/{{$sale}}">
+                                    <form method="POST" action="{{url('admin/add/new/query')}}">
                                         @csrf
                                       <div class="modal-body">
+                                        <fieldset class="form-group floating-label-form-group">
+                                            <label for="email" class="label-control required">Technology</label>
+                                            <select class="form-control" name="tech">
+                                                @forelse ($techs as $tech)
+                                                    <option value="{{$tech->id}}" >{{$tech->name}}</option>
+                                                @empty
+                                                    
+                                                @endforelse
+                                            </select>
+                                        </fieldset>
+                                        <fieldset class="form-group floating-label-form-group">
+                                            <label for="email" class="label-control required">Brand</label>
+                                            <select class="form-control" name="brand">
+                                                @forelse ($brands as $brand)
+                                                    <option value="{{$brand->id}}" >{{$brand->name}}</option>
+                                                @empty
+                                                    
+                                                @endforelse
+                                            </select>
+                                        </fieldset>
                                           <fieldset class="form-group floating-label-form-group">
                                               <label for="email" class="label-control required">Preset Question</label>
                                               <textarea class="form-control" id="query" name="query" placeholder="Preset Question"></textarea>
@@ -149,7 +191,7 @@ table.dataTable tbody td {
                                     </form>
                                   </div>
                                 </div>
-                            </div> --}}
+                            </div>
                         </div>
                     </div>
                 </div>

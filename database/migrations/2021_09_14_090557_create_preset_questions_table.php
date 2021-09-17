@@ -15,7 +15,7 @@ class CreatePresetQuestionsTable extends Migration
     {
         Schema::create('preset_questions', function (Blueprint $table) {
             $table->id();
-            $table->integer('salecon_id');
+            $table->integer('salecon_id')->nullable();
             $table->text('question');
             $table->boolean('status')->default(0);
             $table->timestamps();

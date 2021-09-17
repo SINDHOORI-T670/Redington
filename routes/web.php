@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 
-Route::get('/login','GeneralController@adminLogin')->name('login');
+// Route::get('/login','GeneralController@adminLogin')->name('login');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
@@ -81,8 +81,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('assign/region','AdminController@AssignRegion');
     Route::get('/sales_connects','AdminController@SalesConnects');
     Route::post('/Reschedule/{id}','AdminController@Reschedule');
-    Route::get('/preset_questions/{id}','AdminController@PresetQuestions');
-    Route::post('add/new/query/{id}','AdminController@addsalesquery');
+    Route::get('/preset_questions/{techid}/{brandid}','AdminController@PresetQuestions');
+    Route::get('/prest_questions','AdminController@allqueries');
+    Route::post('add/new/query','AdminController@addsalesquery');
     Route::post('edit/query/{id}','AdminController@editsalesquery');
     Route::get('query_request/{id}','AdminController@QueryRequest');
     Route::post('query/reply/{id}','AdminController@replyquery');

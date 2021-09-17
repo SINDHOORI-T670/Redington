@@ -40,6 +40,7 @@ class AdminController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
+        $this->middleware('CheckAdmin');
         $settings = Setting::select('key', 'value')->get();
         $company = $settings->mapWithKeys(function ($item) {
                 return [$item['key'] => $item['value']];
@@ -1395,25 +1396,36 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Rescheduled successfully');
     }
 
-    public function PresetQuestions($id){
-        $sale = $id;
-        $list = PresetQuestion::where('salecon_id',$id)->withCount('request')->latest()->paginate(20);
-        return view('admin.salesconnect.query',compact('list','sale'));
+    public function PresetQuestions($techid,$brandid){
+        $list = PresetQuestion::where('tech_id',$techid)->where('brand_id',$brandid)->withCount('request')->latest()->paginate(20);
+        return view('admin.salesconnect.query',compact('list'));
     }
 
-    public function addsalesquery($id,Request $request){
+    public function allqueries(){
+        $list = PresetQuestion::latest()->paginate(20);
+        $techs = Technology::where('status',0)->get();
+        $brands = Brand::where('status',0)->get();
+        return view('admin.salesconnect.allquery',compact('list','techs','brands'));
+    }
+
+    public function addsalesquery(Request $request){
         $validator = Validator::make($request->all(),
             [
+                'tech' => 'required',
+                'brand' => 'required',
                 'query' => 'required'
             ],[
                 'query.required' => 'Please enter question',
+                'tech.required' => 'Please select technology',
+                'brand.required' => 'Please select brand'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         }
         $queryId = PresetQuestion::insertGetId([
-            'salecon_id' => $id,
+            'tech_id' => $request->tech,
+            'brand_id' => $request->brand,
             'question' => $request->get('query'),
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
@@ -1427,15 +1439,19 @@ class AdminController extends Controller
     public function editsalesquery($id,Request $request){
         $validator = Validator::make($request->all(),
             [
+                'tech' => 'required',
+                'brand' => 'required',
                 'query' => 'required'
             ],[
                 'query.required' => 'Please enter question',
+                'tech.required' => 'Please select technology',
+                'brand.required' => 'Please select brand'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         }
-        PresetQuestion::where('id',$id)->update(['question'=>$request->get('query'),'status'=>$request->status]);
+        PresetQuestion::where('id',$id)->update(['tech_id'=>$request->tech,'brand_id'=>$request->brand,'question'=>$request->get('query'),'status'=>$request->status]);
         return redirect()->back()->with('success', 'Preset Question updated successfully');
     }
 
