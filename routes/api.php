@@ -31,3 +31,4 @@ Route::get('/sub_journals/{id}','Api\UserApiController@subJournals');
 Route::get('/value_stories','Api\UserApiController@valuestories');
 Route::get('/brands','Api\UserApiController@brands');
 Route::get('/regions','Api\UserApiController@regions');
+Route::get('/salesconnect','Api\UserApiController@salesconnectList');

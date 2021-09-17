@@ -14,6 +14,7 @@ use App\Models\ValueJournal;
 use App\Models\ValueStory;
 use App\Models\Brand;
 use App\Models\Region;
+use App\Models\SalesConnect;
 class UserApiController extends Controller
 {
     public function api_validation($request){
@@ -130,5 +131,10 @@ class UserApiController extends Controller
     public function regions(){
         $regionData = Region::latest()->paginate(20);
         return $regionData;
+    }
+
+    public function salesconnectList(){
+        $salesData = SalesConnect::latest()->paginate(20);
+        return $salesData;
     }
 }
