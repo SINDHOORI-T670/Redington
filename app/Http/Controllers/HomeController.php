@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Auth;
 class HomeController extends Controller
 {
     /**
@@ -39,5 +39,10 @@ class HomeController extends Controller
             Session::flash('message','Wrong Password or your account is not yet verified !');
             return redirect('/login');
         }
+        else{
+            Session::flash('message','Please check your email and password!');
+            return redirect('/login');
+        }
     }
+    
 }

@@ -89,3 +89,10 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('query/reply/{id}','AdminController@replyquery');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });
+
+Route::group(['prefix' => 'customer'], function () {
+    Route::get('/home','CustomerController@index')->name('Customer-Home');
+    Route::get('/edit/profile','CustomerController@editprofile');
+    Route::post('/update/profile','CustomerController@updateprofile');
+
+});

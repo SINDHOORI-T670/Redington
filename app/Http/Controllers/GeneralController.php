@@ -9,4 +9,7 @@ class GeneralController extends Controller
     public function adminLogin(){
         return view('Auth.adminlogin');
     }
+    public function thanks(){
+        return view('thanks');
+    }
 }
