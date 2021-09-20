@@ -17,8 +17,10 @@ class CheckAdmin
     public function handle($request, Closure $next)
     {
         // return $next($request);
+        
         if(Auth::User()->type == 1 && Auth::User()->verify_status == 1){
-            return redirect('admin/home');
+            // dd("admin");
+            return redirect()->route('Admin-Home');
         }
         else if(Auth::User()->type == 1 && Auth::User()->verify_status == 0 ){
              Session::flash('message','Wrong Email and Password !');

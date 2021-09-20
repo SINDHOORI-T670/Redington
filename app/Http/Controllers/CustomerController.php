@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class CustomerController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth');
+        // $this->middleware('auth');
         $this->middleware('CheckUser');
         $settings = Setting::select('key', 'value')->get();
         $company = $settings->mapWithKeys(function ($item) {

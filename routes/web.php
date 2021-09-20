@@ -24,7 +24,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
-    Route::get('/home','AdminController@index')->name('Admin-Home');
+    Route::get('/home','AdminController@index')->name('Admin-Home')->middleware('CheckAdmin');;
     Route::get('/edit/profile','AdminController@editprofile');
     Route::post('/update/profile','AdminController@updateprofile');
     Route::get('/edit/company/profile','AdminController@editCompanyDetails');
