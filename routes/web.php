@@ -24,7 +24,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
-    Route::get('/home','AdminController@index')->name('Admin-Home')->middleware('CheckAdmin');;
+    Route::get('/home','AdminController@index')->name('Admin-Home');
     Route::get('/edit/profile','AdminController@editprofile');
     Route::post('/update/profile','AdminController@updateprofile');
     Route::get('/edit/company/profile','AdminController@editCompanyDetails');
@@ -87,6 +87,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('edit/query/{id}','AdminController@editsalesquery');
     Route::get('query_request/{id}','AdminController@QueryRequest');
     Route::post('query/reply/{id}','AdminController@replyquery');
+    Route::get('list/products','AdminController@ProductList');
+    Route::post('add/product','AdminController@addProduct');
+    Route::post('edit/product/{id}','AdminController@editProduct');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });
 

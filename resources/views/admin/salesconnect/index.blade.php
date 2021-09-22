@@ -55,10 +55,11 @@ table.dataTable tbody td {
                                     <tr role="row">
                                         <th>#</th>
                                         <th>User</th>
-                                        <th>Technology</th>
+                                        <th>Request Mode</th>
+                                        {{-- <th>Technology</th>
                                         <th>Brand</th>
                                         <th>Region</th>
-                                        <th>POC</th>
+                                        <th>POC</th> --}}
                                         <th>Date & Time</th>
                                         <th>Action</th>
                                     </tr>
@@ -68,12 +69,13 @@ table.dataTable tbody td {
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
                                         <td>{{$item->from->name}} (@if($item->from->type==2) Customer @elseif($item->from->type==3) Partner @elseif($item->from->type==4) Employee @endif)</td>
-                                        <td>{{$item->technology->name}}</td>
-                                        <td>{{$item->brand->name}}</td>
-                                        <td>{{$item->region->name}}</td>
-                                        <td>{{$item->user->name}}</td>
+                                        <td>
+                                            {{($item->status==1)?"Meeting Request":"POC Connect"}}
+                                        </td>
+                                        
                                         <td>@if($item->status==1) {{Carbon\Carbon::parse($item->reschedule->date_time)->format('j F Y h:i A')}}@else @endif</td>
                                         <td>
+                                            <a class="btn btn-secondary text-white tab-order" data-toggle="modal" data-target="#viewModal{{$item->id}}"  href="#" title="View"><i class="fa fa-eye"></i></a>
                                             @if($item->status==1)
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#ReschduleModal{{$item->id}}"  href="#" title="Reschedule"><i class="fa fa-calendar"></i></a>
                                             @else 
@@ -99,6 +101,26 @@ table.dataTable tbody td {
                                                 @csrf
                                               <div class="modal-body">
                                                     <fieldset class="form-group floating-label-form-group">
+                                                        <label for="email" class="label-control required">Technology</label>
+                                                        <select class="form-control" name="tech">
+                                                            @forelse ($techs as $tech)
+                                                                <option value="{{$tech->id}}" @if($tech->id==$item->tech_id) selected @else @endif>{{$tech->name}}</option>
+                                                            @empty
+                                                                
+                                                            @endforelse
+                                                        </select>
+                                                    </fieldset>
+                                                    <fieldset class="form-group floating-label-form-group">
+                                                        <label for="email" class="label-control required">Product</label>
+                                                        <select class="form-control" name="product">
+                                                            @forelse ($products as $product)
+                                                                <option value="{{$product->id}}" @if($product->id==$item->product_id) selected @else @endif>{{$product->name}}</option>
+                                                            @empty
+                                                                
+                                                            @endforelse
+                                                        </select>
+                                                    </fieldset>
+                                                    <fieldset class="form-group floating-label-form-group">
                                                       <label for="email" class="label-control required">Date</label>
                                                       <input type="date" class="form-control" id="date" name="date" >
                                                         @if ($errors->has('date'))
@@ -123,6 +145,45 @@ table.dataTable tbody td {
                                                   <input type="submit" class="btn btn-outline-primary btn-lg" value="Schedule">
                                               </div>
                                             </form>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal" id="viewModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                        <div class="modal-dialog" role="document">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h3 class="modal-title" id="myModalLabel35"> View Sales Connects Details</h3>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                              </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <fieldset class="input-group floating-label-form-group">
+                                                    <label class="label-control col-md-4"><b>Technology</b>:</label>
+                                                    <input  type="text" class="form-control col-md-8" value="{{(isset($item->technology))?$item->technology->name:""}}">
+                                                </fieldset><br>
+                                                <fieldset class="input-group floating-label-form-group">
+                                                    <label class="label-control col-md-4"><b>Brand</b>:</label>
+                                                    <input  type="text" class="form-control col-md-8" value="{{(isset($item->brand))?$item->brand->name:""}}">
+                                                </fieldset><br>
+                                                <fieldset class="input-group floating-label-form-group">
+                                                    <label class="label-control col-md-4"><b>POC</b>:</label>
+                                                    <input  type="text" class="form-control col-md-8" value="{{(isset($item->user))?$item->user->name:""}}">
+                                                </fieldset><br>
+                                                <fieldset class="input-group floating-label-form-group">
+                                                    <label class="label-control col-md-4"><b>Region</b>:</label>
+                                                    <input  type="text" class="form-control col-md-8" value="{{(isset($item->region))?$item->region->name:""}}">
+                                                </fieldset><br>
+                                                @if($item->status==1)
+                                                <fieldset class="input-group floating-label-form-group">
+                                                    <label class="label-control col-md-4"><b>Product</b>:</label>
+                                                    <input  type="text" class="form-control col-md-8" value="{{(isset($item->product))?$item->product->name:""}}">
+                                                </fieldset><br>
+                                                @endif
+                                            </div>
+                                            <div class="modal-footer">
+                                                <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                            </div>
                                           </div>
                                         </div>
                                     </div>

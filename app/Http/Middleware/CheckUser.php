@@ -17,8 +17,8 @@ class CheckUser
     public function handle($request, Closure $next)
     {
         if(Auth::User()->type == 2 && Auth::User()->verify_status == 1){
-            dd("customer");
-            return redirect()->route('Customer-Home');
+            // dd("customer");
+            return redirect('customer/home');
         }
         else if(Auth::User()->type == 2 && Auth::User()->verify_status == 0){
             Session::flash('message','Wrong Password or your account is not yet verified !');

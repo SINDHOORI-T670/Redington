@@ -36,11 +36,12 @@ use App\Models\Reschedule;
 use App\Models\PresetQuestion;
 use App\Models\QueryRequest;
 use App\Models\ReplyRequest;
+use App\Models\Product;
 class AdminController extends Controller
 {
     public function __construct(){
-        $this->middleware('auth');
-        $this->middleware('CheckAdmin');
+        // $this->middleware('auth');
+        // $this->middleware('CheckAdmin');
         $settings = Setting::select('key', 'value')->get();
         $company = $settings->mapWithKeys(function ($item) {
                 return [$item['key'] => $item['value']];
@@ -1360,15 +1361,21 @@ class AdminController extends Controller
 
     public function SalesConnects(){
         $list = SalesConnect::latest()->paginate(20);
-        return view('admin.salesconnect.index',compact('list'));
+        $techs = Technology::latest()->get();
+        $products = Product::latest()->get();
+        return view('admin.salesconnect.index',compact('list','techs','products'));
     }
 
     public function Reschedule($id,Request $request){
         $validator = Validator::make($request->all(),
             [
+                'tech' => 'required',
+                'product' => 'required',
                 'date' => 'required',
                 'time' => 'required'
             ],[
+                'tech.required'=>'Please select technology',
+                'product.required'=>'Please select product',
                 'time.required' => 'Please enter time',
                 'date.required' => 'Please enter date'
             ]);
@@ -1377,7 +1384,7 @@ class AdminController extends Controller
             return Redirect::back()->withErrors($messages)->withInput();
         }
         $item = Reschedule::find($id);
-        SalesConnect::where('id',$id)->update(['date_time' => $request->date.' '.$request->time,'status'=>1]);
+        SalesConnect::where('id',$id)->update(['tech_id'=>$request->tech,'product_id'=>$request->product,'date_time' => $request->date.' '.$request->time,'status'=>1]);
         if(isset($item)){
             Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
         }else{
@@ -1483,6 +1490,55 @@ class AdminController extends Controller
         
         DB::commit();
         return redirect()->back()->with('success', 'Reply sended successfully');
+    }
+
+    public function ProductList(){
+        $list = Product::latest()->paginate(20);
+        return view('admin.products.list',compact('list'));
+    }
+
+    public function addProduct(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'name' => 'required'
+            ],[
+                'name.required' => 'Please enter brand name',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $productId = Product::insertGetId([
+            'name' => $request->name,
+            'status' => $request->status,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Brand details added successfully');
+
+    }
+
+    public function editProduct(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required'
+            ],[
+                'editname.required' => 'Please enter brand name',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $inputData=[
+            'name' => $request->editname,
+            'status' => $request->status,
+        ];
+        Product::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Data Updated successfully');
+
     }
 
     public function logout(Request $request)

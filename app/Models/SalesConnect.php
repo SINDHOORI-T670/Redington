@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SalesConnect extends Model
 {
-    protected $with = ['region','technology','brand','user','reschedule','from'];
+    protected $with = ['region','technology','brand','user','reschedule','from','product'];
 
     public function region()
     {
@@ -35,5 +35,9 @@ class SalesConnect extends Model
     public function from()
     {
         return $this->belongsTo('App\User','from_id','id');
+    }
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Product','product_id','id');
     }
 }

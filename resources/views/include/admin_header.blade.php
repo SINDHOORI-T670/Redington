@@ -363,6 +363,10 @@
         <li class=" nav-item"><a href="{{url('admin/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
         </li>
 
+        {{-- Products --}}
+        <li class=" nav-item"><a href="{{url('admin/list/products')}}"><i class="fa fa-shopping-basket"></i><span class="menu-title" data-i18n="nav.chat-application.main">Products</span></a>
+        </li>
+
         {{-- Preset Question --}}
         <li class=" nav-item"><a href="{{url('admin/prest_questions')}}"><i class="icon-question"></i><span class="menu-title" data-i18n="nav.chat-application.main">Preset Questions</span></a>
         </li>

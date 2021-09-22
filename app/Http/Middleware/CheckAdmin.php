@@ -17,17 +17,19 @@ class CheckAdmin
     public function handle($request, Closure $next)
     {
         // return $next($request);
+        if(Auth::User()->type == 1){
+            if(Auth::User()->verify_status == 1){
+                // dd("admin");
+                return redirect('admin/home');
+            }
+            else{
+                 Session::flash('message','Wrong Email and Password !');
+                return redirect('admin/login');
+            }
+        }
         
-        if(Auth::User()->type == 1 && Auth::User()->verify_status == 1){
-            // dd("admin");
-            return redirect()->route('Admin-Home');
-        }
-        else if(Auth::User()->type == 1 && Auth::User()->verify_status == 0 ){
-             Session::flash('message','Wrong Email and Password !');
-            return redirect('admin/login');
-        }
-        else{
+        // else{
             return $next($request);
-        }
+        // }
     }
 }
