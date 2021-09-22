@@ -37,7 +37,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $with = ['poc','regionConnect'];
+    protected $with = ['poc','regionConnect','userSpec'];
     public function poc()
     {
         return $this->belongsTo('App\Models\Poc','poc_id','id');

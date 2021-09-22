@@ -85,8 +85,8 @@ class UserApiController extends Controller
         return response()->json($data);
     }
 
-    public function getProfile(Request $request){
-        $userData   = User::with('userSpec')->where('id',$request->user_id)->first();
+    public function getProfile(Request $request,$user_id){
+        $userData   = User::with('userSpec')->where('id',$user_id)->first();
         return $userData;
     }
 

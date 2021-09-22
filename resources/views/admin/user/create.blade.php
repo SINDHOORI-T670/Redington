@@ -175,8 +175,6 @@
                                             </div>
                                                 
                                             <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>
-            
-            
                                             <div class="form-group row">
                                                 <select class="form-control select2-multi" name="services[]" multiple="multiple">
                                                     @forelse ($services as $item)
