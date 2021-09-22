@@ -15,6 +15,8 @@ use App\Models\ValueStory;
 use App\Models\Brand;
 use App\Models\Region;
 use App\Models\SalesConnect;
+use App\Models\PresetQuestion;
+use App\Models\Product;
 class UserApiController extends Controller
 {
     public function api_validation($request){
@@ -137,4 +139,15 @@ class UserApiController extends Controller
         $salesData = SalesConnect::latest()->paginate(20);
         return $salesData;
     }
+
+    public function presetQuestions(){
+        $QuestionData = PresetQuestion::latest()->paginate(20);
+        return $QuestionData;
+    }
+
+    public function products(){
+        $productData = Product::latest()->paginate(20);
+        return $productData;
+    }
+
 }

@@ -32,3 +32,5 @@ Route::get('/value_stories','Api\UserApiController@valuestories');
 Route::get('/brands','Api\UserApiController@brands');
 Route::get('/regions','Api\UserApiController@regions');
 Route::get('/salesconnect','Api\UserApiController@salesconnectList');
+Route::get('/presetQuestions','Api\UserApiController@presetQuestions');
+Route::get('/products','Api\UserApiController@products');
