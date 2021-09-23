@@ -75,12 +75,79 @@ class UserApiController extends Controller
         }
 
         switch ($op) {
+
             case 'get-profile':
+
                 $data=$this->getProfile($request);
+
                 break;
+            case 'services':
+
+                $data=$this->serviceList($request);
+
+                break;
+            case 'technologies':
+
+                $data=$this->technologyList($request);
+
+                break;
+            case 'resources':
+
+                $data=$this->resourceList($request);
+
+                break;
+            case 'subresources':
+
+                $data=$this->subresourceList($request);
+
+                break;
+            case 'value-journals':
+
+                $data=$this->journalList($request);
+
+                break;
+            case 'subjournals':
+
+                $data=$this->subJournals($request);
+
+                break;
+            case 'value-stories':
+
+                $data=$this->valuestories($request);
+
+                break;
+            case 'brands':
+
+                $data=$this->brands($request);
+
+                break;
+            case 'regions':
+
+                $data=$this->regions($request);
+
+                break;
+            case 'salesconnects':
+
+                $data=$this->salesconnectList($request);
+
+                break;
+            case 'presetQuestions':
+
+                $data=$this->presetQuestions($request);
+
+                break;
+            case 'products':
+
+                $data=$this->products($request);
+
+                break;
+
             default:
+
                 $data['response'] = 'Invalid OP';
+
                 $data['status'] = "Error";
+
         }
         return response()->json($data);
     }
