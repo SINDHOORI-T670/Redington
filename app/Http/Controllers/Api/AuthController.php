@@ -28,6 +28,7 @@ class AuthController extends Controller
                 $response['message'] = 'Logged in successfuly';
                 $response['token']   = Auth::user()->api_token;
                 $response['type'] = Auth::user()->type;
+                $response['user_id'] = Auth::user()->id;
             }else{
                 $response['status']  = 'error';
                 $response['message'] = 'Invalid credentials';

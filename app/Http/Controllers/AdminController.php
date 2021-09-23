@@ -37,6 +37,7 @@ use App\Models\PresetQuestion;
 use App\Models\QueryRequest;
 use App\Models\ReplyRequest;
 use App\Models\Product;
+use App\Models\Events;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -1739,6 +1740,98 @@ class AdminController extends Controller
 
     }
 
+    public function latestevents(){
+        $now_str = \Carbon\Carbon::now();
+        // dd($now_str);
+        $events = Events::where('date_time', '>=', $now_str)->latest()->paginate(20);
+        // dd($events);
+        $icons = [
+            'pdf' => 'pdf',
+            'doc' => 'word',
+            'docx' => 'word',
+            'xls' => 'excel',
+            'xlsx' => 'excel',
+            'ppt' => 'powerpoint',
+            'pptx' => 'powerpoint',
+            'txt' => 'text',
+            'png' => 'image',
+            'jpg' => 'image',
+            'jpeg' => 'image',
+        ];
+        return view('admin.events.new',compact('events','icons'));
+    }
+
+    public function pastevents(){
+        $now_str = \Carbon\Carbon::now();
+        // dd($now_str);
+        $events = Events::whereDate('date_time', '<', $now_str)->latest()->paginate(20);
+        // dd($events);
+        $icons = [
+            'pdf' => 'pdf',
+            'doc' => 'word',
+            'docx' => 'word',
+            'xls' => 'excel',
+            'xlsx' => 'excel',
+            'ppt' => 'powerpoint',
+            'pptx' => 'powerpoint',
+            'txt' => 'text',
+            'png' => 'image',
+            'jpg' => 'image',
+            'jpeg' => 'image',
+        ];
+        return view('admin.events.past',compact('events','icons'));
+    }
+
+    public function addevent(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'eventname' => 'required',
+                'eventdescription' => 'required',
+                'image' => 'required',
+                'date'=>'required',
+                'time'=>'required'
+            ],[
+                'eventname.required' => 'Please enter event title',
+                'eventdescription.required' => 'Please add description for event',
+                'image.required' => 'Please add event image',
+                'date.required'=>'Please specify the event date',
+                'time.required'=>'Please specify the event time'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $eventimage = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/event/images', $fileName);
+            $eventimage = 'uploads/event/images/' . $fileName;
+        }
+        if ($request->file('doc') != "") {
+            foreach ($request->file('doc') as $file) {
+                $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/event/documents/', $name);
+                $document[] = $name;
+            }
+        }
+        $eventId = Events::insertGetId([
+            'user_id' => Auth::User()->id,
+            'title'=>$request->eventname,
+            'description'=>$request->eventdescription,
+            'image'=>$eventimage,
+            'document'=>isset($document)?implode(',',$document):null,
+            'date_time'=>$request->date.' '.$request->time,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'New event added successfully');
+
+    }
     public function logout(Request $request)
     {
         Auth::logout();

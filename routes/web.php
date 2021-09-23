@@ -90,6 +90,10 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('list/products','AdminController@ProductList');
     Route::post('add/product','AdminController@addProduct');
     Route::post('edit/product/{id}','AdminController@editProduct');
+    Route::get('/list/new/events','AdminController@latestevents');
+    Route::get('/list/past/events','AdminController@pastevents');
+    Route::post('add/new/event','AdminController@addevent');
+    Route::post('update/event/{id}','AdminController@updateevent');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });
 

@@ -374,6 +374,10 @@
         {{-- Sales Connect --}}
         <li class=" nav-item"><a href="{{url('admin/sales_connects')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
         </li>
+
+        {{-- Events --}}
+        <li class=" nav-item"><a href="{{url('admin/list/new/events')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Events</span></a>
+        </li>
         
         {{-- Blogs --}}
         {{-- <li class=" nav-item"><a href="#"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Blogs</span></a>
