@@ -41,7 +41,8 @@
                                         (($type == 4) ? "Employee" : "No List"))
                                         );
                                 @endphp
-                                <h4 class="card-title" id="horz-layout-basic">Add {{$usertype}} Info</h4>
+                                
+                                <h4 class="card-title" id="horz-layout-basic"><a href="{{url('admin/list/user')}}/{{$type}}"><i class="fa fa-arrow-left"></i></a> &nbsp;&nbsp;Add {{$usertype}} Info</h4>
                                 <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                                 <div class="heading-elements">
                                     <ul class="list-inline mb-0">
@@ -174,28 +175,33 @@
                                                 @endif
                                             </div>
                                                 
-                                            <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>
-                                            <div class="form-group row">
-                                                <select class="form-control select2-multi" name="services[]" multiple="multiple">
-                                                    @forelse ($services as $item)
-                                                        <option value={{$item->id}}>{{$item->name}}</option>
-                                                    @empty
-                                                    @endforelse
-                                                </select>
-                                                {{-- <div class="col-md-9">
-                                                    <input type="text" name="serv_tags[]" value="{{ old('tags') }}" data-role="tagsinput" class="form-control" />
-                                                </div> --}}
-                                            </div>
-                                            <h4 class="form-section"><i class="ft-clipboard"></i> Technologies</h4>
-                                            
-                                            <div class="form-group row">
-                                                <select class="form-control select2-multi" name="technologies[]" multiple="multiple">
-                                                    @forelse ($technologies as $item)
-                                                        <option value={{$item->id}}>{{$item->name}}</option>
-                                                    @empty
-                                                    @endforelse
-                                                </select>
-                                            </div>
+            
+                                            @if($type!=4)
+                                                <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>
+
+                                                <div class="form-group row">
+                                                    <select class="form-control select2-multi" name="services[]" multiple="multiple">
+                                                        @forelse ($services as $item)
+                                                            <option value={{$item->id}}>{{$item->name}}</option>
+                                                        @empty
+                                                        @endforelse
+                                                    </select>
+                                                    {{-- <div class="col-md-9">
+                                                        <input type="text" name="serv_tags[]" value="{{ old('tags') }}" data-role="tagsinput" class="form-control" />
+                                                    </div> --}}
+                                                </div>
+                                                <h4 class="form-section"><i class="ft-clipboard"></i> Technologies</h4>
+                                                
+                                                <div class="form-group row">
+                                                    <select class="form-control select2-multi" name="technologies[]" multiple="multiple">
+                                                        @forelse ($technologies as $item)
+                                                            <option value={{$item->id}}>{{$item->name}}</option>
+                                                        @empty
+                                                        @endforelse
+                                                    </select>
+                                                </div>
+                                            @endif
+
                                         </div>
             
                                         <div class="form-actions right">

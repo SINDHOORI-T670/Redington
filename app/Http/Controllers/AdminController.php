@@ -199,149 +199,347 @@ class AdminController extends Controller
     }
 
     public function saveUser(Request $request){
+
         $validator = $this->createValidation($request);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         } else  {
+
             // dd($request->all());
+
             DB::beginTransaction();
+
             $fileName = "";
+
             if ($request->file('image') != "") {
+
                 $file = $request->file('image');
+
                 $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+
                 $file->move('uploads/profiles/', $fileName);
+
                 $fileName = 'uploads/profiles/' . $fileName;
+
             }
+
             $userId = User::insertGetId([
+
                 'name' => $request->name,
+
                 'email' => $request->email,
+
                 'phone' => $request->phone,
+
                 'type'=>$request->type,
+
                 'status'=>0,
+
                 'verify_status'=>1,
+
                 'image'=>$fileName,
+
                 'password' => Hash::make(123456),
+
                 'company'=> $request->company,
+
                 'post'=> $request->post,
+
                 'linkedin' => $request->linkedin,
+
                 'poc_id'=>$request->poc,
+
                 'api_token'=>Str::random(60),
-                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
-            ]);
-            $check=UserSpec::where('user_id',$userId)->get();
-            $feature = UserSpec::insertGetId([
-                'user_id' => $userId,
-                'service_id' => isset($request->services)?implode(",",$request->services):null,
-                'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
             ]);
+            if($request->type!=4){
+                $check=UserSpec::where('user_id',$userId)->get();
+
+                $feature = UserSpec::insertGetId([
+
+                    'user_id' => $userId,
+
+                    'service_id' => isset($request->services)?implode(",",$request->services):null,
+
+                    'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
+                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+                ]); 
+            }
+
             DB::commit();
+
             $usertype = (
+
                 ($request->type == 2) ? "Customer" :
+
                 (($request->type == 3) ? "Partner" :
+
                 (($request->type == 4) ? "Employee" : "User"))
+
                 );
+
             return redirect()->back()->with('success', $usertype.' created successfully');
+
         }
+
     }
 
+
+
     public function editUser(Request $request){
+
         $user = User::find($request->id);
+
         $services= Service::all();
+
         $technologies= Technology::all();
+
         $userspecs=UserSpec::where('user_id',$request->id)->first();
+
         $pocs = POC::where('status',0)->latest()->get();
+        // dd($pocs);
         return view('admin.user.edit',compact('user','services','technologies','userspecs','pocs'));
+
+    }
+
+
+    public function updateValidation($request)
+
+    {
+
+            if($request->type==4){
+
+                $validator = Validator::make($request->all(),
+
+                [
+
+                    'name' => 'required',
+
+                    'phone' => 'required',
+
+                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i',
+
+                    'poc' => 'required'
+
+                ],[
+
+                    'name.required' => 'Please enter name',
+
+                    'phone.required' => 'Please enter phone number',
+
+                    'email.required' => 'Please enter email',
+
+                    'email.regex' => 'Domain not valid for registration(example@redington.com).',
+
+                    'poc.required' => 'Please select type'
+
+                ]);
+
+            }elseif($request->type==3){
+
+                $validator = Validator::make($request->all(),
+
+                [
+
+                    'name' => 'required',
+
+                    'phone' => 'required',
+
+                    'email' => 'required|email|max:255'
+
+                ],[
+
+                    'name.required' => 'Please enter name',
+
+                    'phone.required' => 'Please enter phone number',
+
+                    'email.required' => 'Please enter email'
+
+                ]);
+
+            }else{
+
+                $validator = Validator::make($request->all(),
+
+                [
+
+                    'name' => 'required',
+
+                    'phone' => 'required|unique:users,phone',
+
+                    'email' => 'required|email|max:255'
+
+                ],[
+
+                    'name.required' => 'Please enter name',
+
+                    'phone.required' => 'Please enter phone number',
+
+                    'email.required' => 'Please enter email address'
+
+                ]);
+
+            }
+
+        return $validator;
+
     }
 
     public function updateUser(Request $request){
-        $validator = Validator::make($request->all(),
-                [
-                    'name' => 'required',
-                    'phone' => 'required',
-                    'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i',
-                    'poc' => 'required'
-                ],[
-                    'name.required' => 'Please enter name',
-                    'phone.required' => 'Please enter phone number',
-                    'email.required' => 'Please enter email',
-                    'email.regex' => 'Domain not valid for registration(example@redington.com).',
-                    'poc.required' => 'Please select type'
-                ]);
-        if ($validator->fails()) {
-            $messages = $validator->messages();
-            return Redirect::back()->withErrors($messages)->withInput();
-        }
-        // $domain = explode("@", $request->email);
-        // $domain = $domain[(count($domain)-1)];
-        // $blacklist = array('gmail.com', 'yahoo.com', 'outlook.com');
-        // if (in_array($domain, $blacklist)) {
-        //     $messages = ['email'=> 'Domain not valid for E-mail,use only business email'];
-        //     return Redirect::back()->withErrors($messages)->withInput();
-        // }
-        // $email = '';
-        $phone = '';
-        $phone = $request->phone;
-        $phNoExist = User::where('id','!=',$request->id)->where('phone',$phone)->count();
-        if($phNoExist > 0){
-            return redirect()->back()->with('error', 'Phone number  already exist.Please try with another phone!')->withInput();
-        }
-        // $email = $request->email;
-        // $emailExist = User::where('email',$email)->count();
-        // if($emailExist > 0){
-        //     return redirect()->back()->with('error', 'E-mail already exist.Please try with another E-mail!')->withInput();
-        // }
-        $fileName = "";
-            if ($request->file('image') != "") {
-                $userFile = User::find($request->id);
-                if ($userFile->image != "") {
-                    unlink($userFile->image);
-                }
-                $file = $request->file('image');
-                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
-                $file->move('uploads/profiles/', $fileName);
-                $fileName = 'uploads/profiles/' . $fileName;
-            }
-        
-            $inputData = [
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'image' => $fileName,
-                'company'=> $request->company,
-                'post'=> $request->post,
-                'linkedin' => $request->url,
-                'poc_id'=>$request->poc
-            ];
-            User::where('id',$request->id)->update($inputData);
-            // if($request->poc_id!=2){
-            //     $regionData = RegionConnection::where('user_id',$request->id)->delete();
-            // }
-            $check = UserSpec::where('user_id',$request->id)->count();
-            if($check==0){
-                $feature = UserSpec::insertGetId([
-                    'user_id' => $request->id,
-                    'service_id' => isset($request->services)?implode(",",$request->services):null,
-                    'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
-                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        // dd($request->all());
+        $validator = $this->updateValidation($request);
 
-                ]);
-            }else{
-                $feature =[
-                    'service_id' => isset($request->services)?implode(",",$request->services):"",
-                    'technology_id' => isset($request->technologies)?implode(",",$request->technologies):"",
-                ];
-                UserSpec::where('user_id',$request->id)->update($feature);
+        if ($validator->fails()) {
+
+            $messages = $validator->messages();
+
+            return Redirect::back()->withErrors($messages)->withInput();
+
+        }
+
+        // $domain = explode("@", $request->email);
+
+        // $domain = $domain[(count($domain)-1)];
+
+        // $blacklist = array('gmail.com', 'yahoo.com', 'outlook.com');
+
+        // if (in_array($domain, $blacklist)) {
+
+        //     $messages = ['email'=> 'Domain not valid for E-mail,use only business email'];
+
+        //     return Redirect::back()->withErrors($messages)->withInput();
+
+        // }
+
+        // $email = '';
+
+        $phone = '';
+
+        $phone = $request->phone;
+
+        $phNoExist = User::where('id','!=',$request->id)->where('phone',$phone)->count();
+        // dd($phNoExist);
+
+        if($phNoExist > 0){
+
+            return redirect()->back()->with('error', 'Phone number  already exist.Please try with another phone!')->withInput();
+
+        }
+
+        // $email = $request->email;
+
+        // $emailExist = User::where('email',$email)->count();
+
+        // if($emailExist > 0){
+
+        //     return redirect()->back()->with('error', 'E-mail already exist.Please try with another E-mail!')->withInput();
+
+        // }
+
+        $fileName = "";
+
+            if ($request->file('image') != "") {
+
+                $userFile = User::find($request->id);
+
+                if ($userFile->image != "") {
+
+                    unlink($userFile->image);
+
+                }
+
+                $file = $request->file('image');
+
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+
+                $file->move('uploads/profiles/', $fileName);
+
+                $fileName = 'uploads/profiles/' . $fileName;
+
             }
+
+        
+
+            $inputData = [
+
+                'name' => $request->name,
+
+                'phone' => $request->phone,
+
+                'email' => $request->email,
+
+                'image' => $fileName,
+
+                'company'=> $request->company,
+
+                'post'=> $request->post,
+
+                'linkedin' => $request->url,
+
+                'poc_id'=>$request->poc
+
+            ];
+
+            User::where('id',$request->id)->update($inputData);
+
+            // if($request->poc_id!=2){
+
+            //     $regionData = RegionConnection::where('user_id',$request->id)->delete();
+
+            // }
+            if($request->type!=4){
+                $check = UserSpec::where('user_id',$request->id)->count();
+
+                if($check==0){
+
+                    $feature = UserSpec::insertGetId([
+
+                        'user_id' => $request->id,
+
+                        'service_id' => isset($request->services)?implode(",",$request->services):null,
+
+                        'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+
+                        "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
+                        "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+
+
+                    ]);
+
+                }else{
+
+                    $feature =[
+
+                        'service_id' => isset($request->services)?implode(",",$request->services):"",
+
+                        'technology_id' => isset($request->technologies)?implode(",",$request->technologies):"",
+
+                    ];
+
+                    UserSpec::where('user_id',$request->id)->update($feature);
+
+                }
+            }
+
             
+
             return redirect()->back()->with('success', $request->name.' updated successfully');
+
        
+
     }
 
     public function activeUser($id){
@@ -455,7 +653,7 @@ class AdminController extends Controller
                     'name' => $request->servicename,
                     'description' => $request->servicedescription,
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
                 ]);
                 DB::commit();
