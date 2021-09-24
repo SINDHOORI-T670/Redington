@@ -14,10 +14,12 @@ use App\Models\Journal;
 use App\Models\ValueJournal;
 use App\Models\ValueStory;
 use App\Models\Brand;
+use App\Models\MainService;
 use App\Models\Region;
 use App\Models\SalesConnect;
 use App\Models\PresetQuestion;
 use App\Models\Product;
+use App\Models\SubService;
 class UserApiController extends Controller
 {
     public function api_validation($request){
@@ -142,6 +144,9 @@ class UserApiController extends Controller
                 $data=$this->products($request);
 
                 break;
+            case 'main-services': 
+                $data=$this->mainserviceList($request);
+                break;
 
             default:
 
@@ -218,4 +223,8 @@ class UserApiController extends Controller
         return $productData;
     }
 
+    public function mainserviceList(Request $request){
+        $serviceData = MainService::latest()->paginate(20);
+        return $serviceData;
+    }
 }

@@ -40,7 +40,7 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Resources</h4>
+                        <h4 class="card-title">Services</h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
@@ -54,7 +54,7 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
-                                        <th>Resource</th>
+                                        <th>Service</th>
                                         <th>User Type</th>
                                         <th>Action</th>
                                     </tr>
@@ -73,9 +73,9 @@ table.dataTable tbody td {
                                         </td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editResourceModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/subresource/list')}}/{{$item->id}}"><i class="icon-list"></i> Sub Resources</a>
+                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/subservices/list')}}/{{$item->id}}"><i class="icon-list"></i> Sub Services</a>
                                             <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
-                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/resource/')}}/{{$item->id}}" method="get">
+                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/main_service')}}/{{$item->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
@@ -84,16 +84,16 @@ table.dataTable tbody td {
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Edit Resource</h3>
+                                              <h3 class="modal-title" id="myModalLabel35"> Edit Service</h3>
                                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/edit/resource')}}/{{$item->id}}">
+                                            <form method="POST" action="{{url('admin/edit/main_service')}}/{{$item->id}}">
                                                 @csrf
                                               <div class="modal-body">
                                                     <fieldset class="form-group floating-label-form-group">
-                                                      <label for="email" class="label-control required">Resource Name</label>
+                                                      <label for="email" class="label-control required">Service Name</label>
                                                       <input type="text" class="form-control" id="editname" name="editname" value="{{$item->name}}">
                                                         @if ($errors->has('editname'))
                                                             <span class="help-block">
@@ -138,20 +138,20 @@ table.dataTable tbody td {
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h3 class="modal-title" id="myModalLabel35"> Create Resource</h3>
+                              <h3 class="modal-title" id="myModalLabel35"> Create Service</h3>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                               </button>
                             </div>
-                            <form method="POST" action="{{url('admin/add/resource')}}">
+                            <form method="POST" action="{{url('admin/add/main_service')}}">
                                 @csrf
                               <div class="modal-body">
                                   <fieldset class="form-group floating-label-form-group">
-                                      <label for="email" class="label-control required">Resource Name</label>
-                                      <input type="text" class="form-control" id="resourcename" name="resourcename" placeholder="Resource Name">
-                                        @if ($errors->has('resourcename'))
+                                      <label for="email" class="label-control required">Service Name</label>
+                                      <input type="text" class="form-control" id="servicename" name="servicename" placeholder="Service Name">
+                                        @if ($errors->has('servicename'))
                                             <span class="help-block">
-                                                <strong class="error">{{ $errors->first('resourcename') }}</strong>
+                                                <strong class="error">{{ $errors->first('servicename') }}</strong>
                                             </span>
                                         @endif
                                   </fieldset>

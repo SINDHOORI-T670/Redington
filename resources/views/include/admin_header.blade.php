@@ -376,12 +376,12 @@
         </li>
 
         {{-- Events --}}
-        <li class=" nav-item"><a href="{{url('admin/list/new/events')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Events</span></a>
+        <li class=" nav-item"><a href="{{url('admin/list/new/events')}}"><i class="icon-calendar"></i><span class="menu-title" data-i18n="nav.chat-application.main">Events</span></a>
         </li>
         
         {{-- Blogs --}}
-        {{-- <li class=" nav-item"><a href="#"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Blogs</span></a>
-        </li> --}}
+        <li class=" nav-item"><a href="{{url('admin/main_services/list')}}"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Redington Services</span></a>
+        </li>
 
         {{-- <li class=" nav-item"><a href="index-2.html"><i class="icon-home"></i><span class="menu-title" data-i18n="nav.dash.main">Dashboard</span><span class="badge badge badge-info badge-pill float-right mr-2">5</span></a>
           <ul class="menu-content">

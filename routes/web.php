@@ -94,6 +94,16 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/list/past/events','AdminController@pastevents');
     Route::post('add/new/event','AdminController@addevent');
     Route::post('update/event/{id}','AdminController@updateevent');
+    Route::get('/active/event/{id}','AdminController@activeEvent');
+    Route::get('main_services/list','AdminController@mainservices');
+    Route::post('add/main_service','AdminController@addMainService');
+    Route::post('edit/main_service/{id}','AdminController@editMainService');
+    Route::get('active/main_service/{id}','AdminController@activeMainService');
+    Route::get('subservices/list/{id}','AdminController@subMainService');
+    Route::post('add/subservice','AdminController@addsubMainService');
+    Route::post('edit/subservice/{id}','AdminController@editsubMainService');
+    Route::get('active/subservice/{id}','AdminController@activesubMainService');
+    
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
 });
 

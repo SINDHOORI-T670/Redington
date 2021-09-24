@@ -79,7 +79,7 @@ table.dataTable tbody td {
                                     <tr role="row">
                                         <th>#</th>
                                         <th>From</th>
-                                        <th>Request</th>
+                                        {{-- <th>Request</th> --}}
                                         <th>Action</th>
                                     </tr>
                                 </thead>

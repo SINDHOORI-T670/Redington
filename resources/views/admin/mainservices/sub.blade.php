@@ -40,11 +40,11 @@ table.dataTable tbody td {
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Resources</h4>
+                        <h4 class="card-title"><a href="{{url('admin/main_services/list')}}"><i class="fa fa-arrow-left"></i></a> &nbsp;&nbsp;&nbsp;Sub Services</h4>
                         <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                                <li><a data-toggle="modal" data-target="#createResourceModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Resource</span></a></li>
+                                <li><a data-toggle="modal" data-target="#createResourceModal"  href="#" class="btn btn-success mr-1 mb-1 ladda-button" data-style="expand-left"><i class="ft-plus white"></i> <span class="ladda-label">Add Sub Service</span></a></li>
                                 <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                             </ul>
                         </div>
@@ -54,8 +54,7 @@ table.dataTable tbody td {
                             <table class="table table-striped table-bordered dom-jQuery-events dataTable" id="DataTables" role="grid" aria-describedby="DataTables_Table_0_info">
                                 <thead>
                                     <tr role="row">
-                                        <th>Resource</th>
-                                        <th>User Type</th>
+                                        <th>Service</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -64,18 +63,9 @@ table.dataTable tbody td {
                                     <tr role="row" class="odd">
                                         <td>{{$item->name}}</td>
                                         <td>
-                                            <ul class="list-inline mb-0 text-success">
-                                                @forelse(explode(',',$item->type) as $type)
-                                                    <li> @if($type==2) Customer @elseif($type==3) Partner @else Employee @endif</li>
-                                                @empty 
-                                                @endforelse
-                                            </ul>
-                                        </td>
-                                        <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editResourceModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/subresource/list')}}/{{$item->id}}"><i class="icon-list"></i> Sub Resources</a>
                                             <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
-                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/resource/')}}/{{$item->id}}" method="get">
+                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/subservice')}}/{{$item->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
@@ -84,16 +74,16 @@ table.dataTable tbody td {
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Edit Resource</h3>
+                                              <h3 class="modal-title" id="myModalLabel35"> Edit Service</h3>
                                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/edit/resource')}}/{{$item->id}}">
+                                            <form method="POST" action="{{url('admin/edit/subservice')}}/{{$item->id}}">
                                                 @csrf
                                               <div class="modal-body">
                                                     <fieldset class="form-group floating-label-form-group">
-                                                      <label for="email" class="label-control required">Resource Name</label>
+                                                      <label for="email" class="label-control required">Service Name</label>
                                                       <input type="text" class="form-control" id="editname" name="editname" value="{{$item->name}}">
                                                         @if ($errors->has('editname'))
                                                             <span class="help-block">
@@ -102,18 +92,13 @@ table.dataTable tbody td {
                                                         @endif
                                                     </fieldset>
                                                     <fieldset class="form-group floating-label-form-group">
-                                                        <label for="type" class="label-control required">User Type</label>
-                                                        <select name="type[]" id="type" class="form-control select2-multi" multiple>
-                                                              <option value="">Select any type</option>
-                                                              <option value="2" @if(in_array(2,explode(',',$item->type))) selected @else @endif>Customer</option>
-                                                              <option value="3" @if(in_array(3,explode(',',$item->type))) selected @else @endif>Partner</option>
-                                                              <option value="4" @if(in_array(4,explode(',',$item->type))) selected @else @endif>Employee</option>
-                                                        </select>
-                                                          @if ($errors->has('type'))
-                                                              <span class="help-block">
-                                                                  <strong class="error">{{ $errors->first('type') }}</strong>
-                                                              </span>
-                                                          @endif
+                                                        <label for="email" class="label-control">Description</label>
+                                                        <textarea cols="30" rows="15" class="form-control detail2" id="detail2{{$item->id}}" name="detail2" placeholder="Details about service">{!! $item->description !!}</textarea>
+                                                            @if ($errors->has('detail2'))
+                                                                <span class="help-block">
+                                                                    <strong class="error">{{ $errors->first('detail2') }}</strong>
+                                                                </span>
+                                                            @endif
                                                     </fieldset>
                                               </div>
                                               <div class="modal-footer">
@@ -138,34 +123,30 @@ table.dataTable tbody td {
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h3 class="modal-title" id="myModalLabel35"> Create Resource</h3>
+                              <h3 class="modal-title" id="myModalLabel35"> Create Service</h3>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                               </button>
                             </div>
-                            <form method="POST" action="{{url('admin/add/resource')}}">
+                            <form method="POST" action="{{url('admin/add/subservice')}}">
                                 @csrf
+                                <input type="hidden" name="main" value="{{$main}}">
                               <div class="modal-body">
                                   <fieldset class="form-group floating-label-form-group">
-                                      <label for="email" class="label-control required">Resource Name</label>
-                                      <input type="text" class="form-control" id="resourcename" name="resourcename" placeholder="Resource Name">
-                                        @if ($errors->has('resourcename'))
+                                      <label for="email" class="label-control required">Service Name</label>
+                                      <input type="text" class="form-control" id="servicename" name="servicename" placeholder="Service Name">
+                                        @if ($errors->has('servicename'))
                                             <span class="help-block">
-                                                <strong class="error">{{ $errors->first('resourcename') }}</strong>
+                                                <strong class="error">{{ $errors->first('servicename') }}</strong>
                                             </span>
                                         @endif
                                   </fieldset>
                                   <fieldset class="form-group floating-label-form-group">
-                                    <label for="type" class="label-control required">User Type</label>
-                                    <select name="type[]" id="type" class="form-control select2-multi" multiple>
-                                          <option value="">Select any type</option>
-                                          <option value="2">Customer</option>
-                                          <option value="3">Partner</option>
-                                          <option value="4">Employee</option>
-                                    </select>
-                                      @if ($errors->has('type'))
+                                    <label for="email" class="label-control">Description</label>
+                                    <textarea cols="30" rows="15" class="form-control" id="detail1" name="detail1" placeholder="Details about service"></textarea>
+                                      @if ($errors->has('detail1'))
                                           <span class="help-block">
-                                              <strong class="error">{{ $errors->first('type') }}</strong>
+                                              <strong class="error">{{ $errors->first('detail1') }}</strong>
                                           </span>
                                       @endif
                                   </fieldset>
@@ -186,7 +167,7 @@ table.dataTable tbody td {
 </div>
 <!--Import jQuery before export.js-->
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-
+<script src="https://cdn.ckeditor.com/4.14.0/standard-all/ckeditor.js"></script>
 
 <!--Data Table-->
 <script type="text/javascript"  src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
@@ -201,6 +182,11 @@ table.dataTable tbody td {
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script>
+     CKEDITOR.replace( 'detail1' );
+    // CKEDITOR.replace( 'detail2' );
+    $('.detail2').each(function () {
+        CKEDITOR.replace($(this).prop('id'));
+    });
     $('.select2-multi').select2();
     function confirmDelete(id,name,status) {
         if(status==0){

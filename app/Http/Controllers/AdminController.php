@@ -38,6 +38,8 @@ use App\Models\QueryRequest;
 use App\Models\ReplyRequest;
 use App\Models\Product;
 use App\Models\Events;
+use App\Models\MainService;
+use App\Models\SubService;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -1133,6 +1135,7 @@ class AdminController extends Controller
         $filepath = public_path('uploads/subresource/'.$file.'');
         return Response::download($filepath); 
     }
+    
     public function activesubResource($id){
         $status="";
         $resource=SubResource::find($id);
@@ -1604,6 +1607,7 @@ class AdminController extends Controller
 
     public function PresetQuestions($techid,$brandid){
         $list = PresetQuestion::where('tech_id',$techid)->where('brand_id',$brandid)->withCount('request')->latest()->paginate(20);
+        // dd($list);
         return view('admin.salesconnect.query',compact('list'));
     }
 
@@ -1789,13 +1793,17 @@ class AdminController extends Controller
                 'eventdescription' => 'required',
                 'image' => 'required',
                 'date'=>'required',
-                'time'=>'required'
+                'time'=>'required',
+                'type'=>'required',
+                'eventshortdescription'=>'required'
             ],[
                 'eventname.required' => 'Please enter event title',
                 'eventdescription.required' => 'Please add description for event',
                 'image.required' => 'Please add event image',
                 'date.required'=>'Please specify the event date',
-                'time.required'=>'Please specify the event time'
+                'time.required'=>'Please specify the event time',
+                'eventshortdescription.required' => 'Please add short description for event',
+                'type.required'=>'Please select any user to use the event for registration'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1823,6 +1831,8 @@ class AdminController extends Controller
             'image'=>$eventimage,
             'document'=>isset($document)?implode(',',$document):null,
             'date_time'=>$request->date.' '.$request->time,
+            'access'=>implode(',',$request->type),
+            'short'=>$request->eventshortdescription,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -1832,6 +1842,228 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'New event added successfully');
 
     }
+
+    public function updateevent($id,Request $request){
+        $validator = Validator::make($request->all(),
+        [
+            'eventname' => 'required',
+            'eventdescription' => 'required',
+            // 'image' => 'required',
+            'date1'=>'required',
+            'time'=>'required',
+            'type'=>'required',
+            'eventshortdescription'=>'required'
+        ],[
+            'eventname.required' => 'Please enter event title',
+            'eventdescription.required' => 'Please add description for event',
+            // 'image.required' => 'Please add event image',
+            'date1.required'=>'Please specify the event date',
+            'time.required'=>'Please specify the event time',
+            'eventshortdescription.required' => 'Please add short description for event',
+            'type.required'=>'Please select any user to use the event for registration'
+        ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $event = Events::find($id);
+        $eventimage = "";$document=[];
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/event/images', $fileName);
+            $eventimage = 'uploads/event/images/' . $fileName;
+        }else{
+            $eventimage = $event->image;
+        }
+        if ($request->file('doc') != "") {
+            foreach ($request->file('doc') as $file) {
+                $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/event/documents/', $name);
+                $document[] = $name;
+            }
+        }
+
+        if(isset($event->document)){
+            if(!empty($document)){
+                $array = $event->document.','.implode(',',(array) $document);
+            }
+            else{
+                $array = $event->document;
+            }
+        }else{
+            if(!empty($document)){
+                $array = implode(',',(array) $document);
+            }else{
+                $array = null;
+            }
+            
+        }
+
+        $inputData = [
+            'user_id' => Auth::User()->id,
+            'title'=>$request->eventname,
+            'description'=>$request->eventdescription,
+            'image'=>$eventimage,
+            'document'=>$array,
+            'date_time'=>$request->date1.' '.$request->time,
+            'access'=>implode(',',$request->type),
+            'short'=>$request->eventshortdescription,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ];
+        Events::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Event details updated successfully');
+
+    }
+
+    public function activeEvent($id){
+        $status="";
+        $event=Events::find($id);
+        if($event->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Events::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Event status updated successfully');
+    }
+
+    public function mainservices(){
+        $list = MainService::latest()->paginate(20);
+        return view('admin.mainservices.list',compact('list'));
+    }
+
+    public function addMainService(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+            [
+                'servicename' => 'required',
+                'type' => 'required'
+            ],[
+                'servicename.required' => 'Please enter service name',
+                'type.required' => 'Please select user type '
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+        $resourceId = MainService::insertGetId([
+            'name' => $request->servicename,
+            'type'=>implode(',',$request->type),
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Service added successfully');
+    }
+
+    public function editMainService(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required',
+                'type' => 'required'
+            ],[
+                'editname.required' => 'Please enter resource name',
+                'type.required' => 'Please select user type '
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+
+        $inputData = [
+            'name' => $request->editname,
+            'type' => implode(',',$request->type)
+        ];
+        MainService::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Service added successfully');
+    }
+
+    public function activeMainService($id){
+        $status="";
+        $resource=MainService::find($id);
+        if($resource->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        MainService::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Service status updated successfully');
+    }
+
+    public function subMainService($id){
+        $list = SubService::where('main_id',$id)->latest()->paginate(20);
+        $main =$id;
+        return view('admin.mainservices.sub',compact('list','main'));
+    }
+
+    public function addsubMainService(Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+            [
+                'servicename' => 'required',
+                'detail1' => 'required',
+            ],[
+                'servicename.required' => 'Please enter service name',
+                'detail1.required' => 'Please add description about service'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        } 
+        $resourceId = SubService::insertGetId([
+            'main_id' => $request->main,
+            'name' => $request->servicename,
+            'description'=>$request->detail1,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Sub service added successfully');
+    }
+
+    public function editsubMainService(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required',
+                'detail2' => 'required',
+            ],[
+                'editname.required' => 'Please enter service name',
+                'detail2.required' => 'Please add description about service'
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        
+        $inputData = [
+            'name' => $request->editname,
+            'description' => $request->detail2
+        ];
+        SubService::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Sub service updated successfully');
+    }
+
+    public function activesubMainService($id){
+        $status="";
+        $event=SubService::find($id);
+        if($event->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        SubService::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Service status updated successfully');
+    }
+
+    
     public function logout(Request $request)
     {
         Auth::logout();
