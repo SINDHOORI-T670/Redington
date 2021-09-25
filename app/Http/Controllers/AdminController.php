@@ -168,35 +168,56 @@ class AdminController extends Controller
                     'name' => 'required',
                     'phone' => 'required|unique:users,phone',
                     'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i',
-                    'poc' => 'required'
+                    'poc' => 'required',
+                    'password' => 'min:6|required_with:confpassword|same:confpassword',
+                    'confpassword' => 'required|min:6'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
                     'email.required' => 'Please enter email',
                     'email.regex' => 'Domain not valid for registration(example@redington.com).',
-                    'poc.required' => 'Please select type'
+                    'poc.required' => 'Please select type',
+                    'password.same' => 'The password and confirm password must match.',
+                    'confpassword.required' => 'Please enter confirm passowrd',
+                    'password.required_with'=>'Please enter password ',
+                    'password.min' => 'The password must be atleast 6 characters',
+                    'confpassword.min'=>'The Confirm password must be atleast 6 characters'
                 ]);
             }elseif($request->type==3){
                 $validator = Validator::make($request->all(),
                 [
                     'name' => 'required',
                     'phone' => 'required|unique:users,phone',
-                    'email' => 'required|email|max:255'
+                    'email' => 'required|email|max:255',
+                    'password' => 'min:6|required_with:confpassword|same:confpassword',
+                    'confpassword' => 'required|min:6'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    'email.required' => 'Please enter email'
+                    'email.required' => 'Please enter email',
+                    'password.same' => 'The password and confirm password must match.',
+                    'confpassword.required' => 'Please enter confirm passowrd',
+                    'password.required_with'=>'Please enter password ',
+                    'password.min' => 'The password must be atleast 6 characters',
+                    'confpassword.min'=>'The Confirm password must be atleast 6 characters'
                 ]);
             }else{
                 $validator = Validator::make($request->all(),
                 [
                     'name' => 'required',
                     'phone' => 'required|unique:users,phone',
-                    'email' => 'required|email|max:255'
+                    'email' => 'required|email|max:255',
+                    'password' => 'min:6|required_with:confpassword|same:confpassword',
+                    'confpassword' => 'required|min:6'
                 ],[
                     'name.required' => 'Please enter name',
                     'phone.required' => 'Please enter phone number',
-                    'email.required' => 'Please enter email address'
+                    'email.required' => 'Please enter email address',
+                    'password.same' => 'The password and confirm password must match.',
+                    'confpassword.required' => 'Please enter confirm passowrd',
+                    'password.required_with'=>'Please enter password ',
+                    'password.min' => 'The password must be atleast 6 characters',
+                    'confpassword.min'=>'The Confirm password must be atleast 6 characters'
                 ]);
             }
         return $validator;
@@ -248,7 +269,7 @@ class AdminController extends Controller
 
                 'image'=>$fileName,
 
-                'password' => Hash::make(123456),
+                'password' => Hash::make($request->password),
 
                 'company'=> $request->company,
 
@@ -259,6 +280,8 @@ class AdminController extends Controller
                 'poc_id'=>$request->poc,
 
                 'api_token'=>Str::random(60),
+
+                'password' => Hash::make($request->password),
 
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
 
@@ -334,7 +357,9 @@ class AdminController extends Controller
 
                     'email' => 'required|email|max:255|regex:/(.*)@redington\.com/i',
 
-                    'poc' => 'required'
+                    'poc' => 'required',
+                    'password' => 'min:6|required_with:confpassword|same:confpassword',
+                    'confpassword' => 'min:6'
 
                 ],[
 
@@ -346,7 +371,12 @@ class AdminController extends Controller
 
                     'email.regex' => 'Domain not valid for registration(example@redington.com).',
 
-                    'poc.required' => 'Please select type'
+                    'poc.required' => 'Please select type',
+                    'password.same' => 'The password and confirm password must match.',
+                    'confpassword.required' => 'Please enter confirm passowrd',
+                    'password.required_with'=>'Please enter password ',
+                    'password.min' => 'The password must be atleast 6 characters',
+                    'confpassword.min'=>'The Confirm password must be atleast 6 characters'
 
                 ]);
 
@@ -360,7 +390,9 @@ class AdminController extends Controller
 
                     'phone' => 'required',
 
-                    'email' => 'required|email|max:255'
+                    'email' => 'required|email|max:255',
+                    'password' => 'min:6|required_with:confpassword|same:confpassword',
+                    'confpassword' => 'required|min:6'
 
                 ],[
 
@@ -368,7 +400,12 @@ class AdminController extends Controller
 
                     'phone.required' => 'Please enter phone number',
 
-                    'email.required' => 'Please enter email'
+                    'email.required' => 'Please enter email',
+                    'password.same' => 'The password and confirm password must match.',
+                    'confpassword.required' => 'Please enter confirm passowrd',
+                    'password.required_with'=>'Please enter password ',
+                    'password.min' => 'The password must be atleast 6 characters',
+                    'confpassword.min'=>'The Confirm password must be atleast 6 characters'
 
                 ]);
 
@@ -380,9 +417,11 @@ class AdminController extends Controller
 
                     'name' => 'required',
 
-                    'phone' => 'required|unique:users,phone',
+                    'phone' => 'required',
 
-                    'email' => 'required|email|max:255'
+                    'email' => 'required|email|max:255',
+                    'password' => 'min:6|required_with:confpassword|same:confpassword',
+                    'confpassword' => 'min:6'
 
                 ],[
 
@@ -390,7 +429,12 @@ class AdminController extends Controller
 
                     'phone.required' => 'Please enter phone number',
 
-                    'email.required' => 'Please enter email address'
+                    'email.required' => 'Please enter email address',
+                    'password.same' => 'The password and confirm password must match.',
+                    'confpassword.required' => 'Please enter confirm passowrd',
+                    'password.required_with'=>'Please enter password ',
+                    'password.min' => 'The password must be atleast 6 characters',
+                    'confpassword.min'=>'The Confirm password must be atleast 6 characters'
 
                 ]);
 
@@ -491,7 +535,9 @@ class AdminController extends Controller
 
                 'linkedin' => $request->url,
 
-                'poc_id'=>$request->poc
+                'poc_id'=>$request->poc,
+
+                'password' => Hash::make($request->password),
 
             ];
 

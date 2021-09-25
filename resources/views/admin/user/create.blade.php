@@ -58,7 +58,7 @@
                                 <div class="card-body">
                                     <form class="form form-horizontal" id="userform" enctype="multipart/form-data" action="{{url('admin/save/user')}}" method="post"> 
                                         @csrf
-                                        <input type="hidden" name="type" value={{$type}}>
+                                        <input type="hidden" name="type" value="{{$type}}">
                                         <div class="form-body">
                                             <h4 class="form-section"><i class="ft-user"></i> Personal Info</h4>
                                             
@@ -135,6 +135,7 @@
                                                     @endif
                                                 </div>
                                             </div>
+
                                             @if($type==4)
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control required">Type</label>
@@ -148,25 +149,37 @@
                                                 </div>
                                             </div>
                                             @endif
-                                            {{-- <div class="form-group row">
+
+                                            <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="projectinput5">Password</label>
                                                 <div class="col-md-9">
                                                     <input type="password" id="password" class="form-control" placeholder="Password" name="password">
-                                                </div>
-                                                @if ($errors->has('password'))
+                                                    @if ($errors->has('password'))
                                                     <span class="help-block">
                                                         <strong class="error">{{ $errors->first('password') }}</strong>
                                                     </span>
                                                 @endif
-                                            </div> --}}
+                                                </div>
+                                                
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required" for="projectinput5">Confirm Password</label>
+                                                <div class="col-md-9">
+                                                    <input type="password" id="confpassword" class="form-control" placeholder="Confirm Password" name="confpassword">
+                                                    @if ($errors->has('confpassword'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('confpassword') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                
+                                            </div>
 
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control">Profile Image</label>
                                                 <div class="col-md-9">
-                                                    <label id="projectinput6" class="file center-block">
                                                         <input type="file"  name="image" id="image" accept=".jpg,.png,.jpeg" onchange="readURL(this);">
-                                                        <span class="file-custom"></span>
-                                                    </label>
                                                 </div>
                                                 @if ($errors->has('image'))
                                                     <span class="help-block">
@@ -174,7 +187,7 @@
                                                     </span>
                                                 @endif
                                             </div>
-                                                
+                                            
             
                                             @if($type!=4)
                                                 <h4 class="form-section"><i class="ft-clipboard"></i>  Services</h4>
@@ -190,6 +203,7 @@
                                                         <input type="text" name="serv_tags[]" value="{{ old('tags') }}" data-role="tagsinput" class="form-control" />
                                                     </div> --}}
                                                 </div>
+
                                                 <h4 class="form-section"><i class="ft-clipboard"></i> Technologies</h4>
                                                 
                                                 <div class="form-group row">

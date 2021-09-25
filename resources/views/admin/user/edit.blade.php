@@ -197,27 +197,31 @@
 
 
 
-                                            {{-- <div class="form-group row">
-
+                                            <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="projectinput5">Password</label>
-
                                                 <div class="col-md-9">
-
                                                     <input type="password" id="password" class="form-control" placeholder="Password" name="password">
-
+                                                    @if ($errors->has('password'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('password') }}</strong>
+                                                        </span>
+                                                    @endif
                                                 </div>
+                                                
+                                            </div>
 
-                                                @if ($errors->has('password'))
-
-                                                    <span class="help-block">
-
-                                                        <strong class="error">{{ $errors->first('password') }}</strong>
-
-                                                    </span>
-
-                                                @endif
-
-                                            </div> --}}
+                                            <div class="form-group row">
+                                                <label class="col-md-3 label-control required" for="projectinput5">Confirm Password</label>
+                                                <div class="col-md-9">
+                                                    <input type="password" id="confpassword" class="form-control" placeholder="Confirm Password" name="confpassword">
+                                                    @if ($errors->has('confpassword'))
+                                                        <span class="help-block">
+                                                            <strong class="error">{{ $errors->first('confpassword') }}</strong>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                
+                                            </div>
 
                                             @if($user->type==4)
 
@@ -274,7 +278,7 @@
                                                 @endif
 
                                             </div>
-
+                                            
 
 
                                             <div class="form-group row">

@@ -25,7 +25,7 @@ Route::get('admin/login','GeneralController@adminLogin')->name('Admin-Login');
 Route::get('/home', 'HomeController@index')->name('home');
 
 // user protected routes
-Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'cutomer'], function () {
+Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'customer'], function () {
     Route::get('/', 'HomeController@index')->name('Customer-Home');
     Route::get('/home','CustomerController@index')->name('Customer_Dashboard');
     Route::get('/edit/profile','CustomerController@editprofile');
