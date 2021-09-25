@@ -221,14 +221,14 @@
             <li class="dropdown dropdown-user nav-item">
                 <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="avatar avatar-online"><img src="@if(Auth::User()->image){{url(Auth::User()->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar"><i></i></span><span class="user-name">{{Auth::User()->name}}</span></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{url('admin/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
-                    {{-- <a class="dropdown-item" href="{{url('admin/edit/company/profile')}}"><i class="icon-home"></i> My Company</a> --}}
+                    <a class="dropdown-item" href="{{url('customer/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
+                    {{-- <a class="dropdown-item" href="{{url('customer/edit/company/profile')}}"><i class="icon-home"></i> My Company</a> --}}
                     {{-- <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
                     <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a> --}}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{url('admin/logout')}}" onclick="event.preventDefault();
+                    <a class="dropdown-item" href="{{url('customer/logout')}}" onclick="event.preventDefault();
                         document.getElementById('logout-form1').submit();">
-                        <form id="logout-form1" action="{{route('Admin-Logout')}}" method="get" style="display: none;">
+                        <form id="logout-form1" action="{{route('customer-Logout')}}" method="get" style="display: none;">
                             {{ csrf_field() }}
                         </form>
                         <i class="ft-power"></i> Logout</a>
@@ -247,11 +247,11 @@
         {{-- <li class=" nav-item">
           <a href="#"><i class="fa fa-users"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Users</span></a>
           <ul class="menu-content">
-            <li><a class="menu-item" href="{{url('admin/list/user/2')}}" data-i18n="nav.page_layouts.1_column">Customer</a>
+            <li><a class="menu-item" href="{{url('customer/list/user/2')}}" data-i18n="nav.page_layouts.1_column">Customer</a>
             </li>
-            <li><a class="menu-item" href="{{url('admin/list/user/3')}}" data-i18n="nav.page_layouts.2_columns">Partner</a>
+            <li><a class="menu-item" href="{{url('customer/list/user/3')}}" data-i18n="nav.page_layouts.2_columns">Partner</a>
             </li>
-            <li><a class="menu-item" href="{{url('admin/list/user/4')}}" data-i18n="nav.page_layouts.2_columns">Employee</a>
+            <li><a class="menu-item" href="{{url('customer/list/user/4')}}" data-i18n="nav.page_layouts.2_columns">Employee</a>
             </li>
           </ul>
         </li> --}}
@@ -305,11 +305,11 @@
             </li>
           </ul>
         </li> --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/list/Redington/services')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Services</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/list/Redington/services')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Services</span></a>
         </li> --}}
 
         {{-- Technologies --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/list/Redington/technologies')}}"><i class="icon-screen-desktop"></i><span class="menu-title" data-i18n="nav.chat-application.main">Technologies</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/list/Redington/technologies')}}"><i class="icon-screen-desktop"></i><span class="menu-title" data-i18n="nav.chat-application.main">Technologies</span></a>
         </li> --}}
 
 
@@ -340,35 +340,35 @@
         </li> --}}
 
         {{-- Rewards --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/list/rewards')}}"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/list/rewards')}}"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
         </li> --}}
 
         {{-- Resources --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/resource/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Resources</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/resource/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Resources</span></a>
         </li> --}}
 
         {{-- Value Journals --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
         </li> --}}
 
         {{-- Value Stories --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
         </li> --}}
 
         {{-- Brands --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/list/brands')}}"><i class="icon-layers"></i><span class="menu-title" data-i18n="nav.chat-application.main">Brands</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/list/brands')}}"><i class="icon-layers"></i><span class="menu-title" data-i18n="nav.chat-application.main">Brands</span></a>
         </li> --}}
 
         {{-- Regions --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
         </li> --}}
 
         {{-- Preset Question --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/prest_questions')}}"><i class="icon-question"></i><span class="menu-title" data-i18n="nav.chat-application.main">Preset Questions</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/prest_questions')}}"><i class="icon-question"></i><span class="menu-title" data-i18n="nav.chat-application.main">Preset Questions</span></a>
         </li> --}}
 
         {{-- Sales Connect --}}
-        {{-- <li class=" nav-item"><a href="{{url('admin/sales_connects')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('customer/sales_connects')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
         </li> --}}
         
         {{-- Blogs --}}

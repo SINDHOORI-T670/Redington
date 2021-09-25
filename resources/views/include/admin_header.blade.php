@@ -379,8 +379,12 @@
         <li class=" nav-item"><a href="{{url('admin/list/new/events')}}"><i class="icon-calendar"></i><span class="menu-title" data-i18n="nav.chat-application.main">Events</span></a>
         </li>
         
-        {{-- Blogs --}}
+        {{-- main service --}}
         <li class=" nav-item"><a href="{{url('admin/main_services/list')}}"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Redington Services</span></a>
+        </li>
+
+        {{--business solution--}}
+        <li class=" nav-item"><a href="{{url('admin/business_solutions')}}"><i class="icon-bulb"></i><span class="menu-title" data-i18n="nav.chat-application.main">Business Solutions</span></a>
         </li>
 
         {{-- <li class=" nav-item"><a href="index-2.html"><i class="icon-home"></i><span class="menu-title" data-i18n="nav.dash.main">Dashboard</span><span class="badge badge badge-info badge-pill float-right mr-2">5</span></a>

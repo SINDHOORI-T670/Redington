@@ -15,7 +15,7 @@ class CustomerController extends Controller
 {
     public function __construct(){
         // $this->middleware('auth');
-        $this->middleware('CheckUser');
+        // $this->middleware('CheckUser');
         $settings = Setting::select('key', 'value')->get();
         $company = $settings->mapWithKeys(function ($item) {
                 return [$item['key'] => $item['value']];
@@ -62,5 +62,12 @@ class CustomerController extends Controller
         // dd($customer);
         return redirect()->back()->with('message', 'Profile Updated Successfully');
         
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        Session::flush();
+        return redirect('login');
     }
 }

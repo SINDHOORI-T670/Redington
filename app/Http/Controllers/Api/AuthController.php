@@ -59,7 +59,7 @@ class AuthController extends Controller
                 'status'=>0,
                 'verify_status'=>1,
                 'image'=>$fileName,
-                'password' => Hash::make(123456),
+                'password' => Hash::make($request->password),
                 'company'=> $request->company,
                 'post'=> $request->post,
                 'linkedin' => $request->linkedin,

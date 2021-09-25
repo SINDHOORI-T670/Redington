@@ -40,6 +40,7 @@ use App\Models\Product;
 use App\Models\Events;
 use App\Models\MainService;
 use App\Models\SubService;
+use App\Models\BusinessSolution;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -1768,7 +1769,7 @@ class AdminController extends Controller
     public function pastevents(){
         $now_str = \Carbon\Carbon::now();
         // dd($now_str);
-        $events = Events::whereDate('date_time', '<', $now_str)->latest()->paginate(20);
+        $events = Events::where('date_time', '<', $now_str)->latest()->paginate(20);
         // dd($events);
         $icons = [
             'pdf' => 'pdf',
@@ -2063,7 +2064,58 @@ class AdminController extends Controller
         return redirect()->back()->with('success','Service status updated successfully');
     }
 
-    
+    public function businessSolutions(){
+        $list = BusinessSolution::latest()->paginate(20);
+        return view('admin.business.list',compact('list'));
+    }
+
+    public function addbusinesssolution(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'businessname' => 'required',
+                'businessdescription' => 'required',
+            ],[
+                'businessname.required' => 'Please enter business name',
+                'businessdescription.required' => 'Please add description about the business',
+            ]);
+            if ($validator->fails()) {
+                $messages = $validator->messages();
+                return Redirect::back()->withErrors($messages)->withInput();
+            }
+            $businessId = BusinessSolution::insertGetId([
+                'name' => $request->businessname,
+                'description' => $request->businessdescription,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+            ]);
+            DB::commit();
+            return redirect()->back()->with('success','Business solution created successfully');
+    }
+
+    public function editbusinesssolution(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'editname' => 'required',
+                'editdescription' => 'required',
+            ],[
+                'editname.required' => 'Please enter business name',
+                'editdescription.required' => 'Please add description about the business',
+            ]);
+            if ($validator->fails()) {
+                $messages = $validator->messages();
+                return Redirect::back()->withErrors($messages)->withInput();
+            }
+            $inputData = [
+                'name' => $request->editname,
+                'description' => $request->editdescription,
+                'status'=>$request->status
+
+            ];
+            BusinessSolution::where('id',$id)->update($inputData);
+            return redirect()->back()->with('success','Business solution updated successfully');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();

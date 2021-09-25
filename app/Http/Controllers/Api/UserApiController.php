@@ -20,6 +20,7 @@ use App\Models\SalesConnect;
 use App\Models\PresetQuestion;
 use App\Models\Product;
 use App\Models\SubService;
+use App\Models\Events;
 class UserApiController extends Controller
 {
     public function api_validation($request){
@@ -147,6 +148,12 @@ class UserApiController extends Controller
             case 'main-services': 
                 $data=$this->mainserviceList($request);
                 break;
+            case 'newevents': 
+                $data=$this->neweventsList($request);
+                break;
+            case 'pastevents': 
+                $data=$this->pasteventsList($request);
+                break;
 
             default:
 
@@ -164,67 +171,76 @@ class UserApiController extends Controller
     }
 
     public function serviceList(Request $request){
-        $serviceData = Service::latest()->paginate(20);
+        $serviceData = Service::where('status',0)->get();
         return $serviceData;
     }
 
     public function technologyList(Request $request){
-        $technologyData = Technology::latest()->paginate(20);
+        $technologyData = Technology::where('status',0)->get();
         return $technologyData;
     }
 
     public function resourceList(Request $request){
-        $resourceData = Resource::latest()->paginate(20);
+        $resourceData = Resource::where('status',0)->get();
         return $resourceData;
     }
 
     public function subresourceList($id){
-        $subresourceData = SubResource::where('resource_id',$id)->latest()->paginate(20);
+        $subresourceData = SubResource::where('resource_id',$id)->where('status',0)->get();
         return $subresourceData;
     }
 
     public function journalList(){
-        $journalData = Journal::latest()->paginate(20);
+        $journalData = Journal::where('status',0)->get();
         return $journalData;
     }
 
     public function subJournals($id){
-        $subJournalData = ValueJournal::where('journal_id',$id)->latest()->paginate(20);
+        $subJournalData = ValueJournal::where('journal_id',$id)->where('status',0)->get();
         return $subJournalData;
     }
     
     public function valuestories(){
-        $storyData = ValueStory::latest()->paginate(20);
+        $storyData = ValueStory::where('status',0)->get();
         return $storyData;
     }
 
     public function brands(){
-        $brandData = Brand::latest()->paginate(20);
+        $brandData = Brand::where('status',0)->get();
         return $brandData;
     }
 
     public function regions(){
-        $regionData = Region::latest()->paginate(20);
+        $regionData = Region::where('status',0)->get();
         return $regionData;
     }
 
     public function salesconnectList(){
-        $salesData = SalesConnect::latest()->paginate(20);
+        $salesData = SalesConnect::where('status',0)->get();
         return $salesData;
     }
 
     public function presetQuestions(){
-        $QuestionData = PresetQuestion::latest()->paginate(20);
+        $QuestionData = PresetQuestion::where('status',0)->get();
         return $QuestionData;
     }
 
     public function products(){
-        $productData = Product::latest()->paginate(20);
+        $productData = Product::where('status',0)->get();
         return $productData;
     }
 
     public function mainserviceList(Request $request){
-        $serviceData = MainService::latest()->paginate(20);
+        $serviceData = MainService::where('status',0)->get();
         return $serviceData;
+    }
+
+    public function neweventsList(Request $request){
+        $eventData = Events::where('status',0)->get();
+        return $eventData;
+    }
+    public function pasteventsList(Request $request){
+        $eventData = Events::where('status',0)->get();
+        return $eventData;
     }
 }

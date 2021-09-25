@@ -38,6 +38,26 @@ class User extends Authenticatable
     ];
 
     protected $with = ['poc','regionConnect','userSpec'];
+
+    public function isAdmin() {
+        return $this->type === 1;
+    }
+
+    public function isCustomer() {
+        return $this->type === 2;
+    }
+
+    public function isPartner() {
+        return $this->type === 3;
+    }
+
+    public function isEmployee() {
+        return $this->type === 4;
+    }
+
+
+
+
     public function poc()
     {
         return $this->belongsTo('App\Models\Poc','poc_id','id');

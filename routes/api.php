@@ -35,3 +35,5 @@ Route::get('/salesconnect','Api\UserApiController@salesconnectList');
 Route::get('/presetQuestions','Api\UserApiController@presetQuestions');
 Route::get('/products','Api\UserApiController@products');
 Route::get('/main/services','Api\UserApiController@mainserviceList');
+Route::get('new/events','Api\UserApiController@neweventsList');
+Route::get('past/events','Api\UserApiController@pasteventsList');

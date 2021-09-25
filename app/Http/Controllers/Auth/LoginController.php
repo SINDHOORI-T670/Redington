@@ -28,6 +28,22 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/home';
 
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     // dd($user);
+    //     // to admin dashboard
+    //     if($user->isAdmin()) {
+    //         // dd("ttt");
+    //         return redirect(route('Admin-Home'));
+    //     }
+
+    //     // to user dashboard
+    //     else if($user->isCustomer()) {
+    //         return redirect(route('Customer-Home'));
+    //     }
+
+    //     abort(404);
+    // }
     /**
      * Create a new controller instance.
      *

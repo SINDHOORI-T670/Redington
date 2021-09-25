@@ -21,10 +21,22 @@ Auth::routes();
 
 
 // Route::get('/login','GeneralController@adminLogin')->name('login');
+Route::get('admin/login','GeneralController@adminLogin')->name('Admin-Login');
 Route::get('/home', 'HomeController@index')->name('home');
-Route::group(['prefix' => 'admin'], function () {
-    Route::get('/login','GeneralController@adminLogin')->name('Admin-Login');
-    Route::get('/home','AdminController@index')->name('Admin-Home');
+
+// user protected routes
+Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'cutomer'], function () {
+    Route::get('/', 'HomeController@index')->name('Customer-Home');
+    Route::get('/home','CustomerController@index')->name('Customer_Dashboard');
+    Route::get('/edit/profile','CustomerController@editprofile');
+    Route::post('/update/profile','CustomerController@updateprofile');
+    Route::get('/logout', 'CustomerController@logout')->name('customer-Logout');
+});
+
+// admin protected routes
+Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], function () {
+    Route::get('/', 'HomeController@index')->name('Admin-Home');
+    Route::get('/home','AdminController@index')->name('Admin_Dashboard');
     Route::get('/edit/profile','AdminController@editprofile');
     Route::post('/update/profile','AdminController@updateprofile');
     Route::get('/edit/company/profile','AdminController@editCompanyDetails');
@@ -103,13 +115,17 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('add/subservice','AdminController@addsubMainService');
     Route::post('edit/subservice/{id}','AdminController@editsubMainService');
     Route::get('active/subservice/{id}','AdminController@activesubMainService');
-    
+    Route::get('/business_solutions','AdminController@businessSolutions');
+    Route::post('/add/business_solution','AdminController@addbusinesssolution');
+    Route::post('/edit/business_solution/{id}','AdminController@editbusinesssolution');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
-});
-
-Route::group(['prefix' => 'customer'], function () {
-    Route::get('/home','CustomerController@index')->name('Customer-Home');
-    Route::get('/edit/profile','CustomerController@editprofile');
-    Route::post('/update/profile','CustomerController@updateprofile');
 
 });
+// Route::group(['prefix' => 'admin'], function () {
+//     Route::get('admin/login','GeneralController@adminLogin')->name('Admin-Login');
+// });
+
+// Route::group(['prefix' => 'customer'], function () {
+    
+
+// });

@@ -11,7 +11,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->truncate();
+        // DB::table('users')->truncate();
         User::create([
             'name' => 'Admin',
             'email' => 'admin@redington.com',
