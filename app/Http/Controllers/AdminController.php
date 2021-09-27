@@ -1652,8 +1652,13 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Rescheduled successfully');
     }
 
-    public function PresetQuestions($techid,$brandid){
-        $list = PresetQuestion::where('tech_id',$techid)->where('brand_id',$brandid)->withCount('request')->latest()->paginate(20);
+    public function PresetQuestions($techid,$brandid,$fromid){
+        $list = PresetQuestion::where('tech_id',$techid)->where('brand_id',$brandid)
+        ->whereHas('request', function($q) use($fromid){
+            $q->where('from_id', $fromid);
+        })
+        // ->join('reply_requests','reply_requests.req_id','=','preset_questions.id')->where('reply_requests.from_id',$fromid)
+        ->latest()->paginate(20);
         // dd($list);
         return view('admin.salesconnect.query',compact('list'));
     }
@@ -1713,7 +1718,8 @@ class AdminController extends Controller
     }
 
     public function QueryRequest($id){
-        $list = QueryRequest::where('query_id',$id)->latest()->paginate(20);
+        //split $id
+        $list = ReplyRequest::where('query_id',$id)->where('from_id',$id)->latest()->paginate(20);
         QueryRequest::where('query_id',$id)->where('read_status',0)->update(['read_status'=>1]);
         return view('admin.salesconnect.requests',compact('list'));
     }

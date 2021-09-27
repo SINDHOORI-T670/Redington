@@ -34,18 +34,28 @@ class CheckAdmin
         if( Auth::check() )
         {
             // dd(Auth::user()->isAdmin());
-            // if user is not admin take him to his dashboard
+            if ( Auth::user()->isAdmin() ) {
+                return $next($request);
+            }else{
+                return redirect('admin/login');
+            }
             if ( Auth::user()->isCustomer() ) {
                  return redirect(route('Customer-Home'));
+            }else{
+                return redirect('login');
             }
-
-            // allow admin to proceed with request
-            else if ( Auth::user()->isAdmin() ) {
+            if ( Auth::user()->isPartner() ) {
                 
-                 return $next($request);
+                return redirect(route('Partner-Home'));
+            }else{
+                return redirect('login');
+            }
+            if(Auth::user()->isEmployee()){
+
+                return redirect(route('Employee-Home'));
             }
             else{
-                return redirect('admin/login');
+                return redirect('login');
             }
         }
 

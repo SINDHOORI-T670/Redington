@@ -31,6 +31,24 @@ table.dataTable tbody td {
     .error{
         color:red;
     }
+    .chats .chat-left .chat-avatar {
+    float: left; }
+  .chats .chat-left .chat-body {
+    margin-right: 0;
+    margin-left: 30px; }
+  .chats .chat-left .chat-content {
+    text-align: left;
+    float: left;
+    margin: 0 0 10px 20px;
+    color: #55595c;
+    background-color: #c1c1c1 !important; }
+    .chats .chat-left .chat-content + .chat-content:before {
+      border-color: transparent; }
+    .chats .chat-left .chat-content:before {
+      right: auto;
+      left: -10px;
+      border-right-color: white;
+      border-left-color: transparent; }
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -56,63 +74,94 @@ table.dataTable tbody td {
                                     <tr role="row">
                                         <th>#</th>
                                         <th>Query</th>
-                                        <th>No.of Requests</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($list as $index => $item)
-                                        @php 
-                                            $count = App\Models\QueryRequest::where('query_id',$item->id)->where('read_status',0)->count();
-                                            
-                                        @endphp
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
                                         <td>{!!$item->question!!}</td>
-                                        <td>{{$item->request_count}}</td>
                                         <td><h4 @if($item->status==1) class="danger" @else class="success" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
-                                            <a class="btn btn-secondary" href="{{url('admin/query_request')}}/{{$item->id}}"><i class="icon-eye mr-1"></i> Request @if($count!=0)&nbsp;&nbsp;<span class="float-right primary"><span class="badge badge-pill badge-danger">{{$count}}</span></span>@else @endif</a> 
+                                            
+                                            {{-- <a class="btn btn-secondary requestlist" href="{{url('admin/query_request')}}/{{$item->id}}"><i class="icon-eye mr-1"></i> Request</a>  --}}
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#ViewRequestModal{{$item->id}}"  href="#"><i class="fa fa-eye"></i> View</a>
+                                            <div class="modal fade text-left show" id="ViewRequestModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title" id="myModalLabel35"> Requests From  Sales Connects</h3>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+                                                    <form method="POST" action="{{url('admin/query/reply')}}/{{$item->id}}">
+                                                        @csrf
+                                                        <div class="modal-body">
+                                                        {{-- <fieldset class="form-group floating-label-form-group"> --}}
+                                                            {{-- <label for="email" class="label-control">Request</label>
+                                                            <textarea class="form-control Query" id="query{{$item->id}}" name="query" rows="10" columns="10" placeholder="Preset Question"></textarea>
+                                                                @if ($errors->has('query'))
+                                                                    <span class="help-block">
+                                                                        <strong class="error">{{ $errors->first('query') }}</strong>
+                                                                    </span>
+                                                                @endif --}}
+                                                                {{-- <div class="chat-app-window"> --}}
+                                                                    <div class="chats">
+                                                                        <div class="chat">
+                                                                            <div class="chat-avatar">
+                                                                            <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
+                                                                                <img src="@if(isset(Auth::user()->image)){{url(Auth::user()->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
+                                                                            </a>
+                                                                            </div>
+                                                                            <div class="chat-body">
+                                                                            <div class="chat-content" style="text-align: left">
+                                                                                <p>{!!$item->question!!}</p>
+                                                                            </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        @foreach($item->request as $reply)
+                                                                            <div class="chat @if($reply->from_id!=Auth::User()->id) chat-left @endif">
+                                                                                <div class="chat-avatar">
+                                                                                <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
+                                                                                    <img src="@if(isset($reply->user->image)){{url($reply->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
+                                                                                </a>
+                                                                                </div>
+                                                                                <div class="chat-body">
+                                                                                <div class="chat-content">
+                                                                                    <p>{!!$reply->reply!!}</p>
+                                                                                </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                {{-- </div> --}}
+                                                        {{-- </fieldset> --}}
+                                                        
+                                                        <fieldset class="form-group floating-label-form-group">
+                                                            <label for="title1" class="label-control required">Reply</label>
+                                                            <textarea class="form-control detail2" id="reply{{$item->id}}" name="reply"></textarea>
+                                                                @if ($errors->has('reply'))
+                                                                    <span class="help-block">
+                                                                        <strong class="error">{{ $errors->first('reply') }}</strong>
+                                                                    </span>
+                                                                @endif
+                                                        </fieldset>
+                                                        
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
+                                                            <input type="submit" class="btn btn-outline-primary btn-lg" value="Save">
+                                                        </div>
+                                                    </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                               
                                         </td>
                                     </tr>
-                                    {{-- <div class="modal fade text-left show" id="QueryEditModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
-                                        <div class="modal-dialog" role="document">
-                                          <div class="modal-content">
-                                            <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Edit Preset Question</h3>
-                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                              </button>
-                                            </div>
-                                            <form method="POST" action="{{url('admin/edit/query')}}/{{$item->id}}">
-                                                @csrf
-                                              <div class="modal-body">
-                                                <fieldset class="form-group floating-label-form-group">
-                                                    <label for="email" class="label-control required">Preset Question</label>
-                                                    <textarea class="form-control Query" id="query{{$item->id}}" name="query" placeholder="Preset Question">{!!$item->question!!}</textarea>
-                                                      @if ($errors->has('query'))
-                                                          <span class="help-block">
-                                                              <strong class="error">{{ $errors->first('query') }}</strong>
-                                                          </span>
-                                                      @endif
-                                                </fieldset>
-                                                <fieldset class="form-group floating-label-form-group">
-                                                    <label for="email" class="label-control">Status</label>
-                                                    <select class="form-control" name="status">
-                                                            <option value="0" @if($item->status==0) selected @endif>Active</option>
-                                                            <option value="1" @if($item->status==1) selected @endif>Inactive</option>
-                                                    </select>
-                                                </fieldset>
-                                              </div>
-                                              <div class="modal-footer">
-                                                  <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
-                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Save">
-                                              </div>
-                                            </form>
-                                          </div>
-                                        </div>
-                                    </div> --}}
                                     @empty
                                     @endforelse
                                 </tbody>
@@ -179,6 +228,10 @@ table.dataTable tbody td {
     $('.Query').each(function () {
         CKEDITOR.replace($(this).prop('id'));
     });
+    $('.detail2').each(function () {
+        CKEDITOR.replace($(this).prop('id'));
+    });
+    
 </script>
 
 @endsection

@@ -54,7 +54,7 @@
 										{{$errors->first()}}
 									</div>
 								@endif
-                            @include('alert.messages')
+                            {{-- @include('alert.messages') --}}
                         <form class="form-horizontal form-simple" method="POST" action="{{ route('login') }}">
                             {{ csrf_field() }}
                             <fieldset class="form-group position-relative has-icon-left mb-0">

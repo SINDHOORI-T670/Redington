@@ -25,35 +25,39 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // dd("test");
+        
         if(Auth::User()->isAdmin()){
+            // dd("test");
             return redirect(route('Admin_Dashboard'));
             // return redirect('admin/home');
         }else{
-            
-            if(Auth::user()->isCustomer() && Auth::User()->verify_status == 1){
-                return redirect(route('Customer_Dashboard'));
-            }else{
-                Session::flash('message','Your account not yet verified !');
-                return redirect('login');
-            }
+            Session::flash('message','Incorrect e-mail and password!');
+            return redirect('login');
+        }
+            // dd("test");
+        if(Auth::user()->isCustomer() && Auth::User()->verify_status == 1){
+            return redirect(route('Customer_Dashboard'));
+        }else{
+            Session::flash('message','Your account not yet verified !');
+            return redirect('login');
+        }
 
-            if(Auth::user()->isPartner() && Auth::User()->verify_status == 1){
-                dd("im partner");
-                // return redirect('customer/home');
-            }else{
-                Session::flash('message','Your account not yet verified !');
-                return redirect('login');
-            }
+        if(Auth::user()->isPartner() && Auth::User()->verify_status == 1){
+            dd("im partner");
+            // return redirect('customer/home');
+            return redirect(route('Partner_Dashboard'));
+        }else{
+            Session::flash('message','Your account not yet verified !');
+            return redirect('login');
+        }
 
-            if(Auth::user()->isEmployee() && Auth::User()->verify_status == 1){
-                dd("im employee");
-                // return redirect('customer/home');
-            }else{
-                Session::flash('message','Your account not yet verified !');
-                return redirect('login');
-            }
-
+        if(Auth::user()->isEmployee() && Auth::User()->verify_status == 1){
+            dd("im employee");
+            // return redirect('customer/home');
+            return redirect(route('Employee_Dashboard'));
+        }else{
+            Session::flash('message','Your account not yet verified !');
+            return redirect('login');
         }
     //     if ( Auth::user()->isCutomer() ) {
     //         return redirect('customer/home');

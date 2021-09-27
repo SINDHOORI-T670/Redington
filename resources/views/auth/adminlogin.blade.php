@@ -49,12 +49,12 @@
                 <div class="card-content">
                     <div class="card-body">
                             @if($errors->any())
-									<div class="alert alert-danger">
-									<button type="button" class="close" data-dismiss="alert">&times;</button>
-										{{$errors->first()}}
-									</div>
-								@endif
-                            @include('alert.messages')
+                                <div class="alert alert-danger">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    {{$errors->first()}}
+                                </div>
+                            @endif
+                            {{-- @include('alert.messages') --}}
                         <form class="form-horizontal form-simple" method="POST" action="{{ route('login') }}">
                             {{ csrf_field() }}
                             <fieldset class="form-group position-relative has-icon-left mb-0">

@@ -10,7 +10,7 @@ class PresetQuestion extends Model
 
     public function request()
     {
-        return $this->hasMany('App\Models\QueryRequest','query_id','id');
+        return $this->hasMany('App\Models\ReplyRequest','req_id','id');
     }
     public function technology()
     {

@@ -93,7 +93,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('assign/region','AdminController@AssignRegion');
     Route::get('/sales_connects','AdminController@SalesConnects');
     Route::post('/Reschedule/{id}','AdminController@Reschedule');
-    Route::get('/preset_questions/{techid}/{brandid}','AdminController@PresetQuestions');
+    Route::get('/preset_questions/{techid}/{brandid}/{from}','AdminController@PresetQuestions');
     Route::get('/prest_questions','AdminController@allqueries');
     Route::post('add/new/query','AdminController@addsalesquery');
     Route::post('edit/query/{id}','AdminController@editsalesquery');
