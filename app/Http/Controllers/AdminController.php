@@ -41,6 +41,7 @@ use App\Models\Events;
 use App\Models\MainService;
 use App\Models\SubService;
 use App\Models\BusinessSolution;
+use App\Models\SubResourceFile;
 class AdminController extends Controller
 {
     public function __construct(){
@@ -1079,6 +1080,7 @@ class AdminController extends Controller
 
     public function subresources($id){
         $list = SubResource::where('resource_id',$id)->latest()->paginate(20);
+        // dd($list);
         $resource = $id;
         $icons = [
             'pdf' => 'pdf',
@@ -1109,6 +1111,16 @@ class AdminController extends Controller
             return Redirect::back()->withErrors($messages)->withInput();
         } 
         // $fileName = [];
+        $resourceId = SubResource::insertGetId([
+            'resource_id' => $request->resource_id,
+            'heading' => $request->name,
+            'details'=>$request->detail1,
+            // 'file' => isset($fileName)?implode(',',$fileName):null,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        $i = 0;
         if ($request->file('file') != "") {
             foreach ($request->file('file') as $file) {
                 // $file = $request->file('file');
@@ -1119,18 +1131,19 @@ class AdminController extends Controller
                 
                 // $name = $file1.'.'.$extension;  //Concatenate both to get FileName (eg: file.jpg)
                 $file->move('uploads/subresource/', $name);
-                $fileName[] = $name;
+                // $fileName[] = $name;
+                $subresourcefileId = SubResourceFile::insertGetId([
+                    'sub_id' => $resourceId,
+                    'file' => $name,
+                    'filename' => $request->filenamearray11[$i],
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        
+                ]);
+
             }
         }
-        $resourceId = SubResource::insertGetId([
-            'resource_id' => $request->resource_id,
-            'heading' => $request->name,
-            'details'=>$request->detail1,
-            'file' => isset($fileName)?implode(',',$fileName):null,
-            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
-
-        ]);
+        
         
         DB::commit();
         return redirect()->back()->with('success', 'Resource added successfully');
@@ -1148,6 +1161,7 @@ class AdminController extends Controller
             return Redirect::back()->withErrors($messages)->withInput();
         } 
         // $fileName = [];
+        $i = 0;
         if ($request->file('file') != "") {
             foreach ($request->file('file') as $file) {
                 // $file = $request->file('file');
@@ -1158,21 +1172,29 @@ class AdminController extends Controller
                 
                 // $name = $file1.'.'.$extension;  //Concatenate both to get FileName (eg: file.jpg)
                 $file->move('uploads/subresource/', $name);
-                $fileName[] = $name;
+                // $fileName[] = $name;
+                $subresourcefileId = SubResourceFile::insertGetId([
+                    'sub_id' => $id,
+                    'file' => $name,
+                    'filename' => $request->filenamearray[$i],
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        
+                ]);
             }
         }
         
         $sub= SubResource::find($id);
-        if(isset($sub->file)){
-            $array = implode(',',(array) $fileName).','.$sub->file;
-        }else{
-            $array = implode(',',(array) $fileName);
-        }
+        // if(isset($sub->file)){
+        //     $array = implode(',',(array) $fileName).','.$sub->file;
+        // }else{
+        //     $array = implode(',',(array) $fileName);
+        // }
         // dd($array);
         $inputData = [
             'heading' => $request->name,
             'details' => $request->detail2,
-            'file' => $array,
+            // 'file' => $array,
         ];
         SubResource::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'SubResource updated successfully');

@@ -74,7 +74,7 @@ table.dataTable tbody td {
                                     <tr role="row">
                                         <th>#</th>
                                         <th>Query</th>
-                                        <th>Status</th>
+                                        <!-- <th>Status</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -83,7 +83,7 @@ table.dataTable tbody td {
                                     <tr role="row" class="odd">
                                         <td>{{$index+1}}</td>
                                         <td>{!!$item->question!!}</td>
-                                        <td><h4 @if($item->status==1) class="danger" @else class="success" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
+                                        <!-- <td><h4 @if($item->status==1) class="danger" @else class="success" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td> -->
                                         <td>
                                             
                                             {{-- <a class="btn btn-secondary requestlist" href="{{url('admin/query_request')}}/{{$item->id}}"><i class="icon-eye mr-1"></i> Request</a>  --}}
@@ -126,11 +126,11 @@ table.dataTable tbody td {
                                                                             <div class="chat @if($reply->from_id!=Auth::User()->id) chat-left @endif">
                                                                                 <div class="chat-avatar">
                                                                                 <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
-                                                                                    <img src="@if(isset($reply->user->image)){{url($reply->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
+                                                                                    <img src="@if(!empty($reply->user->image)){{asset($reply->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
                                                                                 </a>
                                                                                 </div>
                                                                                 <div class="chat-body">
-                                                                                <div class="chat-content">
+                                                                                <div class="chat-content" @if($reply->from_id==Auth::User()->id) style="text-align: justify;" @endif>
                                                                                     <p>{!!$reply->reply!!}</p>
                                                                                 </div>
                                                                                 </div>
