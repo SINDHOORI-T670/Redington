@@ -69,6 +69,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::get('active/resource/{id}','AdminController@activeResource');
     Route::get('subresource/list/{id}','AdminController@subresources');
     Route::post('add/subresource','AdminController@addsubResource');
+    Route::get('edit/subresource/{id}','AdminController@updatesubres');
     Route::post('edit/subresource/{id}','AdminController@editsubResource');
     Route::get('/downloadfile/{file}','AdminController@downloadfile');
     Route::get('active/subresource/{id}','AdminController@activesubResource');

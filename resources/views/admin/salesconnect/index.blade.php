@@ -73,7 +73,7 @@ table.dataTable tbody td {
                                             {{($item->status==1)?"Meeting Request":"POC Connect"}}
                                         </td>
                                         
-                                        <td>@if($item->status==1) {{Carbon\Carbon::parse($item->reschedule->date_time)->format('j F Y h:i A')}}@else @endif</td>
+                                        <td>@if($item->status==1) {{Carbon\Carbon::parse($item->date_time)->format('j F Y h:i A')}}@else @endif</td>
                                         <td>
                                             <a class="btn btn-secondary text-white tab-order" data-toggle="modal" data-target="#viewModal{{$item->id}}"  href="#" title="View"><i class="fa fa-eye"></i></a>
                                             @if($item->status==1)

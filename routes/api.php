@@ -37,3 +37,6 @@ Route::get('/products','Api\UserApiController@products');
 Route::get('/main/services','Api\UserApiController@mainserviceList');
 Route::get('new/events','Api\UserApiController@neweventsList');
 Route::get('past/events','Api\UserApiController@pasteventsList');
+Route::post('/new/sales_connect','Api\UserApiController@connectnow');
+Route::post('/preset_question/send/reply/{id}','Api\UserApiController@sendReply');
+Route::post('/new/schedule/meeting/{id}','Api\UserApiController@scheduleMeeting');

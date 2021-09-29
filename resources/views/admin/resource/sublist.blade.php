@@ -31,13 +31,7 @@ table.dataTable tbody td {
     .select2-container{
         display: inline !important;
     }
-    .remove{
-        display:block;
-        float:right;
-        width:30px;
-        height:29px;
-        background:url(https://web.archive.org/web/20110126035650/http://digitalsbykobke.com/images/close.png) no-repeat center center;
-    }
+    
     .remove11{
         display:block;
         float:right;
@@ -86,7 +80,7 @@ table.dataTable tbody td {
                                                                             $split[] = explode('.',$file->file);
                                                                         @endphp 
                                                                         <li>
-                                                                            <a  class="text-white" href="{{url('admin/downloadfile')}}/{{$file->file}}" title="{{$file->filename}}" download>File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
+                                                                            <a  class="text-white" href="{{$file->file}}" title="{{$file->filename}}" target="_blank">{{$file->filename}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
                                                                         </li>
                                                                     @empty 
                                                                     @endforelse
@@ -95,9 +89,10 @@ table.dataTable tbody td {
                                                             <br>
                                                             <ul class="list-inline mb-0 text-white">
                                                                 <li>
-                                                                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editsubResourceModal{{$item->id}}">
+                                                                    <a href="{{url('admin/edit/subresource')}}/{{$item->id}}" class="btn btn-secondary">Edit</a>
+                                                                    {{-- <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editsubResourceModal{{$item->id}}">
                                                                         Edit
-                                                                    </button>
+                                                                    </button> --}}
                                                                 </li>
                                                                 <li>
                                                                     <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('subresource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
@@ -110,75 +105,6 @@ table.dataTable tbody td {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal fade text-left show" id="editsubResourceModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
-                                        <div class="modal-dialog" role="document">
-                                          <div class="modal-content">
-                                            <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Edit Sub Resource</h3>
-                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                              </button>
-                                            </div>
-                                            <form method="POST" action="{{url('admin/edit/subresource')}}/{{$item->id}}" enctype="multipart/form-data" id="myForm">
-                                                @csrf
-                                              <div class="modal-body">
-                                                <fieldset class="form-group floating-label-form-group">
-                                                    <label for="email" class="label-control required">Sub Resource Name</label>
-                                                    <input type="text" class="form-control" id="subresourcename1" name="name" placeholder="Sub Resource Name" value="{{$item->heading}}">
-                                                      @if ($errors->has('subresourcename'))
-                                                          <span class="help-block">
-                                                              <strong class="error">{{ $errors->first('subresourcename') }}</strong>
-                                                          </span>
-                                                      @endif
-                                                </fieldset>
-                                                <fieldset class="form-group floating-label-form-group">
-                                                  <label for="email" class="label-control">Sub Resource Detail</label>
-                                                  <textarea cols="30" rows="15" class="form-control detail2" id="detail2{{$item->id}}" name="detail2" placeholder="Details about subresource">{!! $item->details !!}</textarea>
-                                                    @if ($errors->has('detail2'))
-                                                        <span class="help-block">
-                                                            <strong class="error">{{ $errors->first('detail2') }}</strong>
-                                                        </span>
-                                                    @endif
-                                                </fieldset>
-                                                <fieldset class="form-group floating-label-form-group">
-                                                  <label for="email" class="label-control">Upload Files</label>
-                                                  <input type="file" class="form-control uploadFile" id="uploadFile12" name="file12[]" placeholder="Subresource files" accept="application/pdf,application/msword,
-                                                  application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
-                                                  <ul class="list-inline mb-0">  
-                                                    @if(isset($item->subfiles))
-                                                        {{-- @forelse(explode(',',$item->file) as $index => $file)--}}
-                                                            @forelse($item->subfiles as $index => $file)
-                                                            @php 
-                                                                $type = pathinfo($file->file, PATHINFO_EXTENSION);
-                                                                $split[] = explode('.',$file->file);
-                                                            @endphp 
-                                                            <li>
-                                                                <a  class="text-info" href="{{url('admin/downloadfile')}}/{{$file->file}}" title="File{{$index+1}}" download>{{$file->filename}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
-                                                            </li>
-                                                        @empty 
-                                                        @endforelse
-                                                    @endif
-                                                  </ul>
-                                                    @if ($errors->has('file12'))
-                                                        <span class="help-block">
-                                                            <strong class="error">{{ $errors->first('file12') }}</strong>
-                                                        </span>
-                                                    @endif
-                                              </fieldset>
-                                              <div id="image_preview"></div>
-                                              <fieldset class="form-group floating-label-form-group" id="FileName">
-                                    
-
-                                              </fieldset>
-                                              </div>
-                                              <div class="modal-footer">
-                                                  <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
-                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Update">
-                                              </div>
-                                            </form>
-                                          </div>
                                         </div>
                                     </div>
                                     @empty 
@@ -222,7 +148,7 @@ table.dataTable tbody td {
                                           </span>
                                       @endif
                                   </fieldset>
-                                  <fieldset class="form-group floating-label-form-group">
+                                  <fieldset class="form-group floating-label-form-group" id="upload-form">
                                     <label for="email" class="label-control">Upload Files</label>
                                     <input type="file" class="form-control uploadFile11" id="uploadFile11" name="file[]" placeholder="Subresource files" accept="application/pdf,application/msword,
                                     application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
@@ -272,49 +198,16 @@ table.dataTable tbody td {
 <script>
     CKEDITOR.replace( 'detail1' );
     // CKEDITOR.replace( 'detail2' );
-    $('.detail2').each(function () {
-        CKEDITOR.replace($(this).prop('id'));
-    });
+    // $('.detail2').each(function () {
+    //     CKEDITOR.replace($(this).prop('id'));
+    // });
     $('.select2-multi').select2();
-    $(".uploadFile").change(function(){
-        var $this = $(this);
-        // $this.hide();
-        var total_file=document.getElementById("uploadFile12").files.length;
-        console.log("Number of files: ", total_file);
-
-        // var total_file = $('#uploadFile12 input[type=file]').files.length;
-        // console.log(total_file);
-        // alert(document.getElementById("uploadFile12").files);
-        for(var i=0;i<total_file;i++)
-
-        {
-            
-            var fileName = this.files[i].name;
-            var divId = Math.floor((Math.random() * 100) + 1);
-            $('#image_preview').append("<ul class=\"list-inline mb-0 \"><li class=\"pip\">" +
-                "<span id='"+divId+"' class=\"remove\"></span>"+
-                "<lable class=\"label-control\">" + fileName +"<lable>"+
-                "</li></ul>");
-            var selectbox = '<div class='+divId+'><label class="label-control required">File Name for ' + fileName + '</label> <br><input type="text" class="form-control" id="subresourcefilename" name="filenamearray[]" placeholder="File Name" required><br>';
-                $('#FileName').append(selectbox);
-
-        }
-
-        // $("#upload-form").append("<input type='file' class='file-input uploadFile' id='uploadMoreFile' name='files[]' multiple='multiple'>");
-
-        $(".remove").click(function(){
-            file = $(this).attr('id');
-            $(this).parent(".pip").remove();
-            $("."+file).remove();
-            document.getElementById("uploadFile").value=null;
-        });
-
-    });
+    
 
     $(".uploadFile11").change(function(){
         
         var $this = $(this);
-        // $this.hide();
+        $this.hide();
         var total_file=document.getElementById("uploadFile11").files.length;
         for(var i=0;i<total_file;i++)
 
@@ -330,7 +223,7 @@ table.dataTable tbody td {
 
         }
 
-        // $("#upload-form").append("<input type='file' class='file-input uploadFile' id='uploadMoreFile' name='files[]' multiple='multiple'>");
+        $("#upload-form").append("<input type='file' class='file-input uploadMoreFile' id='uploadMoreFile' name='file[]' multiple='multiple'>");
 
         $(".remove11").click(function(){
             file = $(this).attr('id');
@@ -340,6 +233,34 @@ table.dataTable tbody td {
         });
 
     });
+
+    $(document).on('change','#uploadMoreFile',function(){
+        var $this = $(this);
+        $this.hide();
+        var total_file=document.getElementById("uploadMoreFile").files.length;
+        for(var i=0;i<total_file;i++)
+
+        {
+            
+            var fileName = this.files[i].name;
+            var divId = Math.floor((Math.random() * 100) + 1);
+            $('#image_preview11').append("<ul class=\"list-inline mb-0 \"><li class=\"pip\">" +
+                "<span id='"+divId+"' class=\"remove\"></span>"+
+                "<lable class=\"label-control\">" + fileName +"<lable>"+
+                "</li></ul>");
+            var selectbox = '<div class='+divId+'><label class="label-control required">File Name for ' + fileName + '</label> <br><input type="text" class="form-control" id="subresourcefilename" name="filenamearray11[]" placeholder="File Name" required><br>';
+                $('#FileName11').append(selectbox);
+
+        }
+        $(".remove").click(function(){
+        file = $(this).attr('id');
+        $(this).parent(".pip").remove();
+        $("."+file).remove();
+        });
+        $("#upload-form").append("<input type='file' class='form-control uploadMoreFile' id='uploadMoreFile' name='file[]' accept='application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document' multiple='multiple'>");
+   
+    });
+
     $(".remove1").click(function(){
         file = $(this).attr('id');
         Swal.fire({

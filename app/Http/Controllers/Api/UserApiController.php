@@ -40,6 +40,11 @@ use App\Models\MainService;
 
 use App\Models\Events;
 
+use Illuminate\Support\Facades\Validator;
+
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\DB;
 class UserApiController extends Controller
 
 {
@@ -377,6 +382,110 @@ class UserApiController extends Controller
         $eventData = Events::where('date_time', '<', $now_str)->where('status',0)->get();
         return $eventData;
     }
+    public function connectnow(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'technology' => 'required',
+                'brand' => 'required',
+                'region'=>'required',
+                'poc'=>'required'
+            ],[
+                'technology.required' => 'Please select technology',
+                'brand.required' => 'Please select brand',
+                'region.required'=>'Please select region',
+                'poc.required'=>'Please select POC'
+            ]);
+        if ($validator->fails()) {
+            $response['status']  = 'error';
+            $response['message'] = $validator->messages()->first();
+        }
+        $fromid = Auth::User()->id;
+        $queries = PresetQuestion::where('tech_id',$request->technology)->where('brand_id',$request->brand)->get();
+        $response['data'] = [
+                'tech_id' => $request->technology,
+                'brand_id'=>$request->brand,
+                'region_id'=>$request->region,
+                'poc_user_id'=>$request->poc,
+                'from_id'=>Auth::User()->id
+            ]; 
+        $response['questions'] = $queries; 
+        return $response;
+    }
+    public function sendReply(Request $request,$id){
+        $validator = Validator::make($request->all(),
+            [
+                'reply' => 'required'
+            ],[
+                'reply.required' => 'Please enter reply',
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $connectId = SalesConnect::insertGetId([
+            'tech_id' => $request->technology,
+            'brand_id'=>$request->brand,
+            'region_id'=>$request->region,
+            'poc_user_id'=>$request->poc,
+            'from_id'=>Auth::User()->id,
+            'status'=>2, //poc connect
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+        ]);
+        $replyId = ReplyRequest::insertGetId([
+            'req_id' => $id,
+            'from_id'=>Auth::User()->id,
+            'reply'=>$request->reply,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        if(isset($replyId)){
+            return response()->json(['status' => 'success','message'=>'Reply Sent'], 200);
+        }else{
+            $response['status']  = 'error';
+            $response['message'] = $validator->messages()->first();
+        }
+    }
+
+    public function scheduleMeeting(Request $request,$id){
+        $validator = Validator::make($request->all(),
+        [
+            'tech' => 'required',
+            'product' => 'required',
+            'date' => 'required',
+            'time' => 'required'
+        ],[
+            'tech.required'=>'Please select technology',
+            'product.required'=>'Please select product',
+            'time.required' => 'Please enter time',
+            'date.required' => 'Please enter date'
+        ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $connectId = SalesConnect::insertGetId([
+            'tech_id' => $request->technology,
+            'brand_id'=>$request->brand,
+            'region_id'=>$request->region,
+            'poc_user_id'=>$request->poc,
+            'from_id'=>Auth::User()->id,
+            'status'=>1, //schedule meeting
+            'date_time'=>$request->date.' '.$request->time,
+            'product_id'=>$request->product,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        if(isset($connectId)){
+             return response()->json(['status' => 'success','message'=>'Meeting Scheduled'], 200);
+        }else{
+            $response['status']  = 'error';
+            $response['message'] = $validator->messages()->first();
+        }
+    }
 }
 

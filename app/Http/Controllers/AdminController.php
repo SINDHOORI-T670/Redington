@@ -1134,13 +1134,13 @@ class AdminController extends Controller
                 // $fileName[] = $name;
                 $subresourcefileId = SubResourceFile::insertGetId([
                     'sub_id' => $resourceId,
-                    'file' => $name,
+                    'file' => $request->root().'/uploads/subresource/'.$name,
                     'filename' => $request->filenamearray11[$i],
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
                     "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
         
                 ]);
-
+                $i++;
             }
         }
         
@@ -1149,7 +1149,25 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Resource added successfully');
     }
 
+    public function updatesubres($id){
+        $item = SubResource::find($id);
+        $icons = [
+            'pdf' => 'pdf',
+            'doc' => 'word',
+            'docx' => 'word',
+            'xls' => 'excel',
+            'xlsx' => 'excel',
+            'ppt' => 'powerpoint',
+            'pptx' => 'powerpoint',
+            'txt' => 'text',
+            'png' => 'image',
+            'jpg' => 'image',
+            'jpeg' => 'image',
+        ];
+        return view('admin.resource.editsub',compact('item','icons'));
+    }
     public function editsubResource(Request $request,$id){
+        // dd();
         $validator = Validator::make($request->all(),
             [
                 'name' => 'required'
@@ -1162,8 +1180,8 @@ class AdminController extends Controller
         } 
         // $fileName = [];
         $i = 0;
-        if ($request->file('file') != "") {
-            foreach ($request->file('file') as $file) {
+        if ($request->file('file12') != "") {
+            foreach ($request->file('file12') as $file) {
                 // $file = $request->file('file');
                 $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
                 // $file1 = $file->getClientOriginalName(); //Get Image Name
@@ -1175,12 +1193,13 @@ class AdminController extends Controller
                 // $fileName[] = $name;
                 $subresourcefileId = SubResourceFile::insertGetId([
                     'sub_id' => $id,
-                    'file' => $name,
+                    'file' => $request->root().'/uploads/subresource/'.$name,
                     'filename' => $request->filenamearray[$i],
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
                     "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
         
                 ]);
+                $i++;
             }
         }
         
@@ -1654,23 +1673,23 @@ class AdminController extends Controller
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         }
-        $item = Reschedule::find($id);
-        SalesConnect::where('id',$id)->update(['tech_id'=>$request->tech,'product_id'=>$request->product,'date_time' => $request->date.' '.$request->time,'status'=>1]);
-        if(isset($item)){
-            Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
-        }else{
+        // $item = Reschedule::where('salecon_id',$id)->first();
+        SalesConnect::where('id',$id)->update(['date_time'=>$request->date.' '.$request->time,'tech_id'=>$request->tech,'product_id'=>$request->product,'date_time' => $request->date.' '.$request->time,'status'=>1]);
+        // if(isset($item)){
+        //     Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
+        // }else{
             
-            $rescheduleId = Reschedule::insertGetId([
-                'salecon_id' => $id,
-                'date_time' => $request->date.' '.$request->time,
-                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        //     $rescheduleId = Reschedule::insertGetId([
+        //         'salecon_id' => $id,
+        //         'date_time' => $request->date.' '.$request->time,
+        //         "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+        //         "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
     
-            ]);
+        //     ]);
             
-            DB::commit();
+        //     DB::commit();
             
-        }
+        // }
         return redirect()->back()->with('success', 'Rescheduled successfully');
     }
 

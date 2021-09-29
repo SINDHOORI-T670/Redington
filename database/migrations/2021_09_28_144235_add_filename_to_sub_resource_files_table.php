@@ -14,7 +14,7 @@ class AddFilenameToSubResourceFilesTable extends Migration
     public function up()
     {
         Schema::table('sub_resource_files', function (Blueprint $table) {
-            //
+            $table->string('filename');
         });
     }
 
@@ -26,7 +26,7 @@ class AddFilenameToSubResourceFilesTable extends Migration
     public function down()
     {
         Schema::table('sub_resource_files', function (Blueprint $table) {
-            //
+            $table->dropColumn('filename');
         });
     }
 }
