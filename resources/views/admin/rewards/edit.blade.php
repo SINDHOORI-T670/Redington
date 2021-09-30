@@ -19,32 +19,33 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title" id="horz-layout-card-center">Add Reward</h4>
+                                <h4 class="card-title" id="horz-layout-card-center">Edit Reward</h4>
                                 <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
                             </div><br><br><br>
                             <div class="card-content collpase show">
                                 <div class="card-body">
-                                    <form class="form form-horizontal" action="{{url('admin/save/reward')}}" method="post" enctype="multipart/form-data"> 
+                                    <form class="form form-horizontal" action="{{url('admin/update/reward')}}/{{$reward->id}}" method="post" enctype="multipart/form-data"> 
                                         @csrf
                                         <div class="form-body">
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="eventRegInput1">Title</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="Reward Title" name="title">
+                                                    <input type="text" id="eventRegInput1" class="form-control" placeholder="Reward Title" name="title" value="{{$reward->heading}}">
                                                 </div>
                                             </div>
-
+                                            
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control" for="eventRegInput1">Cupon</label>
                                                 <div class="col-md-9">
                                                     <input type="file" class="form-control" id="file" name="image" placeholder="files">
+                                                    @if(isset($reward->image))<a href="{{$reward->image}}" target="_blank">view cupon</a>@endif
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
                                                 <label class="col-md-3 label-control required" for="eventRegInput4">Point</label>
                                                 <div class="col-md-9">
-                                                    <input type="text" id="eventRegInput4" class="form-control" placeholder="Reward Point" name="point">
+                                                    <input type="text" id="eventRegInput4" class="form-control" placeholder="Reward Point" name="point" value="{{$reward->point}}">
                                                 </div>
                                             </div>
                                         </div>
@@ -86,14 +87,6 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    var phones = [{ "mask": "+(###) ########"},{ "mask": "+(###) ########"}];
-            $('#phone').inputmask({ 
-                mask: phones, 
-                greedy: false, 
-                definitions: { '#': { validator: "[0-9]", cardinality: 1}} ,
-                
-            });
-    console.clear();
 
 
     

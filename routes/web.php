@@ -56,6 +56,8 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::get('/list/rewards','AdminController@ListRewards');
     Route::get('create/partner/reward','AdminController@createReward');
     Route::post('save/reward','AdminController@Savereward');
+    Route::get('/edit/reward/{id}','AdminController@editreward');
+    Route::post('/update/reward/{id}','AdminController@updatereward');
     Route::get('active/reward/{id}','AdminController@activeReward');
     Route::get('redeem/history/{id}','AdminController@RedeemHistory');
     Route::get('create/partner/redeem/{id}','AdminController@CreateRedeem');
@@ -73,6 +75,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('edit/subresource/{id}','AdminController@editsubResource');
     Route::get('/downloadfile/{file}','AdminController@downloadfile');
     Route::get('active/subresource/{id}','AdminController@activesubResource');
+    Route::get('delete/sub_resource_file','AdminController@deletesubresourcefile');
     Route::get('journals','AdminController@journals');
     Route::post('add/journal','AdminController@addJournal');
     Route::post('edit/journal/{id}','AdminController@editJournal');
@@ -108,6 +111,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('add/new/event','AdminController@addevent');
     Route::post('update/event/{id}','AdminController@updateevent');
     Route::get('/active/event/{id}','AdminController@activeEvent');
+    Route::post('copy/event/{id}','AdminController@copyEvent');
     Route::get('main_services/list','AdminController@mainservices');
     Route::post('add/main_service','AdminController@addMainService');
     Route::post('edit/main_service/{id}','AdminController@editMainService');
@@ -120,6 +124,10 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('/add/business_solution','AdminController@addbusinesssolution');
     Route::post('/edit/business_solution/{id}','AdminController@editbusinesssolution');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
+    Route::get('/page/settings','AdminController@pagesetiing');
+    Route::post('add/page/details','AdminController@addpagedetails');
+    Route::post('edit/page/{id}','AdminController@editpage');
+    Route::get('/feedbacks','AdminController@feedbacks');
 
 });
 // Route::group(['prefix' => 'admin'], function () {

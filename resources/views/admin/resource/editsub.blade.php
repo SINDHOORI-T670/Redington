@@ -15,6 +15,7 @@
         height:29px;
         background:url(https://web.archive.org/web/20110126035650/http://digitalsbykobke.com/images/close.png) no-repeat center center;
     }
+    
 </style>
 <div class="app-content content">
     <div class="content-wrapper">
@@ -72,8 +73,10 @@
                                                                         $split[] = explode('.',$file->file);
                                                                     @endphp 
                                                                     <li>
-                                                                        <a  class="text-info" href="{{url('admin/downloadfile')}}/{{$file->file}}" title="File{{$index+1}}" download>{{$file->filename}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
+                                                                        <a  class="text-info" href="#" title="File{{$index+1}}">{{$file->filename}} <i class="fa fa-close fa-1x text-center remove1" id="{{$file->id}}"/></i>&nbsp;&nbsp;</a> 
                                                                     </li>
+
+                                                                    
                                                                 @empty 
                                                                 @endforelse
                                                             @endif
@@ -181,7 +184,49 @@
         $("."+file).remove();
         });
         $("#upload-form").append("<input type='file' class='form-control uploadFile' id='uploadMoreFile' name='file12[]' accept='application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document' multiple='multiple'>");
-   
+    
+    });
+
+    $(".remove1").click(function(){
+        file = $(this).attr('id');
+        Swal.fire({
+        title: 'Are you sure ?',
+        text: 'This task cannot be revert',
+        showCancelButton: true,
+        confirmButtonText: `Ok Delete`,
+        cancelButtonText: `Cancel`,
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+                $.ajax({
+                    url:"{{url('admin/delete/sub_resource_file')}}",
+                    method:"get",
+                    data: {
+                        id: file
+                    },
+                    success: function (data) {
+                    if(data=="deleted"){
+                        Swal.fire({
+                        title: "Done!", 
+                        text: "It was succesfully deleted!",
+                        type: "success"
+                        }).then((result) => {
+                        // Reload the Page
+                        location.reload();
+                        });
+                    }
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        Swal.fire({
+                        title: "Error deleting!", 
+                        text: "Please try again",
+                        type: "error"
+                        }).then((result) => {
+                        // Reload the Page
+                        location.reload();
+                        });
+                    }
+                });
+        })
     });
 
     

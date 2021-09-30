@@ -261,47 +261,7 @@ table.dataTable tbody td {
    
     });
 
-    $(".remove1").click(function(){
-        file = $(this).attr('id');
-        Swal.fire({
-        title: 'Are you sure ?',
-        text: 'This task cannot be revert',
-        showCancelButton: true,
-        confirmButtonText: `Ok Delete`,
-        cancelButtonText: `Cancel`,
-        }).then((result) => {
-            if (!result.isConfirmed) return;
-                $.ajax({
-                    url:"#",
-                    method:"get",
-                    data: {
-                        id: file
-                    },
-                    success: function (data) {
-                    if(data=="deleted"){
-                        Swal.fire({
-                        title: "Done!", 
-                        text: "It was succesfully deleted!",
-                        type: "success"
-                        }).then((result) => {
-                        // Reload the Page
-                        location.reload();
-                        });
-                    }
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        Swal.fire({
-                        title: "Error deleting!", 
-                        text: "Please try again",
-                        type: "error"
-                        }).then((result) => {
-                        // Reload the Page
-                        location.reload();
-                        });
-                    }
-                });
-        })
-    });
+    
     function confirmDelete(id,name,status) {
         if(status==0){
             var text="inactive";

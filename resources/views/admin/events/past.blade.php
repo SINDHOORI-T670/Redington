@@ -63,8 +63,7 @@
                                         <th>Added By</th>
                                         <th>Access By</th>
                                         <th>Date Time</th>
-                                        {{-- <th>Status</th>
-                                        <th>Action</th> --}}
+                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,18 +81,21 @@
                                             </ul>    
                                         </td>
                                         <td>{{Carbon\Carbon::parse($event->date_time)->format('j F Y h:i A')}}</td>
-                                        
+                                        <td>
+                                            <a class="btn btn-info text-white tab-order" data-toggle="modal" data-target="#copyEventModal{{$event->id}}"  href="#" title="copy"><i class="icon-copy"></i> Copy</a>
+                                            
+                                        </td>
                                     </tr>
-                                    <div class="modal fade text-left show" id="editEventModal{{$event->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
+                                    <div class="modal fade text-left show" id="copyEventModal{{$event->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">
                                         <div class="modal-dialog" role="document">
                                           <div class="modal-content">
                                             <div class="modal-header">
-                                              <h3 class="modal-title" id="myModalLabel35"> Edit Event</h3>
+                                              <h3 class="modal-title" id="myModalLabel35"> Copy This Event</h3>
                                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/update/event')}}/{{$event->id}}">
+                                            <form method="POST" action="{{url('admin/copy/event')}}/{{$event->id}}" enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="modal-body">
                                                     <fieldset class="form-group floating-label-form-group">
@@ -140,7 +142,7 @@
                                                     </fieldset>
                                                       <fieldset class="form-group floating-label-form-group">
                                                         <img class="card-img-top img-fluid" src="{{url($event->image)}}" alt="{{$event->title}}">
-                                                          <label for="file" class="label-control required">Image</label>
+                                                          <label for="file" class="label-control">Image</label>
                                                           <input type="file" class="form-control" id="file" name="image" placeholder="files">
                                                           @if ($errors->has('image'))
                                                               <span class="help-block">
@@ -149,34 +151,8 @@
                                                           @endif
                                                       </fieldset>
                                                       <fieldset class="form-group floating-label-form-group">
-                                                          <label for="file1" class="label-control">Doument Upload</label>
-                                                          <input type="file" class="form-control" id="file1" name="doc[]" placeholder="Document upload" accept="application/pdf,application/msword,
-                                                          application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
-                                                          @if ($errors->has('doc'))
-                                                              <span class="help-block">
-                                                                  <strong class="error">{{ $errors->first('doc') }}</strong>
-                                                              </span>
-                                                          @endif
-                                                          <br>
-                                                            <ul class="list-inline mb-0 text-white">
-                                                                @if(isset($event->document))
-                                                                    @forelse(explode(',',$event->document) as $index => $file)
-                                                                        @php 
-                                                                            $type = pathinfo($file, PATHINFO_EXTENSION);
-                                                                            $split[] = explode('.',$file);
-                                                                        @endphp
-                                                                        <li>
-                                                                            <a  class="text-primary" href="{{url('uploads/event/documents')}}/{{$file}}" title="File{{$index+1}}" download>File{{$index+1}} <i class="fa fa-file-{{$icons[$type]}}-o fa-1x text-center"/></i>&nbsp;&nbsp;</a> 
-                                                                        </li>
-                                                                    @empty 
-                                                                    @endforelse
-                                                                @endif
-                                                            </ul>
-                                                            <br>
-                                                      </fieldset>
-                                                      <fieldset class="form-group floating-label-form-group">
                                                           <label for="email" class="label-control required">Date</label>
-                                                          <input type="date" class="form-control" id="date" name="date1" value="<?php echo date('Y-m-d',strtotime($event->date_time)) ?>">
+                                                          <input type="date" class="form-control" id="date" name="date" min="<?php echo date("Y-m-d"); ?>" >
                                                             @if ($errors->has('date'))
                                                                 <span class="help-block">
                                                                     <strong class="error">{{ $errors->first('date') }}</strong>
@@ -186,7 +162,7 @@
                                                         <br>
                                                       <fieldset class="form-group floating-label-form-group">
                                                           <label for="title1" class="label-control required">Time</label>
-                                                          <input class="form-control" type="time" name="time" id="time" value="{{ Carbon\Carbon::parse($event->date_time)->format('h:i') }}">
+                                                          <input class="form-control" type="time" name="time" id="time" >
                                                             @if ($errors->has('time'))
                                                                 <span class="help-block">
                                                                     <strong class="error">{{ $errors->first('time') }}</strong>
@@ -196,7 +172,7 @@
                                                 </div>
                                               <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
-                                                  {{-- <input type="submit" class="btn btn-outline-primary btn-lg" value="Update"> --}}
+                                                  <input type="submit" class="btn btn-outline-primary btn-lg" value="Copy">
                                               </div>
                                             </form>
                                           </div>
@@ -233,9 +209,6 @@
 <script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"></script>
 <script>
-    var today = new Date().toISOString().split('T')[0];
-    document.getElementsByName("date")[0].setAttribute('min', today);
-    document.getElementsByName("date1")[0].setAttribute('min', today);
     $('.select2-multi').select2();
     CKEDITOR.replace( 'eventdescription' );
     CKEDITOR.replace( 'eventshortdescription' );

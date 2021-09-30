@@ -223,8 +223,8 @@
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="{{url('admin/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
                     <a class="dropdown-item" href="{{url('admin/edit/company/profile')}}"><i class="icon-home"></i> My Company</a>
-                    {{-- <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
-                    <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a> --}}
+                    <a class="dropdown-item" href="{{url('admin/page/settings')}}"><i class="ft-check-square"></i> Page Setting</a>
+                    <a class="dropdown-item" href="{{url('admin/feedbacks')}}"><i class="ft-message-square"></i> Feedbacks</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{url('admin/logout')}}" onclick="event.preventDefault();
                         document.getElementById('logout-form1').submit();">

@@ -84,7 +84,7 @@
                                         <td>{{Carbon\Carbon::parse($event->date_time)->format('j F Y h:i A')}}</td>
                                         <td><h4 @if($event->status==1) class="danger text-center" @else class="success text-center" @endif>{{($event->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editEventModal{{$event->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
+                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editEventModal{{$event->id}}"  href="#" title="edit"><i class="icon-pencil"></i> Edit</a>
                                             <button @if($event->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('event-active-{{ $event->id }}','{{ $event->title }}','{{ $event->status }}');"> @if($event->status==0) <i class="fa fa-thumbs-o-down"></i> Inactive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
                                             <form id="event-active-{{ $event->id }}" action="{{url('admin/active/event/')}}/{{$event->id}}" method="get">
                                                 {{ csrf_field() }}
@@ -100,7 +100,7 @@
                                                 <span aria-hidden="true">×</span>
                                               </button>
                                             </div>
-                                            <form method="POST" action="{{url('admin/update/event')}}/{{$event->id}}">
+                                            <form method="POST" action="{{url('admin/update/event')}}/{{$event->id}}" enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="modal-body">
                                                     <fieldset class="form-group floating-label-form-group">
@@ -155,7 +155,7 @@
                                                               </span>
                                                           @endif
                                                       </fieldset>
-                                                      <fieldset class="form-group floating-label-form-group">
+                                                      {{-- <fieldset class="form-group floating-label-form-group">
                                                           <label for="file1" class="label-control">Doument Upload</label>
                                                           <input type="file" class="form-control" id="file1" name="doc[]" placeholder="Document upload" accept="application/pdf,application/msword,
                                                           application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
@@ -180,7 +180,7 @@
                                                                 @endif
                                                             </ul>
                                                             <br>
-                                                      </fieldset>
+                                                      </fieldset> --}}
                                                       <fieldset class="form-group floating-label-form-group">
                                                           <label for="email" class="label-control required">Date</label>
                                                           <input type="date" class="form-control" id="date" name="date1" min="<?php echo date("Y-m-d"); ?>" value="<?php echo date('Y-m-d',strtotime($event->date_time)) ?>">
@@ -283,7 +283,7 @@
                                             </span>
                                         @endif
                                     </fieldset>
-                                    <fieldset class="form-group floating-label-form-group">
+                                    {{-- <fieldset class="form-group floating-label-form-group">
                                         <label for="file1" class="label-control">Doument Upload</label>
                                         <input type="file" class="form-control" id="file1" name="doc[]" placeholder="Document upload" accept="application/pdf,application/msword,
                                         application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple>
@@ -292,7 +292,7 @@
                                                 <strong class="error">{{ $errors->first('doc') }}</strong>
                                             </span>
                                         @endif
-                                    </fieldset>
+                                    </fieldset> --}}
                                     <fieldset class="form-group floating-label-form-group">
                                         <label for="email" class="label-control required">Date</label>
                                         <input type="date" class="form-control" id="date" name="date" min="<?php echo date("Y-m-d"); ?>">

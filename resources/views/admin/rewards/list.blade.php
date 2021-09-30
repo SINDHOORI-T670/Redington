@@ -38,8 +38,8 @@
                                 <thead>
                                     <tr role="row">
                                         <th>Heading</th>
-                                        {{-- <th>Partner</th> --}}
                                         <th>reward</th>
+                                        <th>Cupon</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -47,9 +47,10 @@
                                     @forelse($rewards as $reward)
                                     <tr role="row" class="odd">
                                         <td>{{$reward->heading}}</td>
-                                        {{-- <td>{{$reward->partner->name}}</td> --}}
                                         <td>{{$reward->point}} <b>AED</b></td>
+                                        <td>@if(isset($reward->image))<img height="60" width="30" src="{{$reward->image}}">@else @endif</td>
                                         <td>
+                                            <a class="btn btn-primary text-white tab-order" href="{{url('admin/edit/reward')}}/{{$reward->id}}"><i class="icon-pencil"></i> Edit</a>
                                             <button @if($reward->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $reward->id }}','{{ $reward->heading }}','{{ $reward->status }}');"> @if($reward->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
                                             <form id="resource-active-{{ $reward->id }}" action="{{url('admin/active/reward/')}}/{{$reward->id}}" method="get">
                                                 {{ csrf_field() }}
