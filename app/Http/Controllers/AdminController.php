@@ -44,17 +44,24 @@ use App\Models\BusinessSolution;
 use App\Models\SubResourceFile;
 use App\Models\Description;
 use App\Models\Feedback;
+use App\Models\Notification;
+use App\Models\Requests;
 class AdminController extends Controller
 {
     public function __construct(){
         // $this->middleware('auth');
         // $this->middleware('CheckAdmin');
-        $settings = Setting::select('key', 'value')->get();
-        $company = $settings->mapWithKeys(function ($item) {
-                return [$item['key'] => $item['value']];
+        $this->middleware(function ($request, $next) {
+            $settings = Setting::select('key', 'value')->get();
+            $company = $settings->mapWithKeys(function ($item) {
+                    return [$item['key'] => $item['value']];
+            });
+            $not_count = Notification::where('to_id',Auth::User()->id)->where('status',0)->count();
+            $new_notifs = Notification::where('to_id',Auth::User()->id)->where('status',0)->latest()->get();
+            view()->share(['company' => $company,'not_count' => $not_count,'new_notifs' => $new_notifs]);
+            return $next($request);
         });
-        // dd($company);
-        view()->share(['company' => $company]);
+        
     }
 
     public function index(){
@@ -1313,13 +1320,13 @@ class AdminController extends Controller
                 // 'description' => 'required',
                 // 'file' => 'required',
                 // 'detail2' => 'required',
-                // 'date' => 'required'
+                'date' => 'required'
             ],[
                 'name.required' => 'Please enter value journal title',
                 // 'image.required'=> 'Please add an image for value journals',
                 // 'detail1.required' => 'Please enter short description',
                 // 'detail2.required' => 'Please add details about value journals',
-                // 'date.required' => 'Please add date'
+                'date.required' => 'Please add date'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1337,6 +1344,7 @@ class AdminController extends Controller
             'journal' => $request->name,
             'image' => $fileName,
             'description' => $request->detail1,
+            'journal_date' => Carbon::parse($request->date),
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -1354,13 +1362,13 @@ class AdminController extends Controller
                 // 'description' => 'required',
                 // 'file' => 'required',
                 // 'detail2' => 'required',
-                // 'date' => 'required'
+                'date' => 'required'
             ],[
                 'editname.required' => 'Please enter value journal title',
                 // 'image.required'=> 'Please add an image for value journals',
                 // 'detail1.required' => 'Please enter short description',
                 // 'detail2.required' => 'Please add details about value journals',
-                // 'date.required' => 'Please add date'
+                'date.required' => 'Please add date'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1381,6 +1389,7 @@ class AdminController extends Controller
             'journal' => $request->editname,
             'image' => $fileName,
             'description' => $request->detail2,
+            'journal_date' => Carbon::parse($request->date),
         ];
         Journal::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'Value Journal Updated successfully');
@@ -1411,13 +1420,13 @@ class AdminController extends Controller
                 'image' => 'required',
                 'detail1' => 'required',
                 'detail2' => 'required',
-                'date' => 'required'
+                
             ],[
                 'title.required' => 'Please enter value journal title',
                 'image.required'=> 'Please add an image for value journals',
                 'detail1.required' => 'Please enter short description',
                 'detail2.required' => 'Please add details about value journals',
-                'date.required' => 'Please add date'
+                
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1436,7 +1445,7 @@ class AdminController extends Controller
             'image' => $fileName,
             'short' => $request->detail1,
             'detail' => $request->detail2,
-            'journal_date' => Carbon::parse($request->date),
+            
             'journal_id' => $request->j_id,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
@@ -1455,13 +1464,13 @@ class AdminController extends Controller
             // 'image' => 'required',
             'detail3' => 'required',
             'detail4' => 'required',
-            'date' => 'required'
+            // 'date' => 'required'
         ],[
             'title.required' => 'Please enter value journal title',
             // 'image.required'=> 'Please add an image for value journals',
             'detail3.required' => 'Please enter short description',
             'detail4.required' => 'Please add details about value journals',
-            'date.required' => 'Please add date'
+            // 'date.required' => 'Please add date'
         ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1485,7 +1494,7 @@ class AdminController extends Controller
             'image' => $fileName,
             'short' => $request->detail3,
             'detail' => $request->detail4,
-            'journal_date' => Carbon::parse($request->date)
+            // 'journal_date' => Carbon::parse($request->date)
         ];
         ValueJournal::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'Value Journal Updated successfully');
@@ -1714,11 +1723,12 @@ class AdminController extends Controller
 
     }
 
-    public function SalesConnects(){
+    public function SalesConnects($modal=null){
         $list = SalesConnect::latest()->paginate(20);
         $techs = Technology::latest()->get();
         $products = Product::latest()->get();
-        return view('admin.salesconnect.index',compact('list','techs','products'));
+        $modalid=$modal;
+        return view('admin.salesconnect.index',compact('list','techs','products','modalid'));
     }
 
     public function Reschedule($id,Request $request){
@@ -1738,23 +1748,35 @@ class AdminController extends Controller
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         }
-        // $item = Reschedule::where('salecon_id',$id)->first();
-        SalesConnect::where('id',$id)->update(['date_time'=>$request->date.' '.$request->time,'tech_id'=>$request->tech,'product_id'=>$request->product,'date_time' => $request->date.' '.$request->time,'status'=>1]);
-        // if(isset($item)){
-        //     Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
-        // }else{
+        $item = Reschedule::where('salecon_id',$id)->first();
+        SalesConnect::where('id',$id)->update(['date_time'=>$request->date.' '.$request->time,'tech_id'=>$request->tech,'product_id'=>$request->product,'meeting_status' => 1,'status'=>1]);
+        if(isset($item)){
+            Reschedule::where('salecon_id',$id)->update(['date_time'=>$request->date.' '.$request->time]);
+        
+        }else{
             
-        //     $rescheduleId = Reschedule::insertGetId([
-        //         'salecon_id' => $id,
-        //         'date_time' => $request->date.' '.$request->time,
-        //         "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-        //         "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+            $rescheduleId = Reschedule::insertGetId([
+                'salecon_id' => $id,
+                'date_time' => $request->date.' '.$request->time,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
     
-        //     ]);
+            ]);
             
-        //     DB::commit();
+            DB::commit();
             
-        // }
+        }
+        $sales = SalesConnect::find($id);
+        $notificationId = Notification::insertGetId([
+            'req_from' => $sales->id,
+            'from_id'=>Auth::user()->id,
+            'to_id' => $sales->from_id,
+            'type' => "Sales_Connect",
+            'message' => "Meeting Rescheduled for the sales connect request granted",
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
         return redirect()->back()->with('success', 'Rescheduled successfully');
     }
 
@@ -2392,6 +2414,99 @@ class AdminController extends Controller
     public function feedbacks(){
         $list = Feedback::all();
         return view('feedbacks',compact('list'));
+    }
+
+    public function scheduleacceptforsalesconnect(Request $request,$id){
+        SalesConnect::where('id',$id)->update(['date_time'=>$request->date.' '.$request->time,'meeting_status' => 1]);
+        $sales = SalesConnect::find($id);
+        $notificationId = Notification::insertGetId([
+            'req_from' => $id,
+            'from_id'=>Auth::user()->id,
+            'to_id' => $sales->from_id,
+            'type' => "Sales_Connect",
+            'message' => "Meeting scheduled for the sales connect request granted",
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        return redirect()->back()->with('success','Meeting scheduled for the sales connect request granted');
+    }
+
+    public function requestslist($type,$id,$modal=null){
+        if($modal!=null){
+            $item=Requests::where('notifid',$modal)->first();
+            $modalid = 'viewModal'.$item->id;
+            $id=$item->req_id;
+        }else{
+            $modalid =$modal;
+        }
+        
+        if($type=="Sub_service"){
+            $list = Requests::where('req_id',$id)->where('type',$type)->with(['subservice' => function ($q) use ($id) {
+                $q->where('id',$id);
+            }])->latest()->paginate(20);
+            return view('admin.mainservices.requestlist',compact('list','modalid'));
+        }elseif($type=="Business_Solution"){
+            $list = Requests::where('req_id',$id)->where('type',$type)->with(['business' => function ($q) use ($id) {
+                $q->where('id',$id);
+            }])->latest()->paginate(20);
+            return view('admin.business.requestlist',compact('list','modalid'));
+        }
+        
+    }
+    public function RequestRespond(Request $request,$id){
+        
+        $data = Requests::find($id);
+        if($request->status==1){
+            $status = "confirmed";
+        }elseif($request->status==2){
+            $status = "rejected";
+        }
+        if($request->type=="Sub_service"){
+            $item = SubService::where('id',$data->req_id)->first();
+            $heading= $item->name;
+            $type = "Sub_service";
+        }elseif($request->type=="Business_Solution"){
+            $item = BusinessSolution::where('id',$data->req_id)->first();
+            $heading= $item->name;
+            $type = "Business_Solution";
+        }
+        $notificationId = Notification::insertGetId([
+            'req_from' => $data->id,
+            'from_id'=>Auth::user()->id,
+            'to_id' => $data->from_id,
+            'type' => $type,
+            'message' => "Appoinment for ".$heading." is ".$status,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        Requests::where('id',$id)->update(['status'=>$request->status,'notifid'=>$notificationId]);
+        return redirect()->back()->with('success','Request updated successfully');
+    }
+
+    public function readNotification($id,$type){
+        if($type=='All'){
+            Notification::where('to_id',Auth::User()->id)->update(['status'=>1]);
+            return redirect()->back();
+        }elseif($type=='Sales_Connect'){
+            Notification::where('id',$id)->update(['status'=>1]);
+            $item = Notification::find($id);
+            $modalid = 'viewModal'.$item->req_from;
+            return redirect()->route('Sales_Connect',['modal'=>$modalid]);
+        }elseif($type=='Sub_service'){
+            Notification::where('id',$id)->update(['status'=>1]);
+            $item = Notification::find($id);
+            $modalid = $id;
+            return redirect()->route('Request_Call',['type'=> $type,'id'=>$item->req_from,'modal'=>$modalid]);
+        }elseif($type=='Business_Solution'){
+            Notification::where('id',$id)->update(['status'=>1]);
+            $item = Notification::find($id);
+            $modalid = $id;
+            return redirect()->route('Request_Call',['type'=> $type,'id'=>$item->req_from,'modal'=>$modalid]);
+        }
+        
+        
     }
     public function logout(Request $request)
     {

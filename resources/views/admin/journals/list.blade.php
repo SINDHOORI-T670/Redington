@@ -56,7 +56,6 @@ table.dataTable tbody td {
                                     <tr role="row">
                                         <th>Title</th>
                                         <th>Short Description</th>
-                                        <th>date</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -67,9 +66,7 @@ table.dataTable tbody td {
                                         <td>{{$item->title}}</td>
                                         <td>{!! $item->short !!}</td>
                                         {{-- <td><img  height="80" width="140" src="@if($item->image){{url($item->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td> --}}
-                                        <td>
-                                            {{\Carbon\Carbon::parse($item->journal_date)->format('d/m/Y')}}
-                                        </td>
+                                        
                                         <td><h4 @if($item->status==1) class="danger text-center" @else class="success text-center" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editvaluejournalModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
@@ -132,15 +129,7 @@ table.dataTable tbody td {
                                                       @endif
                                                 </fieldset>
               
-                                                <fieldset class="form-group floating-label-form-group">
-                                                  <label class="label-control required">Date </label>
-                                                  <input type="date" class="form-control" id="date" name="date" placeholder="Date" value="{{$item->journal_date}}">
-                                                      @if ($errors->has('date'))
-                                                          <span class="help-block">
-                                                              <strong class="error">{{ $errors->first('date') }}</strong>
-                                                          </span>
-                                                      @endif
-                                                </fieldset>
+                                                
                                               </div>
                                               <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
@@ -213,15 +202,7 @@ table.dataTable tbody td {
                                         @endif
                                   </fieldset>
 
-                                  <fieldset class="form-group floating-label-form-group">
-                                    <label class="label-control required">Date </label>
-                                    <input type="date" class="form-control" id="date" name="date" placeholder="Date">
-                                        @if ($errors->has('date'))
-                                            <span class="help-block">
-                                                <strong class="error">{{ $errors->first('date') }}</strong>
-                                            </span>
-                                        @endif
-                                  </fieldset>
+                                  
                                   
                               </div>
                               <div class="modal-footer">

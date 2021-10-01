@@ -95,7 +95,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('add/region','AdminController@addRegion');
     Route::post('edit/region/{id}','AdminController@editRegion');
     Route::post('assign/region','AdminController@AssignRegion');
-    Route::get('/sales_connects','AdminController@SalesConnects');
+    Route::get('/sales_connects/{modal?}','AdminController@SalesConnects')->name('Sales_Connect');
     Route::post('/Reschedule/{id}','AdminController@Reschedule');
     Route::get('/preset_questions/{techid}/{brandid}/{from}','AdminController@PresetQuestions');
     Route::get('/prest_questions','AdminController@allqueries');
@@ -120,7 +120,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('add/subservice','AdminController@addsubMainService');
     Route::post('edit/subservice/{id}','AdminController@editsubMainService');
     Route::get('active/subservice/{id}','AdminController@activesubMainService');
-    Route::get('/business_solutions','AdminController@businessSolutions');
+    Route::get('/business_solutions/','AdminController@businessSolutions');
     Route::post('/add/business_solution','AdminController@addbusinesssolution');
     Route::post('/edit/business_solution/{id}','AdminController@editbusinesssolution');
     Route::get('/logout', 'AdminController@logout')->name('Admin-Logout');
@@ -128,7 +128,10 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('add/page/details','AdminController@addpagedetails');
     Route::post('edit/page/{id}','AdminController@editpage');
     Route::get('/feedbacks','AdminController@feedbacks');
-
+    Route::post('sales_connect/schedule/accept/{id}','AdminController@scheduleacceptforsalesconnect');
+    Route::get('request_for/{type}/{id}/{modal?}','AdminController@requestslist')->name('Request_Call');
+    Route::post('respond/request/{id}','AdminController@RequestRespond');
+    Route::get('read/notification/{id}/{type}','AdminController@readNotification');
 });
 // Route::group(['prefix' => 'admin'], function () {
 //     Route::get('admin/login','GeneralController@adminLogin')->name('Admin-Login');

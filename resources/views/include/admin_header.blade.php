@@ -130,53 +130,65 @@
             {{-- <li class="dropdown dropdown-language nav-item"><a class="dropdown-toggle nav-link" id="dropdown-flag" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flag-icon flag-icon-gb"></i><span>English</span><span class="selected-language"></span></a>
               <div class="dropdown-menu" aria-labelledby="dropdown-flag"><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-gb"></i> English</a><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-fr"></i> French</a><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-cn"></i> Chinese</a><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-de"></i> German</a></div>
             </li> --}}
-            {{-- <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-bell"></i><span class="badge badge-pill badge-default badge-danger badge-default badge-up">5</span></a>
+            <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-bell"></i>@if($not_count!=0)<span class="badge badge-pill badge-default badge-danger badge-default badge-up">{{$not_count}}</span>@endif</a>
               <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
                 <li class="dropdown-menu-header">
-                  <h6 class="dropdown-header m-0"><span class="grey darken-2">Notifications</span></h6><span class="notification-tag badge badge-default badge-danger float-right m-0">5 New</span>
+                  <h6 class="dropdown-header m-0"><span class="grey darken-2">Notifications</span></h6><span class="notification-tag badge badge-default badge-danger float-right m-0">@if($not_count!=0){{$not_count!=0?$not_count:""}} New @endif</span>
                 </li>
-                <li class="scrollable-container media-list w-100"><a href="javascript:void(0)">
-                    <div class="media">
-                      <div class="media-left align-self-center"><i class="ft-plus-square icon-bg-circle bg-cyan"></i></div>
-                      <div class="media-body">
-                        <h6 class="media-heading">You have new order!</h6>
-                        <p class="notification-text font-small-3 text-muted">Lorem ipsum dolor sit amet, consectetuer elit.</p><small>
-                          <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">30 minutes ago</time></small>
-                      </div>
-                    </div></a><a href="javascript:void(0)">
-                    <div class="media">
-                      <div class="media-left align-self-center"><i class="ft-download-cloud icon-bg-circle bg-red bg-darken-1"></i></div>
-                      <div class="media-body">
-                        <h6 class="media-heading red darken-1">99% Server load</h6>
-                        <p class="notification-text font-small-3 text-muted">Aliquam tincidunt mauris eu risus.</p><small>
-                          <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">Five hour ago</time></small>
-                      </div>
-                    </div></a><a href="javascript:void(0)">
-                    <div class="media">
-                      <div class="media-left align-self-center"><i class="ft-alert-triangle icon-bg-circle bg-yellow bg-darken-3"></i></div>
-                      <div class="media-body">
-                        <h6 class="media-heading yellow darken-3">Warning notifixation</h6>
-                        <p class="notification-text font-small-3 text-muted">Vestibulum auctor dapibus neque.</p><small>
-                          <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">Today</time></small>
-                      </div>
-                    </div></a><a href="javascript:void(0)">
-                    <div class="media">
-                      <div class="media-left align-self-center"><i class="ft-check-circle icon-bg-circle bg-cyan"></i></div>
-                      <div class="media-body">
-                        <h6 class="media-heading">Complete the task</h6><small>
-                          <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">Last week</time></small>
-                      </div>
-                    </div></a><a href="javascript:void(0)">
-                    <div class="media">
-                      <div class="media-left align-self-center"><i class="ft-file icon-bg-circle bg-teal"></i></div>
-                      <div class="media-body">
-                        <h6 class="media-heading">Generate monthly report</h6><small>
-                          <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">Last month</time></small>
-                      </div>
-                    </div></a></li>
-                <li class="dropdown-menu-footer"><a class="dropdown-item text-muted text-center" href="javascript:void(0)">Read all notifications</a></li>
+                @php 
+                        function time_elapsed_string($datetime, $full = false) {
+                            $now = new DateTime;
+                            $ago = new DateTime($datetime);
+                            $diff = $now->diff($ago);
+
+                            $diff->w = floor($diff->d / 7);
+                            $diff->d -= $diff->w * 7;
+
+                            $string = array(
+                                'y' => 'year',
+                                'm' => 'month',
+                                'w' => 'week',
+                                'd' => 'day',
+                                'h' => 'hour',
+                                'i' => 'minute',
+                                's' => 'second',
+                            );
+                            foreach ($string as $k => &$v) {
+                                if ($diff->$k) {
+                                    $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+                                } else {
+                                    unset($string[$k]);
+                                }
+                            }
+
+                            if (!$full) $string = array_slice($string, 0, 1);
+                            return $string ? implode(', ', $string) . ' ago' : 'just now';
+                        }
+                    @endphp
+                    @if($not_count!=0)
+                      @forelse($new_notifs as $new)
+                        <li class="scrollable-container media-list w-100">
+                          
+                          <a href="{{url('admin/read/notification')}}/{{$new->id}}/{{$new->type}}">
+                            <div class="media">
+                              <div class="media-left align-self-center"><i class="ft-plus-square icon-bg-circle bg-cyan"></i></div>
+                              <div class="media-body">
+                                <h6 class="media-heading">{{$new->message}}</h6>
+                                <p class="notification-text font-small-3 text-muted">{{$new->message}}</p><small>
+                                  <time class="media-meta text-muted" datetime="{{$new->created_at}}">{{ time_elapsed_string($new->created_at) }}</time></small>
+                              </div>
+                            </div>
+                          </a>
+                          
+                        </li>
+                        @empty 
+                      @endforelse
+                      <li class="dropdown-menu-footer"><a class="dropdown-item text-muted text-center" href="{{url('admin/read/notification')}}/{{Auth::User()->id}}/{{'All'}}">Read all notifications</a></li>
+                    @else
+                    @endif
+                
               </ul>
-            </li> --}}
+            </li>
             {{-- <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-mail"></i><span class="badge badge-pill badge-default badge-info badge-default badge-up">5              </span></a>
               <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
                 <li class="dropdown-menu-header">

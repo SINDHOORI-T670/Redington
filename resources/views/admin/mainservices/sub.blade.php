@@ -5,6 +5,10 @@
 <link rel="stylesheet" href="http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/dist/bootstrap-tagsinput.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" />
 <style>
+    table {
+        table-layout: fixed;
+        width: 100%;
+    }
     .required:after {
         content: "*";
         color: red;
@@ -63,11 +67,20 @@ table.dataTable tbody td {
                                     <tr role="row" class="odd">
                                         <td>{{$item->name}}</td>
                                         <td>
-                                            <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editResourceModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
-                                            <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
-                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/subservice')}}/{{$item->id}}" method="get">
-                                                {{ csrf_field() }}
-                                            </form>
+                                            <ul class="list-inline mb-0">
+                                                <li>
+                                                    <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editResourceModal{{$item->id}}"  href="#" title="Edit"><i class="icon-pencil"></i> Edit</a>
+                                                </li>
+                                                <li>
+                                                    <button @if($item->status==0) class="btn btn-success text-white tab-order" @else class="btn btn-danger text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->name }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-up"></i> Active @else <i class="fa fa-thumbs-o-down"></i> Inactive @endif</button>
+                                                    <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/subservice')}}/{{$item->id}}" method="get">
+                                                        {{ csrf_field() }}
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <a href="{{url('admin/request_for')}}/{{'Sub_service'}}/{{$item->id}}" class="btn btn-info text-white tab-order" title="Requests"><i class="icon-list"></i> Requests</a>
+                                                </li>
+                                            </ul>
                                         </td>
                                     </tr>
                                     <div class="modal fade text-left show" id="editResourceModal{{$item->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel35" style="padding-right: 17px;">

@@ -55,6 +55,7 @@ table.dataTable tbody td {
                                 <thead>
                                     <tr role="row">
                                         <th>Name</th>
+                                        <th>Date</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -63,6 +64,9 @@ table.dataTable tbody td {
                                     @forelse($list as $item)
                                     <tr role="row" class="odd">
                                         <td>{{$item->journal}}</td>
+                                        <td>
+                                            {{\Carbon\Carbon::parse($item->journal_date)->format('d/m/Y')}}
+                                        </td>
                                         <td><h4 @if($item->status==1) class="danger text-center" @else class="success text-center" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editJournalModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
@@ -113,6 +117,15 @@ table.dataTable tbody td {
                                                             </span>
                                                         @endif
                                                     </fieldset>
+                                                    <fieldset class="form-group floating-label-form-group">
+                                                        <label class="label-control required">Date </label>
+                                                        <input type="date" class="form-control" id="date" name="date" placeholder="Date" min="<?php echo date("Y-m-d"); ?>" value="<?php echo date('Y-m-d',strtotime($item->journal_date)) ?>">
+                                                            @if ($errors->has('date'))
+                                                                <span class="help-block">
+                                                                    <strong class="error">{{ $errors->first('date') }}</strong>
+                                                                </span>
+                                                            @endif
+                                                      </fieldset>
                                               </div>
                                               <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
@@ -171,6 +184,16 @@ table.dataTable tbody td {
                                             </span>
                                         @endif
                                     </fieldset>
+
+                                    <fieldset class="form-group floating-label-form-group">
+                                        <label class="label-control required">Date </label>
+                                        <input type="date" class="form-control" id="date" name="date" placeholder="Date" min="<?php echo date("Y-m-d"); ?>">
+                                            @if ($errors->has('date'))
+                                                <span class="help-block">
+                                                    <strong class="error">{{ $errors->first('date') }}</strong>
+                                                </span>
+                                            @endif
+                                      </fieldset>
                                 </div>
                                 <div class="modal-footer">
                                     <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">

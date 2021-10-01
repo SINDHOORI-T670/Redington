@@ -49,6 +49,7 @@
                                         <td><h4 @if($business->status==1) class="danger text-center" @else class="success text-center" @endif>{{($business->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editBusinessModal{{$business->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
+                                            <a href="{{url('admin/request_for')}}/{{'Business_Solution'}}/{{$business->id}}" class="btn btn-info text-white tab-order" title="Requests"><i class="icon-list"></i> Requests</a>
                                             {{-- <button @if($business->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('service-active-{{ $business->id }}','{{ $business->name }}','{{ $business->status }}');"> @if($business->status==0) <i class="fa fa-thumbs-o-down"></i> Inactive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
                                             <form id="service-active-{{ $business->id }}" action="{{url('admin/active/service/')}}/{{$business->id}}" method="get">
                                                 {{ csrf_field() }}
