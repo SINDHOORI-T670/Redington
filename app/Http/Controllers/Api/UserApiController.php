@@ -27,7 +27,7 @@ use App\Models\ValueJournal;
 use App\Models\ValueStory;
 
 use App\Models\Brand;
-
+use App\Models\BusinessSolution;
 use App\Models\Region;
 
 use App\Models\SalesConnect;
@@ -45,6 +45,15 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
+
+use App\Models\Notification;
+
+use App\Models\Requests;
+
+use App\Models\EventRegister;
+use App\Models\History;
+use App\Models\SubService;
+
 class UserApiController extends Controller
 
 {
@@ -487,5 +496,72 @@ class UserApiController extends Controller
             $response['message'] = $validator->messages()->first();
         }
     }
+
+    public function getRequests($userid){
+        $requestData = Requests::where('from_id',$userid)->with('subservice','business')->get();
+        $response['data']= $requestData;
+        return $response;
+    }
+
+    public function getschedules($userid){
+        $salesData = SalesConnect::where('from_id',$userid)->get();
+        $response['data']= $salesData;
+        return $response;
+    }
+
+    public function myevents($userid){
+        $eventData = EventRegister::where('user_id',$userid)->get();
+        $response['data']= $eventData;
+        return $response;
+    }
+
+    public function myhistory($userid){
+        $historyData = History::where('from',$userid)->get();
+        $response['data']= $historyData;
+        return $response;
+    }
+
+    public function newrequest($userid,$id,Request $request){
+        $requestId = Requests::insertGetId([
+            'req_id' => $id,
+            'from_id'=>$userid,
+            'type'=>$request->type, //Sub_service,Business_Solution,Sales_Connect
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+        ]);
+        $admin = User::find(1);
+        $user = User::find($request->user_id);
+        if($request->type=="Sub_service"){
+            $sub = SubService::find($id);
+            $message = "Appoinment for ".$sub->name." is requested from ".$user->name;
+        }elseif($request->type=="Business_Solution"){
+            $business = BusinessSolution::find($id);
+            $message = "Meeting schedule for ".$business->name." is requested from ".$user->name;
+        }else{
+            $sales = SalesConnect::find($id);
+            $message = "A meeting requested from ".$user->name;
+        }
+        if(isset($requestId)){
+            $notificationId = Notification::insertGetId([
+                'req_from' => $requestId,
+                'from_id'=>$request->user_id, //logged in user
+                'to_id' => $admin->id,
+                'type' => $request->type,
+                'message' => $message,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+    
+            ]);
+            Request::where('id',$requestId)->update(['notifid'=>$notificationId]);
+            $response['status']     = 'Success';
+            $response['data']       = 'Request Send';
+            return $response;
+        }else{
+            $response['status']  = 'Error';
+            $response['data'] = $validator->messages()->first();
+            return $response;
+        }
+    }
+
 }
 

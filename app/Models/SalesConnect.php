@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SalesConnect extends Model
 {
-    protected $with = ['region','technology','brand','user','reschedule','from','product','notification'];
+    protected $with = ['region','technology','brand','user','reschedule','from','product','requestdata'];
 
     public function region()
     {
@@ -40,8 +40,8 @@ class SalesConnect extends Model
     {
         return $this->belongsTo('App\Models\Product','product_id','id');
     }
-    public function notification()
+    public function requestdata()
     {
-        return $this->hasMany('App\Models\Notification','req_from','id')->where('type','Sales_Connect')->latest();
+        return $this->hasMany('App\Models\Requests','req_id','id')->where('type','Sales_connect')->latest();
     }
 }

@@ -40,3 +40,8 @@ Route::get('past/events','Api\UserApiController@pasteventsList');
 Route::post('/new/sales_connect','Api\UserApiController@connectnow');
 Route::post('/preset_question/send/reply/{id}','Api\UserApiController@sendReply');
 Route::post('/new/schedule/meeting/{id}','Api\UserApiController@scheduleMeeting');
+Route::get('/requests/{userid}','Api\UserApiController@getRequests');
+Route::get('/meeting/schedules/{userid}','Api\UserApiController@getschedules');
+Route::get('/myevents/{userid}','Api\UserApiController@myevents');
+Route::get('/myhistory/{userid}','Api\UserController@myhistory');
+Route::post('/new/request/{userid}/{id}','Api\UserController@newrequest');

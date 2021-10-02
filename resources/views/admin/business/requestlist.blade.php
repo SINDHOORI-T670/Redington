@@ -82,7 +82,7 @@
                                                     </fieldset><br>
                                                     <fieldset class="input-group floating-label-form-group">
                                                         <label class="label-control col-md-4"><b>Requested Date</b>:</label>
-                                                        <input  type="text" class="form-control col-md-8" value="{{ Carbon\Carbon::parse($request->created_at)->format('j F Y h:i A')}}">
+                                                        <input  type="text" class="form-control col-md-8" value="{{ Carbon\Carbon::parse($request->date_time)->format('j F Y h:i A')}}">
                                                     </fieldset><br>
                                                     <fieldset class="input-group floating-label-form-group">
                                                         <label class="label-control col-md-4"><b>Status</b>:</label>

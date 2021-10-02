@@ -30,8 +30,25 @@ Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'customer'], fu
     Route::get('/home','CustomerController@index')->name('Customer_Dashboard');
     Route::get('/edit/profile','CustomerController@editprofile');
     Route::post('/update/profile','CustomerController@updateprofile');
-    Route::get('/logout', 'CustomerController@logout')->name('customer-Logout');
+    // Route::get('/value_journals','CustomerController@listjournals');
+    // Route::get('/value_stories','CustomerController@liststories');
+    // Route::get('/events','CustomerController@listevents');
+    // Route::get('/services','CustomerController@mainservices');
+    // Route::get('/sales_connect','CustomerController@listsalesconnects');
+    // Route::get('/businnes_solutions','CustomerController@listbusiness');
+    // Route::get('/logout', 'CustomerController@logout')->name('customer-Logout');
 });
+
+// Employee protected routes
+Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'employee'], function () {
+    Route::get('/', 'HomeController@index')->name('Employee-Home');
+    Route::get('/home','EmployeeController@index')->name('Employee_Dashboard');
+    Route::get('/edit/profile','EmployeeController@editprofile');
+    Route::post('/update/profile','EmployeeController@updateprofile');
+    Route::get('/sales_connect','EmployeeController@listsalesconnects');
+    Route::get('/logout', 'EmployeeController@logout')->name('Employee-Logout');
+});
+
 
 // admin protected routes
 Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], function () {

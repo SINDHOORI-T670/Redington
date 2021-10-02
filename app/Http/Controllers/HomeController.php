@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
+use Session;
 class HomeController extends Controller
 {
     /**
@@ -27,64 +28,22 @@ class HomeController extends Controller
     {
         
         if(Auth::User()->isAdmin()){
-            // dd("test");
             return redirect(route('Admin_Dashboard'));
             // return redirect('admin/home');
         }else{
-            Session::flash('message','Incorrect e-mail and password!');
-            return redirect('login');
-        }
-            // dd("test");
-        if(Auth::user()->isCustomer() && Auth::User()->verify_status == 1){
-            return redirect(route('Customer_Dashboard'));
-        }else{
-            Session::flash('message','Your account not yet verified !');
-            return redirect('login');
-        }
+            // dd(Auth::User()->verify_status);
+            if(Auth::user()->isCustomer() && Auth::User()->verify_status == 1){
+                return redirect(route('Customer_Dashboard'));
+            }elseif(Auth::user()->isPartner() && Auth::User()->verify_status == 1){
+                dd("im partner");
+                // return redirect('customer/home');
+            }elseif(Auth::User()->isEmployee()==true && Auth::User()->verify_status == 1){
+                return redirect(route('Employee_Dashboard'));
+            }else{
+                Session::flash('message','Your account not yet verified !');
+                return redirect('login');
+            }
 
-        if(Auth::user()->isPartner() && Auth::User()->verify_status == 1){
-            dd("im partner");
-            // return redirect('customer/home');
-            return redirect(route('Partner_Dashboard'));
-        }else{
-            Session::flash('message','Your account not yet verified !');
-            return redirect('login');
         }
-
-        if(Auth::user()->isEmployee() && Auth::User()->verify_status == 1){
-            dd("im employee");
-            // return redirect('customer/home');
-            return redirect(route('Employee_Dashboard'));
-        }else{
-            Session::flash('message','Your account not yet verified !');
-            return redirect('login');
-        }
-    //     if ( Auth::user()->isCutomer() ) {
-    //         return redirect('customer/home');
-    //    }
-
-    //    // allow admin to proceed with request
-    //    else if ( Auth::user()->isAdmin() ) {
-    //        dd("ooo");
-    //       return redirect('admin/home');
-    //    }
-        // if(Auth::User() && Auth::User()->type == 4 ){
-        //     if(Auth::User()->verify_status == 1){
-        //         dd("Hello Employee");
-        //     }else{
-        //         Session::flash('message','Your account not yet verified !');
-        //         return redirect('login');
-        //     }
-            
-        // }
-        // else if(Auth::User()->type == 4 && Auth::User()->verify_status == 0){
-        //     Session::flash('message','Wrong Password or your account is not yet verified !');
-        //     return redirect('/login');
-        // }
-        // else{
-        //     Session::flash('message','Please check your email and password!');
-        //     return redirect('/login');
-        // }
     }
-    
 }

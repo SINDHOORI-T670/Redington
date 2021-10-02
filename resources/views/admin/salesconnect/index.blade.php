@@ -161,7 +161,7 @@ table.dataTable tbody td {
                                             <form method="post" action="{{url('admin/sales_connect/schedule/accept')}}/{{$item->id}}">
                                                 @csrf
                                                 <div class="modal-body">
-                                                    <p class="text-info text-center"><strong>@if(isset($item->notification))@foreach($item->notification as $msg)@if($loop->first){{$msg->message}}@endif @endforeach @else @endif</strong></p>
+                                                    <p class="text-info text-center"><strong> @if(isset($item->requestdata->notifi)) {{$item->requestdata->notifi->message}} @else @endif</strong></p>
                                                     <fieldset class="input-group floating-label-form-group">
                                                         <label class="label-control col-md-4"><b>Technology</b>:</label>
                                                         <input  type="text" class="form-control col-md-8" value="{{(isset($item->technology))?$item->technology->name:""}}">

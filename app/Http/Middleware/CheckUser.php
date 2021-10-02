@@ -42,15 +42,14 @@ class CheckUser
             }
 
             // allow user to proceed with request
-            else if ( Auth::user()->isCustomer() ) {
+            if ( Auth::user()->isCustomer() ) {
                     return $next($request);
             }
-            else if ( Auth::user()->isPartner() ) {
+            if ( Auth::user()->isPartner() ) {
                 
                 return $next($request);
             }
-            else if(Auth::user()->isEmployee()){
-
+            if(Auth::user()->isEmployee() ){
                 return $next($request);
             }
             

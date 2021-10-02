@@ -130,7 +130,7 @@
             {{-- <li class="dropdown dropdown-language nav-item"><a class="dropdown-toggle nav-link" id="dropdown-flag" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flag-icon flag-icon-gb"></i><span>English</span><span class="selected-language"></span></a>
               <div class="dropdown-menu" aria-labelledby="dropdown-flag"><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-gb"></i> English</a><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-fr"></i> French</a><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-cn"></i> Chinese</a><a class="dropdown-item" href="#"><i class="flag-icon flag-icon-de"></i> German</a></div>
             </li> --}}
-            <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-bell"></i>@if($not_count!=0)<span class="badge badge-pill badge-default badge-danger badge-default badge-up">{{$not_count}}</span>@endif</a>
+            {{-- <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-bell"></i>@if($not_count!=0)<span class="badge badge-pill badge-default badge-danger badge-default badge-up">{{$not_count}}</span>@endif</a>
               <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
                 <li class="dropdown-menu-header">
                   <h6 class="dropdown-header m-0"><span class="grey darken-2">Notifications</span></h6><span class="notification-tag badge badge-default badge-danger float-right m-0">@if($not_count!=0){{$not_count!=0?$not_count:""}} New @endif</span>
@@ -188,7 +188,7 @@
                     @endif
                 
               </ul>
-            </li>
+            </li> --}}
             {{-- <li class="dropdown dropdown-notification nav-item"><a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-mail"></i><span class="badge badge-pill badge-default badge-info badge-default badge-up">5              </span></a>
               <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
                 <li class="dropdown-menu-header">
@@ -233,14 +233,14 @@
             <li class="dropdown dropdown-user nav-item">
                 <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="avatar avatar-online"><img src="@if(Auth::User()->image){{asset(Auth::User()->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar"><i></i></span><span class="user-name">{{Auth::User()->name}}</span></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{url('customer/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
-                    {{-- <a class="dropdown-item" href="{{url('customer/edit/company/profile')}}"><i class="icon-home"></i> My Company</a> --}}
+                    <a class="dropdown-item" href="{{url('employee/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
+                    {{-- <a class="dropdown-item" href="{{url('employee/edit/company/profile')}}"><i class="icon-home"></i> My Company</a> --}}
                     {{-- <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
                     <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a> --}}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{url('customer/logout')}}" onclick="event.preventDefault();
+                    <a class="dropdown-item" href="{{url('employee/logout')}}" onclick="event.preventDefault();
                         document.getElementById('logout-form1').submit();">
-                        <form id="logout-form1" action="{{route('customer-Logout')}}" method="get" style="display: none;">
+                        <form id="logout-form1" action="{{route('Employee-Logout')}}" method="get" style="display: none;">
                             {{ csrf_field() }}
                         </form>
                         <i class="ft-power"></i> Logout</a>
@@ -259,11 +259,11 @@
         {{-- <li class=" nav-item">
           <a href="#"><i class="fa fa-users"></i><span class="menu-title" data-i18n="nav.page_layouts.main">Users</span></a>
           <ul class="menu-content">
-            <li><a class="menu-item" href="{{url('customer/list/user/2')}}" data-i18n="nav.page_layouts.1_column">Customer</a>
+            <li><a class="menu-item" href="{{url('employee/list/user/2')}}" data-i18n="nav.page_layouts.1_column">Customer</a>
             </li>
-            <li><a class="menu-item" href="{{url('customer/list/user/3')}}" data-i18n="nav.page_layouts.2_columns">Partner</a>
+            <li><a class="menu-item" href="{{url('employee/list/user/3')}}" data-i18n="nav.page_layouts.2_columns">Partner</a>
             </li>
-            <li><a class="menu-item" href="{{url('customer/list/user/4')}}" data-i18n="nav.page_layouts.2_columns">Employee</a>
+            <li><a class="menu-item" href="{{url('employee/list/user/4')}}" data-i18n="nav.page_layouts.2_columns">Employee</a>
             </li>
           </ul>
         </li> --}}
@@ -317,12 +317,12 @@
             </li>
           </ul>
         </li> --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/list/Redington/services')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Services</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/list/Redington/services')}}"><i class="fa fa-sellsy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Services</span></a>
         </li> --}}
 
         {{-- Technologies --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/list/Redington/technologies')}}"><i class="icon-screen-desktop"></i><span class="menu-title" data-i18n="nav.chat-application.main">Technologies</span></a>
-        </li> --}}
+        <li class=" nav-item"><a href="{{url('employee/sales_connect')}}"><i class="icon-screen-desktop"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
+        </li>
 
 
         {{-- Events --}}
@@ -352,35 +352,35 @@
         </li> --}}
 
         {{-- Rewards --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/list/rewards')}}"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/list/rewards')}}"><i class="icon-trophy"></i><span class="menu-title" data-i18n="nav.chat-application.main">Rewards</span></a>
         </li> --}}
 
         {{-- Resources --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/resource/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Resources</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/resource/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Resources</span></a>
         </li> --}}
 
         {{-- Value Journals --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
         </li> --}}
 
         {{-- Value Stories --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
         </li> --}}
 
         {{-- Brands --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/list/brands')}}"><i class="icon-layers"></i><span class="menu-title" data-i18n="nav.chat-application.main">Brands</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/list/brands')}}"><i class="icon-layers"></i><span class="menu-title" data-i18n="nav.chat-application.main">Brands</span></a>
         </li> --}}
 
         {{-- Regions --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/list/regions')}}"><i class="fa fa-location-arrow"></i><span class="menu-title" data-i18n="nav.chat-application.main">Regions</span></a>
         </li> --}}
 
         {{-- Preset Question --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/prest_questions')}}"><i class="icon-question"></i><span class="menu-title" data-i18n="nav.chat-application.main">Preset Questions</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/prest_questions')}}"><i class="icon-question"></i><span class="menu-title" data-i18n="nav.chat-application.main">Preset Questions</span></a>
         </li> --}}
 
         {{-- Sales Connect --}}
-        {{-- <li class=" nav-item"><a href="{{url('customer/sales_connects')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
+        {{-- <li class=" nav-item"><a href="{{url('employee/sales_connects')}}"><i class="icon-speech"></i><span class="menu-title" data-i18n="nav.chat-application.main">Sales Connects</span></a>
         </li> --}}
         
         {{-- Blogs --}}

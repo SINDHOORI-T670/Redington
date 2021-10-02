@@ -39,17 +39,20 @@ class CheckAdmin
             }else{
                 return redirect('admin/login');
             }
+
             if ( Auth::user()->isCustomer() ) {
                  return redirect(route('Customer-Home'));
             }else{
                 return redirect('login');
             }
+
             if ( Auth::user()->isPartner() ) {
                 
                 return redirect(route('Partner-Home'));
             }else{
                 return redirect('login');
             }
+            
             if(Auth::user()->isEmployee()){
 
                 return redirect(route('Employee-Home'));

@@ -11,17 +11,29 @@ use App\User;
 use App\Models\Setting;
 use Redirect;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
+use App\Models\ValueJournal;
+use App\Models\ValueStory;
+use Carbon\Carbon;
+use App\Models\Journal;
+use App\Models\SalesConnect;
+use App\Models\Events;
+use App\Models\MainService;
+use App\Models\SubService;
+use App\Models\BusinessSolution;
 class CustomerController extends Controller
 {
     public function __construct(){
         // $this->middleware('auth');
         // $this->middleware('CheckUser');
-        $settings = Setting::select('key', 'value')->get();
-        $company = $settings->mapWithKeys(function ($item) {
-                return [$item['key'] => $item['value']];
+        $this->middleware(function ($request, $next) {
+            $settings = Setting::select('key', 'value')->get();
+            $company = $settings->mapWithKeys(function ($item) {
+                    return [$item['key'] => $item['value']];
+            });
+            view()->share(['company' => $company,'not_count' => $not_count,'new_notifs' => $new_notifs]);
+            return $next($request);
         });
-        // dd($company);
-        view()->share(['company' => $company]);
     }
 
     public function index(){
@@ -29,7 +41,7 @@ class CustomerController extends Controller
     }
 
     public function editprofile(){
-        $customer = User::where('type',1)->first();
+        $customer = User::find(Auth::User()->id);
         return view('customer.profile',compact('customer'));
     }
     
@@ -62,6 +74,10 @@ class CustomerController extends Controller
         // dd($customer);
         return redirect()->back()->with('message', 'Profile Updated Successfully');
         
+    }
+    public function listjournals(){
+        $list = Journal::where('status',0)->latest()->paginate(20);
+        return view('customer.list.journals',compact('list'));
     }
 
     public function logout(Request $request)

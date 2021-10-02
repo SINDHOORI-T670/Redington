@@ -1767,8 +1767,9 @@ class AdminController extends Controller
             
         }
         $sales = SalesConnect::find($id);
+        $requests = Requests::where('req_id',$sales->id)->where('type','Sales_connect')->first();
         $notificationId = Notification::insertGetId([
-            'req_from' => $sales->id,
+            'req_from' => $request->id,
             'from_id'=>Auth::user()->id,
             'to_id' => $sales->from_id,
             'type' => "Sales_Connect",
@@ -1777,6 +1778,10 @@ class AdminController extends Controller
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
         ]);
+        
+        if($notificationId){
+            $requests->update(['notifid'=>$notificationId]);
+        }
         return redirect()->back()->with('success', 'Rescheduled successfully');
     }
 
@@ -2466,17 +2471,19 @@ class AdminController extends Controller
             $item = SubService::where('id',$data->req_id)->first();
             $heading= $item->name;
             $type = "Sub_service";
+            $text = "Appoinment for ";
         }elseif($request->type=="Business_Solution"){
             $item = BusinessSolution::where('id',$data->req_id)->first();
             $heading= $item->name;
             $type = "Business_Solution";
+            $text = "Scheduled a meeting for ";
         }
         $notificationId = Notification::insertGetId([
             'req_from' => $data->id,
             'from_id'=>Auth::user()->id,
             'to_id' => $data->from_id,
             'type' => $type,
-            'message' => "Appoinment for ".$heading." is ".$status,
+            'message' => $text.$heading." is ".$status,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
