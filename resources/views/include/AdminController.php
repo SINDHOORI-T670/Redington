@@ -1,42 +1,81 @@
 <?php
 
+
+
 namespace App\Http\Controllers;
 
+
+
 use Illuminate\Http\Request;
+
 use Auth;
+
 use Illuminate\Support\Facades\Validator;
+
 use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\Session;
+
 use App\User;
+
 use App\Models\Setting;
+
 use Redirect;
+
 use Illuminate\Support\Facades\DB;
+
 use App\Models\Service;
+
 use App\Models\Technology;
+
 use App\Models\UserSpec;
+
 use App\Models\Reward;
+
 use App\Models\Redeem;
+
 use App\Models\Redeemdeduction;
+
 use App\Models\PartnerReward;
+
 use App\Models\Resource;
+
 use App\Models\SubResource;
+
 use App\Models\ValueJournal;
+
 use App\Models\ValueStory;
+
 use Carbon\Carbon;
+
 use App\Models\Journal;
+
 use File;
+
 use Response;
+
 use App\Models\Brand;
+
 use App\Models\Region;
+
 use App\Models\Poc;
+
 use App\Models\RegionConnection;
+
 use Illuminate\Support\Str;
+
 use App\Models\SalesConnect;
+
 use App\Models\Reschedule;
+
 use App\Models\PresetQuestion;
+
 use App\Models\QueryRequest;
+
 use App\Models\ReplyRequest;
+
 use App\Models\Product;
+
 use App\Models\Events;
 use App\Models\MainService;
 use App\Models\SubService;
@@ -47,10 +86,15 @@ use App\Models\Feedback;
 use App\Models\Notification;
 use App\Models\Requests;
 class AdminController extends Controller
+
 {
+
     public function __construct(){
+
         // $this->middleware('auth');
+
         // $this->middleware('CheckAdmin');
+
         $this->middleware(function ($request, $next) {
             $settings = Setting::select('key', 'value')->get();
             $company = $settings->mapWithKeys(function ($item) {
@@ -61,114 +105,223 @@ class AdminController extends Controller
             view()->share(['company' => $company,'not_count' => $not_count,'new_notifs' => $new_notifs]);
             return $next($request);
         });
-        
     }
+
+
 
     public function index(){
+
         return view('admin.home');
+
     }
+
+
 
     public function editprofile(){
+
         $admin = User::where('type',1)->first();
+
         return view('admin.profile',compact('admin'));
+
     }
+
     
+
     public function updateprofile(Request $request){
+
         // dd($request->all());
+
         $admin = User::find(Auth::User()->id);
+
         $fileName = "";
+
             if ($request->file('image') != "") {
+
                 $userFile = User::find(Auth::User()->id);
+
                 if ($userFile->image != "") {
+
                     unlink($userFile->image);
+
                 }
+
                 $file = $request->file('image');
+
                 $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+
                 $file->move('uploads/profiles/', $fileName);
-                $fileName = 'uploads/profiles/'.$fileName;
+
+                // $fileName = 'uploads/profiles/'.$fileName;
+                $fileName = $request->root().'/uploads/profiles/'.$fileName;
+
             }else{
+
                 $userFile = User::find(Auth::User()->id);
+
                 $fileName=$userFile->image;
+
             }
+
         $data = [
+
             'name' => $request->name,
+
             'phone' => $request->phone,
+
             'email' => $request->email,
+
             'image' => $fileName,
-            'password' => Hash::make($request->password),
+
+            'password' => isset($request->password)?Hash::make($request->password):$admin->password,
+
         ];
+
         // dd($data);
+
         User::where('id',Auth::User()->id)->update($data);
+
         // dd($admin);
+
         return redirect()->back()->with('message', 'Admin Updated');
+
         
+
     }
+
+
 
     public function editCompanyDetails(){
+
         $setting = Setting::select('key', 'value')->get();
+
         $settings = $setting->mapWithKeys(function ($item) {
+
                 return [$item['key'] => $item['value']];
+
         });
+
         return view('admin.settings',compact('settings'));
+
     }
+
+
 
     public function updateCompanyDetails(Request $request){
+
         $settings = $request->all();
+
         unset($settings['_token']);
+
         foreach ($settings as $key => $setting) {
+
             $temp_setting = Setting::where('key', 'like', '%' . $key . '%')->first();
+
             // $temp_setting = Setting::where('key', $key)->first();
+
             if($temp_setting){
+
                 if($temp_setting->key == 'site_favicon') {
+
                     if($request->file('site_favicon') == null) {
+
                         $logo = $temp_setting->value;
+
                     } else {
+
                         $logo = $temp_setting->value;
+
                         
+
                     }
+
                     $temp_setting->value = $logo;
 
+
+
                 }
+
                 elseif($temp_setting->key == 'site_logo') {
 
+
+
                     if($request->file('site_logo') == null) {
+
                         $logo = $temp_setting->value;
+
                     } else {
+
                         $logo = $temp_setting->value;
+
                         
+
                     }
+
                     $temp_setting->value = $logo;
+
                 }
+
                 else {
+
                     $temp_setting->value = $request->$key;               
+
                 } 
+
                 $temp_setting->save();
+
             }else{
+
                 Setting::set($key,$setting);
+
                 Setting::save();
+
             }  
+
                 
+
         }   
+
         return redirect()->back()->with('message', 'Admin Updated');
+
     }
+
+
 
     public function listUser(Request $request){
+
         $type = $request->type;
+
         $users = User::where('type',$request->type)->latest()->paginate(20);
+
         // $users = User::where('type',$request->type)->get();
+
         // dd($users);
+
         $rewards = Reward::where('status',0)->get();
+
         $regions = Region::where('status',0)->get();
+
         return view('admin.user.list',compact('users','type','rewards','regions'));
+
     }
 
+
+
     public function createUser(Request $request){
+
         $type = $request->type;
+
         $services= Service::latest()->get();
+
         $technologies= Technology::latest()->get();
+
         $pocs = POC::where('status',0)->latest()->get();
+        // dd($pocs);
+
         return view('admin.user.create',compact('type','services','technologies','pocs'));
+
     }
+
+
 
     public function createValidation($request)
     {
@@ -233,6 +386,8 @@ class AdminController extends Controller
         return $validator;
     }
 
+
+
     public function saveUser(Request $request){
 
         $validator = $this->createValidation($request);
@@ -259,7 +414,9 @@ class AdminController extends Controller
 
                 $file->move('uploads/profiles/', $fileName);
 
-                $fileName = 'uploads/profiles/' . $fileName;
+                // $fileName = 'uploads/profiles/' . $fileName;
+                $fileName = $request->root().'/uploads/profiles/'.$fileName;
+                
 
             }
 
@@ -279,7 +436,7 @@ class AdminController extends Controller
 
                 'image'=>$fileName,
 
-                'password' => Hash::make($request->password),
+                'password' => Hash::make(123456),
 
                 'company'=> $request->company,
 
@@ -523,7 +680,8 @@ class AdminController extends Controller
 
                 $file->move('uploads/profiles/', $fileName);
 
-                $fileName = 'uploads/profiles/' . $fileName;
+                // $fileName = 'uploads/profiles/' . $fileName;
+                $fileName = $request->root().'/uploads/profiles/'.$fileName;
 
             }
 
@@ -602,206 +760,409 @@ class AdminController extends Controller
 
     }
 
+
+
     public function activeUser($id){
+
         // User::where('id',$id)->delete();
+
         $status="";
+
         $user=User::find($id);
+
         if($user->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         User::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','User status updated successfully');
+
     }
+
     
+
     public function AssignRegion(Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'region' => 'required',
+
                 'check' => 'required',
+
             ],[
+
                 'region.required' => 'Please select any region',
+
                 'check.required' => 'Please choose some employees',
+
             ]);
+
             if ($validator->fails()) {
+
                 $messages = $validator->messages();
+
                 return Redirect::back()->withErrors($messages)->withInput();
+
             }
+
         $users=$request->check;
+
         if((isset($users)) && (isset($request->region))){
+
             foreach(explode(",",$users) as $user){
+
                 $regionData = RegionConnection::where('user_id',$user)->get();
+
                 // dd($regionData);
+
                 if(count($regionData)>0){
+
                     RegionConnection::where('user_id',$user)->update(['region_id' => $request->region]);
+
                    
+
                 }else{
+
                     $RegConID = RegionConnection::insertGetId([
+
                         'user_id' => $user,
+
                         'region_id' => $request->region,
+
                         "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
                         "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
         
+
                     ]);
+
                     DB::commit();
+
                 
+
                 }
+
             }
+
             return redirect()->back()->with('success', 'Region assigned successfully');
+
         }
+
         else{
+
             return redirect()->back()->with('error', 'Something went wrong,please try again !!!');
+
         }
+
     }
+
     public function ListRedingtonFeatures($type){
+
         if($type=='services'){
+
             $services = Service::latest()->paginate(20);
+
             // dd($services);
+
             return view('admin.service.list',compact('services'));
+
         }elseif($type=='technologies'){
+
             $technologys = Technology::latest()->paginate(20);
+
             return view('admin.technology.list',compact('technologys'));
+
         }else{
+
             dd("$type");
+
         }
+
     }
+
+
 
     public function AddRedingtonFeatures(Request $request,$type){
+
         // dd($type);
+
         if($type=='technology'){
+
             $validator = Validator::make($request->all(),
+
             [
+
                 'techname' => 'required',
+
                 'techdescription' => 'required',
+
             ],[
+
                 'techname.required' => 'Please enter technology name',
+
                 'techdescription.required' => 'Please add description about the technology',
+
             ]);
+
             if ($validator->fails()) {
+
                 $messages = $validator->messages();
+
                 return Redirect::back()->withErrors($messages)->withInput();
+
             } else  {
+
                 DB::beginTransaction();
+
                 
+
                 $techId = Technology::insertGetId([
+
                     'name' => $request->techname,
+
                     'description' => $request->techdescription,
+
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
                 ]);
+
                 DB::commit();
+
                 return redirect()->back()->with('success','Technology created successfully');
+
             }
+
+
 
         }elseif($type=='service'){
+
             $validator = Validator::make($request->all(),
+
             [
+
                 'servicename' => 'required',
+
                 'servicedescription' => 'required',
+
             ],[
+
                 'servicename.required' => 'Please enter service name',
+
                 'servicedescription.required' => 'Please add description about the service',
+
             ]);
+
             if ($validator->fails()) {
+
                 $messages = $validator->messages();
+
                 return Redirect::back()->withErrors($messages)->withInput();
+
             } else  {
+
                 DB::beginTransaction();
+
                 
+
                 $serviceId = Service::insertGetId([
+
                     'name' => $request->servicename,
+
                     'description' => $request->servicedescription,
+
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+
 
                 ]);
+
                 DB::commit();
+
                 return redirect()->back()->with('success','Service created successfully');
+
             }
+
         }else{
+
             dd($type);
+
         }
+
         
+
     }
+
+
 
     public function editRedingtonTechnology(Request $request,$id){
+
         $validator = Validator::make($request->all(),
+
                 [
+
                     'editname' => 'required',
+
                     'editdescription' => 'required',
+
                 ],[
+
                     'editname.required' => 'Please enter technology name',
+
                     'editdescription.required' => 'Please add description about the technology',
+
                 ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $inputData = [
+
             'name' => $request->editname,
+
             'description' => $request->editdescription
+
         ];
+
         Technology::where('id',$id)->update($inputData);
+
         return redirect()->back()->with('success', $request->editname.' updated successfully');
+
     }
+
+
 
     public function editRedingtonService(Request $request,$id){
+
         $validator = Validator::make($request->all(),
+
                 [
+
                     'editname' => 'required',
+
                     'editdescription' => 'required',
+
                 ],[
+
                     'editname.required' => 'Please enter service name',
+
                     'editdescription.required' => 'Please add description about the service',
+
                 ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $inputData = [
+
             'name' => $request->editname,
+
             'description' => $request->editdescription
+
         ];
+
         Service::where('id',$id)->update($inputData);
+
         return redirect()->back()->with('success', $request->editname.' updated successfully');
+
     }
+
  
+
     public function activeService($id){
+
         $status="";
+
         $service=Service::find($id);
+
         if($service->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         Service::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Service status updated successfully');
 
+
+
     }
+
+
 
     public function activeTechnology($id){
+
         $status="";
+
         $technology=Technology::find($id);
+
         if($technology->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         Technology::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Technology status updated successfully');
 
+
+
     }
+
     public function ListRewards(){
+
         $rewards = Reward::latest()->paginate(20);
+
         return view('admin.rewards.list',compact('rewards'));
 
+
+
     }
 
+
+
     public function createReward(){
+
         $users = User::where('type',3)->get();
+
         return view('admin.rewards.create',compact('users'));
+
     }
+
+
 
     public function Savereward(Request $request){
         $validator = Validator::make($request->all(),
@@ -890,6 +1251,7 @@ class AdminController extends Controller
                 $filename = explode('/',$item->image);
                 File::delete('uploads/rewards/'.$filename[5]);
             }
+           
             $file = $request->file('image');
             $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
             $file->move('uploads/rewards/', $name);
@@ -908,256 +1270,505 @@ class AdminController extends Controller
     }
 
     public function activeReward($id){
+
         $status="";
+
         $reward=Reward::find($id);
+
         if($reward->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         Reward::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Reward status updated successfully');
+
     }
+
+
 
     public function RedeemHistory($id){
+
         $user = User::find($id);
+
         $total = Redeemdeduction::where('partner_id',$id)->first();
+
         // dd($totalrewards[0]->score);
+
         $redeems = Redeem::where('partner_id',$id)->latest()->paginate(20);
+
         return view('admin.rewards.redeemhistory',compact('redeems','user','total'));
+
     }
+
+
 
     public function Createredeem($id){
+
         $user = User::find($id);
+
         return view('admin.rewards.redeem',compact('user'));
+
     }
+
+
 
     public function SaveRedeem(Request $request){
+
         // dd($request->all());
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'amount' => 'required'
+
             ],[
+
                 'amount.required' => 'Please enter redeem amount'
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         } 
+
         $rewards = PartnerReward::where('partner_id',$request->id)->count();
+
         $check = Redeemdeduction::where('partner_id',$request->id)->first();
+
         if($request->amount>$check->total_reward){
+
             $messages = ['greater'=> 'There is not much points to redeem from the rewards'];
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         if($rewards!=0){
+
             $redeemId = Redeem::insertGetId([
+
                 'amount' => $request->amount,
+
                 'partner_id' => $request->id,
+
                 'description' => isset($request->description)?$request->description:"",
+
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
                 "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
     
+
             ]);
+
             
+
             $deduction = Redeemdeduction::where('partner_id',$request->id)->first();
+
             if(isset($deduction)){
+
                 $inputData = [
+
                     'total_reward' => $deduction->total_reward - $request->amount,
+
                     'total_redeem' => $deduction->total_redeem + $request->amount
+
                 ];
+
                 // dd($inputData);
+
                 Redeemdeduction::where('id',$deduction->id)->update($inputData);
+
             }else{
+
                 $totalrewards = Reward::where('partner_id',$request->id)->selectRaw('sum(rewards.point) as score')->get();
+
                 $totalredeems = Redeem::where('partner_id',$request->id)->selectRaw('sum(redeems.amount) as score')->get();
+
                 $score1 = isset($totalrewards[0]->score)?$totalrewards[0]->score:0;
+
                 $score2 = isset($totalredeems[0]->score)?$totalredeems[0]->score:0;
+
                 $redeemId = Redeemdeduction::insertGetId([
+
                     'total_reward' => ($score1 - $request->amount),
+
                     'partner_id' => $request->id,
+
                     'total_redeem' => $score2 + $request->amount
+
                 ]);
+
             }
+
             
+
             DB::commit();
+
             return redirect('admin/redeem/history/'.$request->id)->with('success', 'Success');
+
     
+
         }else{
+
             $messages = ['check'=> 'There is no rewards for redeem,Please try again'];
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         
+
     }
+
+
 
     public function RewardHistory($id){
+
         $user = User::find($id);
+
         $total = Redeemdeduction::where('partner_id',$id)->first();
+
         // dd($totalrewards[0]->score);
+
         $rewards = PartnerReward::where('partner_id',$id)->latest()->paginate(20);
+
         return view('admin.rewards.rewardhistory',compact('rewards','user','total'));
+
     }
+
+
 
     // public function CreateReward($id){
+
     //     $user = User::find($id);
+
     //     return view('admin.rewards.reward',compact('user'));
+
     // }
 
+
+
     public function SaveRewardforPartner(Request $request){
+
         // dd($request->all());
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'partner' => 'required',
+
                 'reward' => 'required'
+
             ],[
+
                 'partner.required' => 'Please select partner',
+
                 'reward.required' => 'Please select reward'
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         } 
+
         // $rewards = PartnerReward::where('partner_id',$request->id)->count();
+
         // $check = Redeemdeduction::where('partner_id',$request->id)->first();
+
         // if($request->amount>$check->total_reward){
+
         //     $messages = ['greater'=> 'There is not much points to redeem from the rewards'];
+
         //     return Redirect::back()->withErrors($messages)->withInput();
+
         // }
+
         // if($rewards!=0){
+
             $reward = Reward::find($request->reward);
+
             foreach($request->partner as $partner){
+
                 $rewardId = PartnerReward::insertGetId([
+
                     'amount' => $reward->point,
+
                     'reward_id'=>$request->reward,
+
                     'partner_id' => $partner,
+
                     // 'description' => isset($request->description)?$request->description:"",
+
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
                     "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
         
+
                 ]);
+
                 
+
                 $deduction = Redeemdeduction::where('partner_id',$partner)->first();
+
                 // dd($deduction);
+
                 if(isset($deduction)){
+
                     $inputData = [
+
                         'total_reward' => ($deduction->total_reward+$reward->point),
+
                         // 'total_redeem' => $deduction->total_redeem + $reward->point
+
                     ];
+
                     Redeemdeduction::where('id',$deduction->id)->update($inputData);
+
                 }else{
+
                     
+
                     $totalrewards = PartnerReward::where('partner_id',$partner)->selectRaw('sum(partner_rewards.amount) as score')->get();
+
                     $totalredeems = Redeem::where('partner_id',$partner)->selectRaw('sum(redeems.amount) as score')->get();
+
                     $score1 = isset($totalrewards[0]->score)?$totalrewards[0]->score:0;
+
                     $score2 = isset($totalredeems[0]->score)?$totalredeems[0]->score:0;
+
                     // dd($score1,$score2);
+
                     $redeemId = Redeemdeduction::insertGetId([
+
                         'total_reward' => ($score1 - $request->amount),
+
                         'partner_id' => $partner,
+
                         'total_redeem' => $score2 + $request->amount
+
                     ]);
+
                 }
+
                 
+
                 DB::commit();
+
             }
+
             return redirect()->back()->with('success', 'Reward applied successfully');
+
             // return redirect('admin/reward/history/'.$request->id)->with('success', 'Success');
+
     
+
         // }else{
+
         //     $messages = ['check'=> 'There is no rewards for redeem,Please try again'];
+
         //     return Redirect::back()->withErrors($messages)->withInput();
+
         // }
+
         
+
     }
+
     public function getRewardPoint(Request $request){
+
         $reward = Reward::find($request->reward_id);
+
         return $reward->point;
+
     }
+
+
 
     public function resources(){
+
         $list = Resource::latest()->paginate(20);
+
         return view('admin.resource.list',compact('list'));
+
     }
+
+
 
     public function addResource(Request $request){
+
         // dd($request->all());
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'resourcename' => 'required',
+
                 'type' => 'required'
+
             ],[
+
                 'resourcename.required' => 'Please enter resource name',
+
                 'type.required' => 'Please select user type '
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         } 
+
         $resourceId = Resource::insertGetId([
+
             'name' => $request->resourcename,
+
             'type'=>implode(',',$request->type),
+
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+
+
         ]);
+
         
+
         DB::commit();
+
         return redirect()->back()->with('success', 'Resource added successfully');
+
     }
+
+
 
     public function editResource(Request $request,$id){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'editname' => 'required',
+
                 'type' => 'required'
+
             ],[
+
                 'editname.required' => 'Please enter resource name',
+
                 'type.required' => 'Please select user type '
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         } 
 
+
+
         $inputData = [
+
             'name' => $request->editname,
+
             'type' => implode(',',$request->type)
+
         ];
+
         Resource::where('id',$id)->update($inputData);
+
         return redirect()->back()->with('success', 'Resource added successfully');
+
     }
 
+
+
     public function activeResource($id){
+
         $status="";
+
         $resource=Resource::find($id);
+
         if($resource->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         Resource::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Resource status updated successfully');
+
     }
+
+
 
     public function subresources($id){
         $list = SubResource::where('resource_id',$id)->latest()->paginate(20);
         // dd($list);
         $resource = $id;
+
         $icons = [
+
             'pdf' => 'pdf',
+
             'doc' => 'word',
+
             'docx' => 'word',
+
             'xls' => 'excel',
+
             'xlsx' => 'excel',
+
             'ppt' => 'powerpoint',
+
             'pptx' => 'powerpoint',
+
             'txt' => 'text',
+
             'png' => 'image',
+
             'jpg' => 'image',
+
             'jpeg' => 'image',
+
         ];
+
         return view('admin.resource.sublist',compact('list','resource','icons'));
+
     }
+
+
 
     public function addsubResource(Request $request){
         // dd($request->all());
@@ -1228,7 +1839,7 @@ class AdminController extends Controller
         return view('admin.resource.editsub',compact('item','icons'));
     }
     public function editsubResource(Request $request,$id){
-        // dd();
+        // dd($request->all());
         $validator = Validator::make($request->all(),
             [
                 'name' => 'required'
@@ -1279,23 +1890,39 @@ class AdminController extends Controller
         SubResource::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'SubResource updated successfully');
     }
+
     public function downloadfile($file)
+
     {
+
         $filepath = public_path('uploads/subresource/'.$file.'');
+
         return Response::download($filepath); 
+
     }
-    
+
     public function activesubResource($id){
+
         $status="";
+
         $resource=SubResource::find($id);
+
         if($resource->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         SubResource::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','SubResource status updated successfully');
+
     }
+
     public function deletesubresourcefile(Request $request){
         $file = SubResourceFile::find($request->id);
         $filename = explode('/',$file->file);
@@ -1309,9 +1936,14 @@ class AdminController extends Controller
     }
 
     public function journals(){
+
         $list = Journal::latest()->paginate(20);
+
         return view('admin.journals.journals',compact('list'));
+
     }
+
+
 
     public function addJournal(Request $request){
         $validator = Validator::make($request->all(),
@@ -1395,23 +2027,42 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Value Journal Updated successfully');
 
     }
+
     
+
     public function activemainjournals($id){
+
         $status="";
+
         $journal=Journal::find($id);
+
         if($journal->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         Journal::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Value journal status updated successfully');
+
     }
+
     public function ValueJournalList($id){
+
         $journal = Journal::find($id);
+
         $list = ValueJournal::where('journal_id',$id)->latest()->paginate(20);
+
         return view('admin.journals.list',compact('list','journal'));
+
     }
+
+
 
     public function storevalueJournal(Request $request){
         $validator = Validator::make($request->all(),
@@ -1501,227 +2152,450 @@ class AdminController extends Controller
 
     }
 
+
+
     public function activejournals($id){
+
         $status="";
+
         $journal=ValueJournal::find($id);
+
         if($journal->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         ValueJournal::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Value journal status updated successfully');
 
+
+
     }
+
+
 
     public function ValuestoriesList(){
+
         $list = ValueStory::latest()->paginate(20);
+
         return view('admin.stories.list',compact('list'));
+
     }
+
+
 
     public function storevaluestories(Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'title' => 'required',
+
                 'image' => 'required',
+
                 'detail1' => 'required',
+
                 'detail2' => 'required',
+
                 'date' => 'required',
+
                 'by' => 'required'
+
             ],[
+
                 'title.required' => 'Please enter value story title',
+
                 'image.required'=> 'Please add an image for value story',
+
                 'detail1.required' => 'Please enter short description',
+
                 'detail2.required' => 'Please add details about value story',
+
                 'date.required' => 'Please add date',
+
                 'by.required'=>'Please enter addedby' 
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $fileName = "";
+
         if ($request->file('image') != "") {
+
             
+
             $file = $request->file('image');
+
             $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+
             $file->move('uploads/stories/', $fileName);
+
             $fileName = 'uploads/stories/' . $fileName;
+
         }
+
         $storyId = ValueStory::insertGetId([
+
             'title' => $request->title,
+
             'image' => $fileName,
+
             'short' => $request->detail1,
+
             'detail' => $request->detail2,
+
             'journal_date' => Carbon::parse($request->date),
+
             'by'=> $request->by,
+
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+
+
         ]);
+
         
+
         DB::commit();
+
         return redirect()->back()->with('success', 'Data added successfully');
 
+
+
     }
+
     public function editvaluestories($id,Request $request){
+
         // dd($request->all());
+
         $validator = Validator::make($request->all(),
+
         [
+
             'title' => 'required',
+
             // 'image' => 'required',
+
             'detail3' => 'required',
+
             'detail4' => 'required',
+
             'date' => 'required',
+
             'by' => 'required'
+
         ],[
+
             'title.required' => 'Please enter value journal title',
+
             // 'image.required'=> 'Please add an image for value journals',
+
             'detail3.required' => 'Please enter short description',
+
             'detail4.required' => 'Please add details about value journals',
+
             'date.required' => 'Please add date',
+
             'by.required' => 'Please enter addedby'
+
         ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
+
 
         $fileName = "";
+
         if ($request->file('image') != "") {
+
             
+
             $file = $request->file('image');
+
             $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+
             $file->move('uploads/journals/', $fileName);
+
             $fileName = 'uploads/journals/' . $fileName;
+
         }else{
+
             $story = ValueStory::find($id);
+
             $fileName = $story->image;
 
+
+
         }
+
         $inputData=[
+
             'title' => $request->title,
+
             'image' => $fileName,
+
             'short' => $request->detail3,
+
             'detail' => $request->detail4,
+
             'journal_date' => Carbon::parse($request->date),
+
             'by' =>$request->by
+
         ];
+
         ValueStory::where('id',$id)->update($inputData);
+
         return redirect()->back()->with('success', 'Data Updated successfully');
 
+
+
     }
+
+
 
     public function activestories($id){
+
         $status="";
+
         $story=ValueStory::find($id);
+
         if($story->status==0){
+
             $status=1;
+
         }else{
+
             $status=0;
+
         }
+
         ValueStory::where('id',$id)->update(['status'=> $status]);
+
         return redirect()->back()->with('success','Status updated successfully');
 
+
+
     }
+
+
 
     public function BrandList(){
+
         $list = Brand::latest()->paginate(20);
         return view('admin.brands.list',compact('list'));
+
     }
+
+
 
     public function addBrand(Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'name' => 'required'
+
             ],[
+
                 'name.required' => 'Please enter brand name',
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $brandId = Brand::insertGetId([
+
             'name' => $request->name,
+
             'status' => $request->status,
+
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+
+
         ]);
+
         
+
         DB::commit();
+
         return redirect()->back()->with('success', 'Brand details added successfully');
 
+
+
     }
+
+
 
     public function editBrand(Request $request,$id){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'editname' => 'required'
+
             ],[
+
                 'editname.required' => 'Please enter brand name',
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $inputData=[
+
             'name' => $request->editname,
+
             'status' => $request->status,
+
         ];
+
         Brand::where('id',$id)->update($inputData);
+
         return redirect()->back()->with('success', 'Data Updated successfully');
 
+
+
     }
+
+
 
     public function RegionList(){
+
         $list = Region::latest()->paginate(20);
+
         return view('admin.regions.list',compact('list'));
+
     }
+
+
 
     public function addRegion(Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'name' => 'required'
+
             ],[
+
                 'name.required' => 'Please enter region name',
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $regionId = Region::insertGetId([
+
             'name' => $request->name,
+
             'status' => $request->status,
+
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+
+
         ]);
+
         
+
         DB::commit();
+
         return redirect()->back()->with('success', 'New region added successfully');
 
+
+
     }
+
+
 
     public function editRegion(Request $request,$id){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'editname' => 'required'
+
             ],[
+
                 'editname.required' => 'Please enter region name',
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $inputData=[
+
             'name' => $request->editname,
+
             'status' => $request->status,
+
         ];
+
         Region::where('id',$id)->update($inputData);
+
         return redirect()->back()->with('success', 'Data Updated successfully');
 
+
+
     }
+
+
 
     public function SalesConnects($modal=null){
         $list = SalesConnect::latest()->paginate(20);
@@ -1730,6 +2604,8 @@ class AdminController extends Controller
         $modalid=$modal;
         return view('admin.salesconnect.index',compact('list','techs','products','modalid'));
     }
+
+
 
     public function Reschedule($id,Request $request){
         $validator = Validator::make($request->all(),
@@ -1785,100 +2661,187 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Rescheduled successfully');
     }
 
+
+
     public function PresetQuestions($techid,$brandid,$fromid){
+
         $list = PresetQuestion::where('tech_id',$techid)->where('brand_id',$brandid)
         ->whereHas('request', function($q) use($fromid){
             $q->where('from_id', $fromid);
         })
-        // ->join('reply_requests','reply_requests.req_id','=','preset_questions.id')->where('reply_requests.from_id',$fromid)
         ->latest()->paginate(20);
         // dd($list);
+
         return view('admin.salesconnect.query',compact('list'));
+
     }
+
+
 
     public function allqueries(){
+
         $list = PresetQuestion::latest()->paginate(20);
+
         $techs = Technology::where('status',0)->get();
+
         $brands = Brand::where('status',0)->get();
+
         return view('admin.salesconnect.allquery',compact('list','techs','brands'));
+
     }
+
+
 
     public function addsalesquery(Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'tech' => 'required',
+
                 'brand' => 'required',
+
                 'query' => 'required'
+
             ],[
+
                 'query.required' => 'Please enter question',
+
                 'tech.required' => 'Please select technology',
+
                 'brand.required' => 'Please select brand'
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $queryId = PresetQuestion::insertGetId([
+
             'tech_id' => $request->tech,
+
             'brand_id' => $request->brand,
+
             'question' => $request->get('query'),
+
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+
+
         ]);
+
         
+
         DB::commit();
+
         return redirect()->back()->with('success', 'Preset Question added successfully');
+
     }
+
+
 
     public function editsalesquery($id,Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'tech' => 'required',
+
                 'brand' => 'required',
+
                 'query' => 'required'
+
             ],[
+
                 'query.required' => 'Please enter question',
+
                 'tech.required' => 'Please select technology',
+
                 'brand.required' => 'Please select brand'
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         PresetQuestion::where('id',$id)->update(['tech_id'=>$request->tech,'brand_id'=>$request->brand,'question'=>$request->get('query'),'status'=>$request->status]);
+
         return redirect()->back()->with('success', 'Preset Question updated successfully');
+
     }
+
+
 
     public function QueryRequest($id){
-        //split $id
-        $list = ReplyRequest::where('query_id',$id)->where('from_id',$id)->latest()->paginate(20);
+
+        $list = QueryRequest::where('query_id',$id)->latest()->paginate(20);
+
         QueryRequest::where('query_id',$id)->where('read_status',0)->update(['read_status'=>1]);
+
         return view('admin.salesconnect.requests',compact('list'));
+
     }
 
+
+
     public function replyquery($id,Request $request){
+
         $validator = Validator::make($request->all(),
+
             [
+
                 'reply' => 'required'
+
             ],[
+
                 'reply.required' => 'Please enter reply',
+
             ]);
+
         if ($validator->fails()) {
+
             $messages = $validator->messages();
+
             return Redirect::back()->withErrors($messages)->withInput();
+
         }
+
         $replyId = ReplyRequest::insertGetId([
+
             'req_id' => $id,
+
             'from_id'=>Auth::User()->id,
+
             'reply'=>$request->reply,
+
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
+
+
         ]);
+
         
+
         DB::commit();
+
         return redirect()->back()->with('success', 'Reply sended successfully');
+
     }
 
     public function ProductList(){
@@ -1891,7 +2854,7 @@ class AdminController extends Controller
             [
                 'name' => 'required'
             ],[
-                'name.required' => 'Please enter brand name',
+                'name.required' => 'Please enter product name',
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1915,7 +2878,7 @@ class AdminController extends Controller
             [
                 'editname' => 'required'
             ],[
-                'editname.required' => 'Please enter brand name',
+                'editname.required' => 'Please enter productbrand name',
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -1934,7 +2897,6 @@ class AdminController extends Controller
         $now_str = \Carbon\Carbon::now();
         // dd($now_str);
         $events = Events::where('date_time', '>=', $now_str)->latest()->paginate(20);
-        // dd($events);
         $icons = [
             'pdf' => 'pdf',
             'doc' => 'word',
@@ -1952,6 +2914,7 @@ class AdminController extends Controller
     }
 
     public function pastevents(){
+        
         $now_str = \Carbon\Carbon::now();
         // dd($now_str);
         $events = Events::where('date_time', '<', $now_str)->latest()->paginate(20);
@@ -2142,6 +3105,7 @@ class AdminController extends Controller
         }
         $eventimage = ""; $old = Events::find($id);
         if ($request->file('image') != "") {
+            
             $file = $request->file('image');
             $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
             $file->move('uploads/event/images', $fileName);
@@ -2154,7 +3118,6 @@ class AdminController extends Controller
                 $document[] = $name;
             }
         }
-        
         $eventId = Events::insertGetId([
             'user_id' => Auth::User()->id,
             'title'=>$request->eventname,
@@ -2173,7 +3136,6 @@ class AdminController extends Controller
         return redirect('admin/list/new/events')->with('success', 'New event added successfully');
 
     }
-
     public function mainservices(){
         $list = MainService::latest()->paginate(20);
         return view('admin.mainservices.list',compact('list'));
@@ -2416,8 +3378,9 @@ class AdminController extends Controller
         return redirect()->back()->with('success',$item->page.' details updated successfully');
         
     }
+
     public function feedbacks(){
-        $list = Feedback::all();
+        $list = Feedback::latest()->paginate(20);
         return view('feedbacks',compact('list'));
     }
 
@@ -2450,8 +3413,7 @@ class AdminController extends Controller
             $list = Requests::where('req_id',$id)->where('type',$type)->with(['subservice' => function ($q) use ($id) {
                 $q->where('id',$id);
             }])->latest()->paginate(20);
-            $sub = SubService::find($id);
-            return view('admin.mainservices.requestlist',compact('list','modalid','sub'));
+            return view('admin.mainservices.requestlist',compact('list','modalid'));
         }elseif($type=="Business_Solution"){
             $list = Requests::where('req_id',$id)->where('type',$type)->with(['business' => function ($q) use ($id) {
                 $q->where('id',$id);
@@ -2472,19 +3434,17 @@ class AdminController extends Controller
             $item = SubService::where('id',$data->req_id)->first();
             $heading= $item->name;
             $type = "Sub_service";
-            $text = "Appoinment for ";
         }elseif($request->type=="Business_Solution"){
             $item = BusinessSolution::where('id',$data->req_id)->first();
             $heading= $item->name;
             $type = "Business_Solution";
-            $text = "Scheduled a meeting for ";
         }
         $notificationId = Notification::insertGetId([
             'req_from' => $data->id,
             'from_id'=>Auth::user()->id,
             'to_id' => $data->from_id,
             'type' => $type,
-            'message' => $text.$heading." is ".$status,
+            'message' => "Appoinment for ".$heading." is ".$status,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -2516,10 +3476,18 @@ class AdminController extends Controller
         
         
     }
+
     public function logout(Request $request)
+
     {
+
         Auth::logout();
+
         Session::flush();
+
         return redirect('admin/login');
+
     }
+
 }
+

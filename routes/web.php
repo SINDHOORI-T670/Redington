@@ -49,6 +49,15 @@ Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'employee'], fu
     Route::get('/logout', 'EmployeeController@logout')->name('Employee-Logout');
 });
 
+// Partn protected routes
+Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'partner'], function () {
+    Route::get('/', 'HomeController@index')->name('Partner-Home');
+    Route::get('/home','PartnerController@index')->name('Partner_Dashboard');
+    Route::get('/edit/profile','PartnerController@editprofile');
+    Route::post('/update/profile','PartnerController@updateprofile');
+    Route::get('/sales_connect','PartnerController@listsalesconnects');
+    Route::get('/logout', 'PartnerController@logout')->name('Partner-Logout');
+});
 
 // admin protected routes
 Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], function () {
