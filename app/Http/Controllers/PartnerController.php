@@ -24,6 +24,11 @@ use App\Models\BusinessSolution;
 use App\Models\Service;
 use App\Models\Technology;
 use App\Models\Product;
+use App\Models\Reward;
+use App\Models\Redeemdeduction;
+use App\Models\PartnerReward;
+use App\Models\Resource;
+use App\Models\SubResource;
 class PartnerController extends Controller
 {
     public function __construct(){
@@ -80,7 +85,47 @@ class PartnerController extends Controller
         
     }
     
+    public function ListRewards(){
+        $total = Redeemdeduction::where('partner_id',Auth::User()->id)->first();
+        $rewards = PartnerReward::where('partner_id',Auth::User()->id)->latest()->paginate(20);
+        return view('partner.rewards.list',compact('rewards','total'));
+    }
 
+    public function journals(){
+        $list = Journal::where('status',0)->latest()->paginate(20);
+        return view('partner.journals.list',compact('list'));
+    }
+    public function subjournals($id){
+        $journal = Journal::find($id);
+        $list = ValueJournal::where('journal_id',$id)->where('status',0)->latest()->paginate(20);
+        return view('partner.journals.sublist',compact('list','journal'));
+    }
+    public function ValuestoriesList(){
+        $list = ValueStory::where('status',0)->latest()->paginate(20);
+        return view('partner.stories.list',compact('list'));
+    }
+    public function resources(){
+        $list = Resource::where('status',0)->latest()->paginate(20);
+        return view('partner.resource.list',compact('list'));
+    }
+    public function subresources($id){
+        $list = SubResource::where('status',0)->where('resource_id',$id)->latest()->paginate(20);
+        $resource = $id;
+        $icons = [
+            'pdf' => 'pdf',
+            'doc' => 'word',
+            'docx' => 'word',
+            'xls' => 'excel',
+            'xlsx' => 'excel',
+            'ppt' => 'powerpoint',
+            'pptx' => 'powerpoint',
+            'txt' => 'text',
+            'png' => 'image',
+            'jpg' => 'image',
+            'jpeg' => 'image',
+        ];
+        return view('partner.resource.sublist',compact('list','resource','icons'));
+    }
     public function logout(Request $request)
     {
         Auth::logout();

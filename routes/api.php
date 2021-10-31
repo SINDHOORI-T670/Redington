@@ -45,3 +45,4 @@ Route::get('/meeting/schedules/{userid}','Api\UserApiController@getschedules');
 Route::get('/myevents/{userid}','Api\UserApiController@myevents');
 Route::get('/myhistory/{userid}','Api\UserController@myhistory');
 Route::post('/new/request/{userid}/{id}','Api\UserController@newrequest');
+Route::get('/salesconnect/{id}','Api\UserController@Salesconnect');

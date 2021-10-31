@@ -563,5 +563,42 @@ class UserApiController extends Controller
         }
     }
 
+    public function Salesconnect(Request $request){
+        $meetingRequestfromcustomer= SalesConnect::where('poc_user_id',$request->user_id)->where('status',1)->without('region','user','reschedule','product','requestdata')->has('from')
+        ->whereHas('from', function($q) {
+            $q->where('type', 2);
+        })
+        ->latest()->get();
+        $meetingRequestfrompartner= SalesConnect::where('poc_user_id',$request->user_id)->where('status',1)->without('region','user','reschedule','product','requestdata')->has('from')
+        ->whereHas('from', function($q) {
+            $q->where('type', 3);
+        })
+        ->latest()->get();
+
+        $serviceRequestfromcustomer= SalesConnect::select('sales_connects.*','preset_questions.id as questionId','preset_questions.question as Question','reply_requests.id as replyId','reply_requests.req_id as reply_questionId','reply_requests.from_id as replyFrom','reply_requests.reply as Reply')
+        ->where('sales_connects.poc_user_id',$request->user_id)->where('sales_connects.status',2)->without('region','user','reschedule','product','requestdata')->has('from')
+        ->whereHas('from', function($q) {
+            $q->where('type', 2);
+        })
+        ->join('preset_questions','sales_connects.tech_id','=','preset_questions.tech_id')
+        ->whereColumn('preset_questions.brand_id', '=', 'sales_connects.brand_id')
+        ->join('reply_requests','preset_questions.id','=','reply_requests.req_id')
+        ->latest()->get();
+        $serviceRequestfrompartner= SalesConnect::select('sales_connects.*','preset_questions.id as questionId','preset_questions.question as Question','reply_requests.id as replyId','reply_requests.req_id as reply_questionId','reply_requests.from_id as replyFrom','reply_requests.reply as Reply')
+        ->where('sales_connects.poc_user_id',$request->user_id)->where('sales_connects.status',2)->without('region','user','reschedule','product','requestdata')->has('from')
+        ->whereHas('from', function($q) {
+            $q->where('type', 3);
+        })
+        ->join('preset_questions','sales_connects.tech_id','=','preset_questions.tech_id')
+        ->whereColumn('preset_questions.brand_id', '=', 'sales_connects.brand_id')
+        ->join('reply_requests','preset_questions.id','=','reply_requests.req_id')
+        ->latest()->get();
+
+        $response['meetingRequestfromcustomer'] = $meetingRequestfromcustomer;
+        $response['meetingRequestfrompartner']  = $meetingRequestfrompartner;
+        $response['serviceRequestfromcustomer'] = $serviceRequestfromcustomer;
+        $response['serviceRequestfrompartner']  = $serviceRequestfrompartner;
+    }
+
 }
 

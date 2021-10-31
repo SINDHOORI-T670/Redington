@@ -17,6 +17,9 @@ class Requests extends Model
     public function business(){
         return $this->belongsTo('App\Models\BusinessSolution','req_id','id');
     }
+    public function promotion(){
+        return $this->belongsTo('App\Models\Promotion','req_id','id');
+    }
     public function notifi()
     {
         return $this->belongsTo('App\Models\Notification','notifid','id');

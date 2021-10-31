@@ -21,7 +21,9 @@ class PresetQuestion extends Model
     {
         return $this->belongsTo('App\Models\Brand','brand_id','id');
     }
+
     
+     
 
 
 }

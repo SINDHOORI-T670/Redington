@@ -56,7 +56,6 @@ table.dataTable tbody td {
                                     <tr role="row">
                                         <th>Title</th>
                                         <th>Short Description</th>
-                                        <th>date</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -67,12 +66,11 @@ table.dataTable tbody td {
                                         <td>{{$item->title}}</td>
                                         <td>{!! $item->short !!}</td>
                                         {{-- <td><img  height="80" width="140" src="@if($item->image){{url($item->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="image"></td> --}}
-                                        <td>{{\Carbon\Carbon::parse($item->journal_date)->format('d/m/Y')}}</td>
                                         <td><h4 @if($item->status==1) class="danger text-center" @else class="success text-center" @endif>{{($item->status==1)?"Inactive":"Active"}}</h4></td>
                                         <td>
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#editvaluestoriesModal{{$item->id}}"  href="#"><i class="icon-pencil"></i> Edit</a>
                                             <button @if($item->status==0) class="btn btn-danger text-white tab-order" @else class="btn btn-success text-white tab-order" @endif onclick="confirmDelete('resource-active-{{ $item->id }}','{{ $item->title }}','{{ $item->status }}');"> @if($item->status==0) <i class="fa fa-thumbs-o-down"></i> Inactive @else <i class="fa fa-thumbs-o-up"></i> Active @endif</button>
-                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/stories/')}}/{{$item->id}}" method="get">
+                                            <form id="resource-active-{{ $item->id }}" action="{{url('admin/active/stories')}}/{{$item->id}}" method="get">
                                                 {{ csrf_field() }}
                                             </form>
                                         </td>
@@ -130,7 +128,7 @@ table.dataTable tbody td {
                                                       @endif
                                                 </fieldset>
               
-                                                <fieldset class="form-group floating-label-form-group">
+                                                {{-- <fieldset class="form-group floating-label-form-group">
                                                   <label class="label-control required">Date </label>
                                                   <input type="date" class="form-control" id="date" name="date" placeholder="Date" value="{{$item->journal_date}}">
                                                       @if ($errors->has('date'))
@@ -138,9 +136,9 @@ table.dataTable tbody td {
                                                               <strong class="error">{{ $errors->first('date') }}</strong>
                                                           </span>
                                                       @endif
-                                                </fieldset>
+                                                </fieldset> --}}
 
-                                                <fieldset class="form-group floating-label-form-group">
+                                                {{-- <fieldset class="form-group floating-label-form-group">
                                                     <label class="label-control required">By </label>
                                                     <input type="text" class="form-control" id="by" name="by" placeholder="By" value="{{$item->by}}">
                                                         @if ($errors->has('by'))
@@ -148,7 +146,7 @@ table.dataTable tbody td {
                                                                 <strong class="error">{{ $errors->first('by') }}</strong>
                                                             </span>
                                                         @endif
-                                                  </fieldset>
+                                                  </fieldset> --}}
                                               </div>
                                               <div class="modal-footer">
                                                   <input type="reset" class="btn btn-outline-secondary btn-lg" data-dismiss="modal" value="close">
@@ -178,6 +176,7 @@ table.dataTable tbody td {
                             </div>
                             <form method="POST" action="{{url('admin/add/value_stories')}}" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="story" value="{{$story}}">
                               <div class="modal-body">
                                   <fieldset class="form-group floating-label-form-group">
                                       <label class="label-control required">Title</label>
@@ -219,7 +218,7 @@ table.dataTable tbody td {
                                         @endif
                                   </fieldset>
 
-                                  <fieldset class="form-group floating-label-form-group">
+                                  {{-- <fieldset class="form-group floating-label-form-group">
                                     <label class="label-control required">Date </label>
                                     <input type="date" class="form-control" id="date" name="date" placeholder="Date">
                                         @if ($errors->has('date'))
@@ -227,9 +226,9 @@ table.dataTable tbody td {
                                                 <strong class="error">{{ $errors->first('date') }}</strong>
                                             </span>
                                         @endif
-                                  </fieldset>
+                                  </fieldset> --}}
 
-                                  <fieldset class="form-group floating-label-form-group">
+                                  {{-- <fieldset class="form-group floating-label-form-group">
                                     <label class="label-control required">By </label>
                                     <input type="text" class="form-control" id="by" name="by" placeholder="By">
                                         @if ($errors->has('by'))
@@ -237,7 +236,7 @@ table.dataTable tbody td {
                                                 <strong class="error">{{ $errors->first('by') }}</strong>
                                             </span>
                                         @endif
-                                  </fieldset>
+                                  </fieldset> --}}
                                   
                               </div>
                               <div class="modal-footer">

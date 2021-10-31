@@ -107,7 +107,7 @@ table.dataTable tbody td {
                                                               <option value="">Select any type</option>
                                                               <option value="2" @if(in_array(2,explode(',',$item->type))) selected @else @endif>Customer</option>
                                                               <option value="3" @if(in_array(3,explode(',',$item->type))) selected @else @endif>Partner</option>
-                                                              <option value="4" @if(in_array(4,explode(',',$item->type))) selected @else @endif>Employee</option>
+                                                              {{-- <option value="4" @if(in_array(4,explode(',',$item->type))) selected @else @endif>Employee</option> --}}
                                                         </select>
                                                           @if ($errors->has('type'))
                                                               <span class="help-block">
@@ -161,7 +161,7 @@ table.dataTable tbody td {
                                           <option value="">Select any type</option>
                                           <option value="2">Customer</option>
                                           <option value="3">Partner</option>
-                                          <option value="4">Employee</option>
+                                          {{-- <option value="4">Employee</option> --}}
                                     </select>
                                       @if ($errors->has('type'))
                                           <span class="help-block">

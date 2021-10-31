@@ -234,7 +234,7 @@
                 <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="avatar avatar-online"><img src="@if(Auth::User()->image){{asset(Auth::User()->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar"><i></i></span><span class="user-name">{{Auth::User()->name}}</span></a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="{{url('partner/edit/profile')}}"><i class="ft-user"></i> Edit Profile</a>
-                    {{-- <a class="dropdown-item" href="{{url('employee/edit/company/profile')}}"><i class="icon-home"></i> My Company</a> --}}
+                    <a class="dropdown-item" href="{{url('partner/list/rewards')}}"><i class="icon-home"></i> My Rewards</a>
                     {{-- <a class="dropdown-item" href="#"><i class="ft-check-square"></i> Task</a>
                     <a class="dropdown-item" href="#"><i class="ft-message-square"></i> Chats</a> --}}
                     <div class="dropdown-divider"></div>
@@ -356,16 +356,16 @@
         </li> --}}
 
         {{-- Resources --}}
-        {{-- <li class=" nav-item"><a href="{{url('employee/resource/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Resources</span></a>
-        </li> --}}
+        <li class=" nav-item"><a href="{{url('partner/resource/list')}}"><i class="fa fa-tasks"></i><span class="menu-title" data-i18n="nav.chat-application.main">Resources</span></a>
+        </li>
 
         {{-- Value Journals --}}
-        {{-- <li class=" nav-item"><a href="{{url('employee/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
-        </li> --}}
+        <li class=" nav-item"><a href="{{url('partner/journals')}}"><i class="icon-grid"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Journals</span></a>
+        </li>
 
         {{-- Value Stories --}}
-        {{-- <li class=" nav-item"><a href="{{url('employee/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
-        </li> --}}
+        <li class=" nav-item"><a href="{{url('partner/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
+        </li>
 
         {{-- Brands --}}
         {{-- <li class=" nav-item"><a href="{{url('employee/list/brands')}}"><i class="icon-layers"></i><span class="menu-title" data-i18n="nav.chat-application.main">Brands</span></a>

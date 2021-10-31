@@ -99,6 +99,7 @@ table.dataTable tbody td {
                                                     </div>
                                                     <form method="POST" action="{{url('admin/query/reply')}}/{{$item->id}}">
                                                         @csrf
+                                                        <input type="hidden" name="sale" value="{{$sale->id}}">
                                                         <div class="modal-body">
                                                         {{-- <fieldset class="form-group floating-label-form-group"> --}}
                                                             {{-- <label for="email" class="label-control">Request</label>
@@ -124,16 +125,31 @@ table.dataTable tbody td {
                                                                         </div>
                                                                         @foreach($item->request as $reply)
                                                                             <div class="chat @if($reply->from_id!=Auth::User()->id) chat-left @endif">
+                                                                                @if($reply->saleId==$sale->id)
                                                                                 <div class="chat-avatar">
                                                                                 <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
                                                                                     <img src="@if(!empty($reply->user->image)){{asset($reply->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
                                                                                 </a>
                                                                                 </div>
+                                                                                
                                                                                 <div class="chat-body">
                                                                                 <div class="chat-content" @if($reply->from_id==Auth::User()->id) style="text-align: justify;" @endif>
                                                                                     <p>{!!$reply->reply!!}</p>
                                                                                 </div>
                                                                                 </div>
+                                                                                @else 
+                                                                                <div class="chat-avatar">
+                                                                                    <a class="avatar" data-toggle="tooltip" href="#" data-placement="right" title="" data-original-title="">
+                                                                                        <img src="@if(!empty($reply->user->image)){{asset($reply->user->image)}} @else {{asset('admin/app-assets/images/portrait/small/avatar-s-1.png')}} @endif" alt="avatar">
+                                                                                    </a>
+                                                                                    </div>
+                                                                                    
+                                                                                    <div class="chat-body">
+                                                                                    <div class="chat-content" @if($reply->from_id==Auth::User()->id) style="text-align: justify;" @endif>
+                                                                                        <p>{!!$reply->reply!!}</p>
+                                                                                    </div>
+                                                                                    </div>
+                                                                                @endif
                                                                             </div>
                                                                         @endforeach
                                                                     </div>

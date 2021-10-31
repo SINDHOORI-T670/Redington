@@ -44,4 +44,6 @@ class SalesConnect extends Model
     {
         return $this->hasMany('App\Models\Requests','req_id','id')->where('type','Sales_connect')->latest();
     }
+
+    
 }

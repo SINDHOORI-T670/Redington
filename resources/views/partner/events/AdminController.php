@@ -85,6 +85,8 @@ use App\Models\Description;
 use App\Models\Feedback;
 use App\Models\Notification;
 use App\Models\Requests;
+use App\Models\Promotion;
+use App\Models\MainStory;
 class AdminController extends Controller
 
 {
@@ -100,8 +102,9 @@ class AdminController extends Controller
             $company = $settings->mapWithKeys(function ($item) {
                     return [$item['key'] => $item['value']];
             });
-            $not_count = Notification::where('to_id',Auth::User()->id)->where('status',0)->count();
-            $new_notifs = Notification::where('to_id',Auth::User()->id)->where('status',0)->latest()->get();
+            $not_count = Notification::where('to_id',Auth::User()->id)->where('message','!=',null)->where('status',0)->with('from')->has('from')->count();
+            $new_notifs = Notification::where('to_id',Auth::User()->id)->where('message','!=',null)->where('status',0)->with('from')->has('from')->latest()->get();
+            // dd($new_notifs);
             view()->share(['company' => $company,'not_count' => $not_count,'new_notifs' => $new_notifs]);
             return $next($request);
         });
@@ -310,14 +313,16 @@ class AdminController extends Controller
 
         $type = $request->type;
 
-        $services= Service::latest()->get();
+        $services= Service::where('status',0)->latest()->get();
 
-        $technologies= Technology::latest()->get();
+        $technologies= Technology::where('status',0)->latest()->get();
+
+        $products = Product::where('status',0)->latest()->get();
 
         $pocs = POC::where('status',0)->latest()->get();
         // dd($pocs);
 
-        return view('admin.user.create',compact('type','services','technologies','pocs'));
+        return view('admin.user.create',compact('type','products','services','technologies','pocs'));
 
     }
 
@@ -455,20 +460,38 @@ class AdminController extends Controller
                 "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
             ]);
             if($request->type!=4){
-                $check=UserSpec::where('user_id',$userId)->get();
+                if($request->type==2){
+                    $check=UserSpec::where('user_id',$userId)->get();
 
-                $feature = UserSpec::insertGetId([
+                    $feature = UserSpec::insertGetId([
+    
+                        'user_id' => $userId,
+    
+                        'service_id' => isset($request->services)?implode(",",$request->services):null,
+    
+                        'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+    
+                        "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+    
+                        "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+                    ]); 
+                }else{
+                    $check=UserSpec::where('user_id',$userId)->get();
 
-                    'user_id' => $userId,
+                    $feature = UserSpec::insertGetId([
 
-                    'service_id' => isset($request->services)?implode(",",$request->services):null,
+                        'user_id' => $userId,
 
-                    'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+                        'product_id' => isset($request->products)?implode(",",$request->products):null,
 
-                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+                        'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
 
-                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
-                ]); 
+                        "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
+                        "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+                    ]); 
+                }
+                
             }
 
             DB::commit();
@@ -495,15 +518,15 @@ class AdminController extends Controller
 
         $user = User::find($request->id);
 
-        $services= Service::all();
+        $services= Service::where('status',0)->get();
 
-        $technologies= Technology::all();
-
+        $technologies= Technology::where('status',0)->get();
+        $products = Product::where('status',0)->get();
         $userspecs=UserSpec::where('user_id',$request->id)->first();
 
         $pocs = POC::where('status',0)->latest()->get();
         // dd($pocs);
-        return view('admin.user.edit',compact('user','services','technologies','userspecs','pocs'));
+        return view('admin.user.edit',compact('user','services','technologies','products','userspecs','pocs'));
 
     }
 
@@ -720,33 +743,59 @@ class AdminController extends Controller
                 $check = UserSpec::where('user_id',$request->id)->count();
 
                 if($check==0){
+                    if($request->type==2){
+                        $feature = UserSpec::insertGetId([
 
-                    $feature = UserSpec::insertGetId([
+                            'user_id' => $request->id,
 
-                        'user_id' => $request->id,
+                            'service_id' => isset($request->services)?implode(",",$request->services):null,
 
-                        'service_id' => isset($request->services)?implode(",",$request->services):null,
+                            'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
 
-                        'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+                            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
 
-                        "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-
-                        "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+                            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
 
 
-                    ]);
+                        ]);
+                    }else{
+                        $feature = UserSpec::insertGetId([
+
+                            'user_id' => $request->id,
+
+                            'product_id' => isset($request->products)?implode(",",$request->services):null,
+
+                            'technology_id' => isset($request->technologies)?implode(",",$request->technologies):null,
+
+                            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
+                            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+
+
+                        ]);
+                    }
 
                 }else{
+                    if($request->type==2){
+                    
+                        $feature =[
 
-                    $feature =[
+                            'service_id' => isset($request->services)?implode(",",$request->services):"",
 
-                        'service_id' => isset($request->services)?implode(",",$request->services):"",
+                            'technology_id' => isset($request->technologies)?implode(",",$request->technologies):"",
 
-                        'technology_id' => isset($request->technologies)?implode(",",$request->technologies):"",
+                        ];
+                    }else{
+                        $feature =[
 
-                    ];
+                            'product_id' => isset($request->products)?implode(",",$request->products):"",
 
+                            'technology_id' => isset($request->technologies)?implode(",",$request->technologies):"",
+
+                        ];
+                    }
                     UserSpec::where('user_id',$request->id)->update($feature);
 
                 }
@@ -931,6 +980,7 @@ class AdminController extends Controller
                     'name' => $request->techname,
 
                     'description' => $request->techdescription,
+                    'status' => 0, 
 
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
 
@@ -981,7 +1031,7 @@ class AdminController extends Controller
                     'name' => $request->servicename,
 
                     'description' => $request->servicedescription,
-
+                    'status' => 0,
                     "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
 
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
@@ -1362,7 +1412,7 @@ class AdminController extends Controller
                 'amount' => $request->amount,
 
                 'partner_id' => $request->id,
-
+                'status' => 1,
                 'description' => isset($request->description)?$request->description:"",
 
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
@@ -1407,7 +1457,10 @@ class AdminController extends Controller
 
                     'partner_id' => $request->id,
 
-                    'total_redeem' => $score2 + $request->amount
+                    'total_redeem' => $score2 + $request->amount,
+                    "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
+                    "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
                 ]);
 
@@ -2096,7 +2149,7 @@ class AdminController extends Controller
             'image' => $fileName,
             'short' => $request->detail1,
             'detail' => $request->detail2,
-            
+            'journal_date'=>\Carbon\Carbon::now(),
             'journal_id' => $request->j_id,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
@@ -2177,226 +2230,223 @@ class AdminController extends Controller
 
 
     }
-
-
-
-    public function ValuestoriesList(){
-
-        $list = ValueStory::latest()->paginate(20);
-
-        return view('admin.stories.list',compact('list'));
-
+    public function ValuestoriesmainList(){
+        $list = MainStory::latest()->paginate(20);
+        return view('admin.stories.mainlist',compact('list'));
     }
-
-
-
-    public function storevaluestories(Request $request){
-
+    public function storemainvaluestories(Request $request){
         $validator = Validator::make($request->all(),
-
             [
-
                 'title' => 'required',
-
                 'image' => 'required',
-
                 'detail1' => 'required',
-
                 'detail2' => 'required',
-
                 'date' => 'required',
-
                 'by' => 'required'
-
             ],[
-
                 'title.required' => 'Please enter value story title',
-
                 'image.required'=> 'Please add an image for value story',
-
                 'detail1.required' => 'Please enter short description',
-
                 'detail2.required' => 'Please add details about value story',
-
                 'date.required' => 'Please add date',
-
                 'by.required'=>'Please enter addedby' 
-
             ]);
-
         if ($validator->fails()) {
-
             $messages = $validator->messages();
-
             return Redirect::back()->withErrors($messages)->withInput();
-
         }
-
         $fileName = "";
-
         if ($request->file('image') != "") {
-
             
-
             $file = $request->file('image');
-
-            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
-
-            $file->move('uploads/stories/', $fileName);
-
-            $fileName = 'uploads/stories/' . $fileName;
-
+            $Name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/stories/', $Name);
+            $fileName = $request->root().'/uploads/stories/'.$Name;
         }
-
-        $storyId = ValueStory::insertGetId([
-
+        $storyId = MainStory::insertGetId([
             'title' => $request->title,
-
             'image' => $fileName,
-
             'short' => $request->detail1,
-
             'detail' => $request->detail2,
-
             'journal_date' => Carbon::parse($request->date),
-
             'by'=> $request->by,
-
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
-
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
-
-
         ]);
-
         
-
         DB::commit();
-
         return redirect()->back()->with('success', 'Data added successfully');
 
-
-
     }
-
-    public function editvaluestories($id,Request $request){
-
+    public function editmainvaluestories($id,Request $request){
         // dd($request->all());
-
         $validator = Validator::make($request->all(),
-
         [
-
             'title' => 'required',
-
             // 'image' => 'required',
-
             'detail3' => 'required',
-
             'detail4' => 'required',
-
             'date' => 'required',
-
             'by' => 'required'
-
         ],[
-
             'title.required' => 'Please enter value journal title',
-
             // 'image.required'=> 'Please add an image for value journals',
-
             'detail3.required' => 'Please enter short description',
-
             'detail4.required' => 'Please add details about value journals',
-
             'date.required' => 'Please add date',
-
             'by.required' => 'Please enter addedby'
-
         ]);
-
         if ($validator->fails()) {
-
             $messages = $validator->messages();
-
             return Redirect::back()->withErrors($messages)->withInput();
-
         }
-
-
 
         $fileName = "";
-
         if ($request->file('image') != "") {
-
             
-
             $file = $request->file('image');
-
-            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
-
-            $file->move('uploads/journals/', $fileName);
-
-            $fileName = 'uploads/journals/' . $fileName;
-
+            $Name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/stories/', $Name);
+            $fileName = $request->root().'/uploads/stories/'.$Name;
         }else{
-
-            $story = ValueStory::find($id);
-
+            $story = MainStory::find($id);
             $fileName = $story->image;
 
-
-
         }
-
         $inputData=[
-
             'title' => $request->title,
-
             'image' => $fileName,
-
             'short' => $request->detail3,
-
             'detail' => $request->detail4,
-
             'journal_date' => Carbon::parse($request->date),
-
             'by' =>$request->by
-
         ];
-
-        ValueStory::where('id',$id)->update($inputData);
-
+        MainStory::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'Data Updated successfully');
-
-
 
     }
 
-
-
-    public function activestories($id){
-
+    public function activemainstories($id){
         $status="";
-
-        $story=ValueStory::find($id);
-
+        $story=MainStory::find($id);
         if($story->status==0){
-
             $status=1;
-
         }else{
-
             $status=0;
-
         }
-
-        ValueStory::where('id',$id)->update(['status'=> $status]);
-
+        MainStory::where('id',$id)->update(['status'=> $status]);
         return redirect()->back()->with('success','Status updated successfully');
 
+    }
+    public function ValuestoriesList($id){
+        $list = ValueStory::where('story_id',$id)->latest()->paginate(20);
+        $story = $id;
+        return view('admin.stories.list',compact('list','story'));
+    }
 
+    public function storevaluestories(Request $request){
+        $validator = Validator::make($request->all(),
+            [
+                'title' => 'required',
+                'image' => 'required',
+                'detail1' => 'required',
+                'detail2' => 'required',
+                // 'date' => 'required',
+                // 'by' => 'required'
+            ],[
+                'title.required' => 'Please enter value story title',
+                'image.required'=> 'Please add an image for value story',
+                'detail1.required' => 'Please enter short description',
+                'detail2.required' => 'Please add details about value story',
+                // 'date.required' => 'Please add date',
+                // 'by.required'=>'Please enter addedby' 
+            ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $fileName = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $Name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/stories/', $Name);
+            $fileName = $request->root().'/uploads/stories/'.$Name;
+        }
+        $storyId = ValueStory::insertGetId([
+            'story_id'=>$request->story,
+            'title' => $request->title,
+            'image' => $fileName,
+            'short' => $request->detail1,
+            'detail' => $request->detail2,
+            'journal_date' => \Carbon\Carbon::now(),
+            'by'=> 'Default',
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        
+        DB::commit();
+        return redirect()->back()->with('success', 'Data added successfully');
+
+    }
+    public function editvaluestories($id,Request $request){
+        // dd($request->all());
+        $validator = Validator::make($request->all(),
+        [
+            'title' => 'required',
+            // 'image' => 'required',
+            'detail3' => 'required',
+            'detail4' => 'required',
+            // 'date' => 'required',
+            // 'by' => 'required'
+        ],[
+            'title.required' => 'Please enter value journal title',
+            // 'image.required'=> 'Please add an image for value journals',
+            'detail3.required' => 'Please enter short description',
+            'detail4.required' => 'Please add details about value journals',
+            // 'date.required' => 'Please add date',
+            // 'by.required' => 'Please enter addedby'
+        ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+
+        $fileName = "";
+        if ($request->file('image') != "") {
+            
+            $file = $request->file('image');
+            $Name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/stories/', $Name);
+            $fileName = $request->root().'/uploads/stories/'.$Name;
+        }else{
+            $story = ValueStory::find($id);
+            $fileName = $story->image;
+
+        }
+        $inputData=[
+            'title' => $request->title,
+            'image' => $fileName,
+            'short' => $request->detail3,
+            'detail' => $request->detail4
+        ];
+        ValueStory::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Data Updated successfully');
+
+    }
+
+    public function activestories($id){
+        $status="";
+        $story=ValueStory::find($id);
+        if($story->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        ValueStory::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Status updated successfully');
 
     }
 
@@ -2598,10 +2648,11 @@ class AdminController extends Controller
 
 
     public function SalesConnects($modal=null){
-        $list = SalesConnect::latest()->paginate(20);
+        $list = SalesConnect::has('from')->latest()->paginate(20);
         $techs = Technology::latest()->get();
         $products = Product::latest()->get();
         $modalid=$modal;
+        // dd($list);
         return view('admin.salesconnect.index',compact('list','techs','products','modalid'));
     }
 
@@ -2663,17 +2714,16 @@ class AdminController extends Controller
 
 
 
-    public function PresetQuestions($techid,$brandid,$fromid){
-
+    public function PresetQuestions($techid,$brandid,$fromid,$saleid){
         $list = PresetQuestion::where('tech_id',$techid)->where('brand_id',$brandid)
         ->whereHas('request', function($q) use($fromid){
             $q->where('from_id', $fromid);
         })
+        // ->join('reply_requests','reply_requests.req_id','=','preset_questions.id')->where('reply_requests.from_id',$fromid)
         ->latest()->paginate(20);
+        $sale = SalesConnect::find($saleid);
         // dd($list);
-
-        return view('admin.salesconnect.query',compact('list'));
-
+        return view('admin.salesconnect.query',compact('list','sale'));
     }
 
 
@@ -2792,8 +2842,7 @@ class AdminController extends Controller
 
         QueryRequest::where('query_id',$id)->where('read_status',0)->update(['read_status'=>1]);
 
-        return view('admin.salesconnect.requests',compact('list'));
-
+        return view('admin.salesconnect.query',compact('list'));
     }
 
 
@@ -2827,6 +2876,8 @@ class AdminController extends Controller
             'from_id'=>Auth::User()->id,
 
             'reply'=>$request->reply,
+
+            'saleId'=>$request->sale,
 
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
 
@@ -2964,13 +3015,15 @@ class AdminController extends Controller
             $file = $request->file('image');
             $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
             $file->move('uploads/event/images', $fileName);
-            $eventimage = 'uploads/event/images/' . $fileName;
+            // $eventimage = 'uploads/event/images/' . $fileName;
+            $eventimage = $request->root().'/uploads/event/images/'.$fileName;
         }
         if ($request->file('doc') != "") {
             foreach ($request->file('doc') as $file) {
                 $name = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
                 $file->move('uploads/event/documents/', $name);
-                $document[] = $name;
+                $image = $request->root().'/uploads/event/documents/'.$name;
+                $document[] = $image;
             }
         }
         $eventId = Events::insertGetId([
@@ -3137,6 +3190,7 @@ class AdminController extends Controller
 
     }
     public function mainservices(){
+        // MainService::truncate();
         $list = MainService::latest()->paginate(20);
         return view('admin.mainservices.list',compact('list'));
     }
@@ -3146,18 +3200,30 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(),
             [
                 'servicename' => 'required',
-                'type' => 'required'
+                'type' => 'required',
+                'image' => 'required'
             ],[
                 'servicename.required' => 'Please enter service name',
-                'type.required' => 'Please select user type '
+                'type.required' => 'Please select user type ',
+                'image.required' => 'Please add image'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         } 
+        $image = "";
+            if ($request->file('image') != "") {
+        
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/Mainservice/images', $fileName);
+                // $eventimage = 'uploads/event/images/' . $fileName;
+                $image = $request->root().'/uploads/Mainservice/images/'.$fileName;
+            }
         $resourceId = MainService::insertGetId([
             'name' => $request->servicename,
             'type'=>implode(',',$request->type),
+            'image' => $image,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -3180,10 +3246,25 @@ class AdminController extends Controller
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         } 
-
+        $service = MainService::find($id);
+        // if($service->image==null){
+        //     return Redirect::back()->withErrors(['image' => 'Please upload image']);
+        // }
+        $image = "";
+        if ($request->file('image') != "") {
+    
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/Mainservice/images', $fileName);
+            // $eventimage = 'uploads/event/images/' . $fileName;
+            $image = $request->root().'/uploads/Mainservice/images/'.$fileName;
+        }else{
+            $image = $service->image;
+        }
         $inputData = [
             'name' => $request->editname,
-            'type' => implode(',',$request->type)
+            'type' => implode(',',$request->type),
+            'image' => $image
         ];
         MainService::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'Service added successfully');
@@ -3202,6 +3283,7 @@ class AdminController extends Controller
     }
 
     public function subMainService($id){
+        // SubService::truncate();
         $list = SubService::where('main_id',$id)->latest()->paginate(20);
         $main =$id;
         return view('admin.mainservices.sub',compact('list','main'));
@@ -3213,18 +3295,30 @@ class AdminController extends Controller
             [
                 'servicename' => 'required',
                 'detail1' => 'required',
+                'image' => 'required'
             ],[
                 'servicename.required' => 'Please enter service name',
-                'detail1.required' => 'Please add description about service'
+                'detail1.required' => 'Please add description about service',
+                'image.required' => 'Please add image'
             ]);
         if ($validator->fails()) {
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         } 
+        $image = "";
+        if ($request->file('image') != "") {
+    
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/Mainservice/images', $fileName);
+            // $eventimage = 'uploads/event/images/' . $fileName;
+            $image = $request->root().'/uploads/Mainservice/images/'.$fileName;
+        }
         $resourceId = SubService::insertGetId([
             'main_id' => $request->main,
             'name' => $request->servicename,
             'description'=>$request->detail1,
+            'image' => $image,
             "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
             "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -3247,10 +3341,21 @@ class AdminController extends Controller
             $messages = $validator->messages();
             return Redirect::back()->withErrors($messages)->withInput();
         }
-        
+        $image = "";
+        if ($request->file('image') != "") {
+    
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/Mainservice/images', $fileName);
+            // $eventimage = 'uploads/event/images/' . $fileName;
+            $image = $request->root().'/uploads/Mainservice/images/'.$fileName;
+        }else{
+            $image = $service->image;
+        }
         $inputData = [
             'name' => $request->editname,
-            'description' => $request->detail2
+            'description' => $request->detail2,
+            'image'=>$image
         ];
         SubService::where('id',$id)->update($inputData);
         return redirect()->back()->with('success', 'Sub service updated successfully');
@@ -3269,6 +3374,7 @@ class AdminController extends Controller
     }
 
     public function businessSolutions(){
+        // BusinessSolution::truncate();
         $list = BusinessSolution::latest()->paginate(20);
         return view('admin.business.list',compact('list'));
     }
@@ -3278,17 +3384,29 @@ class AdminController extends Controller
             [
                 'businessname' => 'required',
                 'businessdescription' => 'required',
+                'image'=>'required'
             ],[
                 'businessname.required' => 'Please enter business name',
                 'businessdescription.required' => 'Please add description about the business',
+                'image.required' => 'Please add image'
             ]);
             if ($validator->fails()) {
                 $messages = $validator->messages();
                 return Redirect::back()->withErrors($messages)->withInput();
             }
+            $image = "";
+            if ($request->file('image') != "") {
+        
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/business/images', $fileName);
+                // $eventimage = 'uploads/event/images/' . $fileName;
+                $image = $request->root().'/uploads/business/images/'.$fileName;
+            }
             $businessId = BusinessSolution::insertGetId([
                 'name' => $request->businessname,
                 'description' => $request->businessdescription,
+                'image' => $image,
                 "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
                 "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
 
@@ -3310,9 +3428,24 @@ class AdminController extends Controller
                 $messages = $validator->messages();
                 return Redirect::back()->withErrors($messages)->withInput();
             }
+            $business = BusinessSolution::find($id);
+            
+            $image = "";
+            if ($request->file('image') != "") {
+        
+                $file = $request->file('image');
+                $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+                $file->move('uploads/business/images', $fileName);
+                // $eventimage = 'uploads/event/images/' . $fileName;
+                $image = $request->root().'/uploads/business/images/'.$fileName;
+            }else{
+
+                $image = $business->image;
+            }
             $inputData = [
                 'name' => $request->editname,
                 'description' => $request->editdescription,
+                'image' => $image,
                 'status'=>$request->status
 
             ];
@@ -3380,7 +3513,7 @@ class AdminController extends Controller
     }
 
     public function feedbacks(){
-        $list = Feedback::latest()->paginate(20);
+        $list = Feedback::has('user')->latest()->paginate(20);
         return view('feedbacks',compact('list'));
     }
 
@@ -3402,9 +3535,24 @@ class AdminController extends Controller
 
     public function requestslist($type,$id,$modal=null){
         if($modal!=null){
-            $item=Requests::where('notifid',$modal)->first();
-            $modalid = 'viewModal'.$item->id;
-            $id=$item->req_id;
+            // dd($id,$modal);
+            if($type=='Redeem_Request'){
+                $item=Requests::find($modal);
+                $modalid = 'viewModal'.$item->id;
+                $id = $item->from_id;
+                // dd($item);
+            }else{
+                $item=Requests::where('notifid',$modal)->first();
+                if(isset($item)){
+                    $modalid = 'viewModal'.$item->id;
+                    $id=$item->req_id;
+                }else{;
+                    $item = Requests::find($id);
+                    $modalid = 'viewModal'.$item->id;
+                    $id = $item->req_id;
+                }
+            }
+            
         }else{
             $modalid =$modal;
         }
@@ -3412,19 +3560,36 @@ class AdminController extends Controller
         if($type=="Sub_service"){
             $list = Requests::where('req_id',$id)->where('type',$type)->with(['subservice' => function ($q) use ($id) {
                 $q->where('id',$id);
-            }])->latest()->paginate(20);
-            return view('admin.mainservices.requestlist',compact('list','modalid'));
+            }])->has('from')->latest()->paginate(20);
+            $sub = SubService::find($id);
+            return view('admin.mainservices.requestlist',compact('list','modalid','sub'));
         }elseif($type=="Business_Solution"){
             $list = Requests::where('req_id',$id)->where('type',$type)->with(['business' => function ($q) use ($id) {
                 $q->where('id',$id);
-            }])->latest()->paginate(20);
+            }])->has('from')->latest()->paginate(20);
             return view('admin.business.requestlist',compact('list','modalid'));
+        }elseif($type=="Promotion"){
+            $list = Requests::where('req_id',$id)->where('type',$type)->with(['promotion' => function ($q) use ($id) {
+                $q->where('id',$id);
+            }])->has('from')->latest()->paginate(20);
+            return view('admin.promotion.requestlist',compact('list','modalid'));
+        }elseif($type=="Redeem_Request"){
+            // Notification::where('id',100)->update(['status' => 0]);
+            // dd(Notification::find(100));
+            // request_for/Redeem_Request/48
+            $list = Requests::where('from_id',$id)->where('type',$type)->with(['redeem' => function ($q) use ($id) {
+                $q->where('partner_id',$id);
+            }])->has('from')->latest()->paginate(20);
+            // dd($list);
+            
+            return view('admin.rewards.requestlist',compact('list','modalid'));
         }
         
     }
     public function RequestRespond(Request $request,$id){
         
         $data = Requests::find($id);
+        Notification::where('id',$data->notifid)->update(['status'=>1]);
         if($request->status==1){
             $status = "confirmed";
         }elseif($request->status==2){
@@ -3438,6 +3603,10 @@ class AdminController extends Controller
             $item = BusinessSolution::where('id',$data->req_id)->first();
             $heading= $item->name;
             $type = "Business_Solution";
+        }elseif($request->type=="Promotion"){
+            $item = Promotion::where('id',$data->req_id)->first();
+            $heading= $item->name;
+            $type = "Promotion";
         }
         $notificationId = Notification::insertGetId([
             'req_from' => $data->id,
@@ -3472,11 +3641,224 @@ class AdminController extends Controller
             $item = Notification::find($id);
             $modalid = $id;
             return redirect()->route('Request_Call',['type'=> $type,'id'=>$item->req_from,'modal'=>$modalid]);
+        }elseif($type=='Promotion'){
+            Notification::where('id',$id)->update(['status'=>1]);
+            $item = Notification::find($id);
+            $modalid = $id;
+            return redirect()->route('Request_Call',['type'=> $type,'id'=>$item->req_from,'modal'=>$modalid]);
+        }elseif($type=='Redeem_Request'){
+            // dd($id);
+            Notification::where('id',$id)->update(['status'=>1]);
+            $item = Notification::find($id);
+            $modalid = $item->req_from;
+            return redirect()->route('Request_Call',['type'=> $type,'id'=>$item->from_id,'modal'=>$modalid]);
         }
         
         
     }
 
+    public function upload_images(Request $request){
+        $request->validate([
+            'upload' => 'image',
+        ]);
+        // if ($request->hasFile('upload')) {
+        //       $url = $request->upload->store('images');
+        //       $CKEditorFuncNum = $request->input('CKEditorFuncNum');
+        //       $url = asset('storage/ckeditor' . $url);
+        //       $msg = 'Image successfully uploadeddd';
+        //       $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
+        //       @header('Content-type: text/html; charset=utf-8');
+        //       return $response;
+        // }
+
+        if($request->hasFile('upload')) {
+            $originName = $request->file('upload')->getClientOriginalName();
+            $fileName = pathinfo($originName, PATHINFO_FILENAME);
+            $extension = $request->file('upload')->getClientOriginalExtension();
+            $fileName = $fileName.'_'.time().'.'.$extension;
+           
+            $request->file('upload')->move(public_path('images'), $fileName);
+      
+            $CKEditorFuncNum = $request->input('CKEditorFuncNum');
+            $url = asset('images/'.$fileName); 
+            $msg = 'Image uploaded successfully'; 
+            $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
+                  
+            @header('Content-type: text/html; charset=utf-8'); 
+            echo $response;
+        }
+   
+    }
+    public function promotions(){
+        $list = Promotion::latest()->paginate(20);
+        return view('admin.promotion.list',compact('list'));
+
+    }
+    public function addpromotion(Request $request){
+        $validator = Validator::make($request->all(),
+        [
+            'promotionname' => 'required',
+            'promotiondescription1' => 'required',
+            'image' => 'required',
+            'date1'=>'required',
+            'date2'=>'required'
+        ],[
+            'promotionname.required' => 'Please enter promotion title',
+            'promotiondescription1.required' => 'Please add description for promotion',
+            'image.required' => 'Please add event image',
+            'date1.required'=>'Please specify the from date',
+            'date2.required'=>'Please specify the to date',
+            
+        ]);
+    if ($validator->fails()) {
+        $messages = $validator->messages();
+        return Redirect::back()->withErrors($messages)->withInput();
+    }
+    $image = "";
+    if ($request->file('image') != "") {
+        
+        $file = $request->file('image');
+        $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+        $file->move('uploads/promotion/images', $fileName);
+        // $eventimage = 'uploads/event/images/' . $fileName;
+        $image = $request->root().'/uploads/promotion/images/'.$fileName;
+    }
+    $promotionId = Promotion::insertGetId([
+        'name'=>$request->promotionname,
+        'description'=>$request->promotiondescription1,
+        'image'=>$image,
+        'from_date'=>$request->date1,
+        'to_date'=>$request->date2,
+        "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+        "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+    ]);
+    
+    DB::commit();
+    return redirect()->back()->with('success', 'New promotion added successfully');
+    }
+    public function updatepromotion(Request $request,$id){
+        $validator = Validator::make($request->all(),
+        [
+            'promotionname' => 'required',
+            'promotiondescription' => 'required',
+            // 'image' => 'required',
+            'date1'=>'required',
+            'date2'=>'required'
+        ],[
+            'promotionname.required' => 'Please enter promotion title',
+            'promotiondescription1.required' => 'Please add description for promotion',
+            // 'image.required' => 'Please add event image',
+            'date1.required'=>'Please specify the from date',
+            'date2.required'=>'Please specify the to date',
+            
+        ]);
+        if ($validator->fails()) {
+            $messages = $validator->messages();
+            return Redirect::back()->withErrors($messages)->withInput();
+        }
+        $promotion = Promotion::find($id);
+        $image = "";$document=[];
+        if ($request->file('image') != "") {
+            $file = $request->file('image');
+            $fileName = md5($file->getClientOriginalName() . time()) . "." . $file->getClientOriginalExtension();
+            $file->move('uploads/promotion/images', $fileName);
+            // $eventimage = 'uploads/event/images/' . $fileName;
+            $image = $request->root().'/uploads/promotion/images/'.$fileName;
+        }else{
+            $image = $promotion->image;
+        }
+
+        $inputData = [
+            'name'=>$request->promotionname,
+            'description'=>$request->promotiondescription,
+            'image'=>$image,
+            'from_date'=>$request->date1,
+            'to_date'=>$request->date2,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ];
+        Promotion::where('id',$id)->update($inputData);
+        return redirect()->back()->with('success', 'Promotion details updated successfully');
+
+    }
+    public function activepromotion($id){
+        $status="";
+        $promotion=Promotion::find($id);
+        if($promotion->status==0){
+            $status=1;
+        }else{
+            $status=0;
+        }
+        Promotion::where('id',$id)->update(['status'=> $status]);
+        return redirect()->back()->with('success','Promotion status updated successfully');
+    }
+
+    public function PartnerRedeemRequestResponse(Request $request,$id){
+        $data = Requests::find($id);
+        Notification::where('id',$data->notifid)->update(['status'=>1]);
+        Redeem::where('id',$data->req_id)->update(['status'=>$request->status]);
+        if($request->status==1){
+            $status = "granted";
+        }elseif($request->status==2){
+            $status = "rejected";
+        }
+        $item = Notification::find($data->notifid);
+        $deduction = Redeemdeduction::where('partner_id',$item->from_id)->first();
+
+        if(isset($deduction)){
+
+            $inputData = [
+
+                'total_reward' => $deduction->total_reward - $request->amount,
+
+                'total_redeem' => $deduction->total_redeem + $request->amount
+
+            ];
+
+            // dd($inputData);
+
+            Redeemdeduction::where('id',$deduction->id)->update($inputData);
+
+        }else{
+
+            $totalrewards = Reward::where('partner_id',$item->from_id)->selectRaw('sum(rewards.point) as score')->get();
+
+            $totalredeems = Redeem::where('partner_id',$item->from_id)->selectRaw('sum(redeems.amount) as score')->get();
+
+            $score1 = isset($totalrewards[0]->score)?$totalrewards[0]->score:0;
+
+            $score2 = isset($totalredeems[0]->score)?$totalredeems[0]->score:0;
+
+            $redeemId = Redeemdeduction::insertGetId([
+
+                'total_reward' => ($score1 - $request->amount),
+
+                'partner_id' => $item->from_id,
+
+                'total_redeem' => $score2 + $request->amount,
+                "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+
+                "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+            ]);
+
+        }
+        $notificationId = Notification::insertGetId([
+            'req_from' => $data->id,
+            'from_id'=>Auth::user()->id,
+            'to_id' => $data->from_id,
+            'type' => 'Redeem_Request',
+            'message' => "Redeem requested for amount ".$request->amount." AED is ".$status,
+            "created_at" =>  \Carbon\Carbon::now(), # new \Datetime()
+            "updated_at" => \Carbon\Carbon::now(),  # new \Datetime()
+
+        ]);
+        Requests::where('id',$id)->update(['status'=>$request->status,'notifid'=>$notificationId]);
+        return redirect()->back()->with('success','Request updated successfully');
+    }
+    
     public function logout(Request $request)
 
     {

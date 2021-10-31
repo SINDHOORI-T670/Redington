@@ -79,7 +79,7 @@ table.dataTable tbody td {
                                             @if($item->status==1)
                                             <a class="btn btn-primary text-white tab-order" data-toggle="modal" data-target="#ReschduleModal{{$item->id}}"  href="#" title="Reschedule"><i class="fa fa-calendar"></i></a>
                                             @else 
-                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/preset_questions')}}/{{$item->tech_id}}/{{$item->brand_id}}/{{$item->from_id}}" title="Preset Questions"><i class="fa fa-question"></i></a>
+                                            <a class="btn btn-warning text-white tab-order" href="{{url('admin/preset_questions')}}/{{$item->tech_id}}/{{$item->brand_id}}/{{$item->from_id}}/{{$item->id}}" title="Preset Questions"><i class="fa fa-question"></i></a>
                                             @endif
                                             {{-- <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings mr-1"></i></button>
                                                 <div class="dropdown-menu arrow" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;">

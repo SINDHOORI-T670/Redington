@@ -56,6 +56,12 @@ Route::group(['middleware' => ['auth', 'CheckUser'], 'prefix' => 'partner'], fun
     Route::get('/edit/profile','PartnerController@editprofile');
     Route::post('/update/profile','PartnerController@updateprofile');
     Route::get('/sales_connect','PartnerController@listsalesconnects');
+    Route::get('/list/rewards','PartnerController@ListRewards');
+    Route::get('journals','PartnerController@journals');
+    Route::get('sub/journals/{id}','PartnerController@subjournals');
+    Route::get('value_stories/list','PartnerController@ValuestoriesList');
+    Route::get('resource/list','PartnerController@resources');
+    Route::get('subresource/list/{id}','PartnerController@subresources');
     Route::get('/logout', 'PartnerController@logout')->name('Partner-Logout');
 });
 
@@ -109,11 +115,15 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::get('value_journals/list/{id}','AdminController@ValueJournalList');
     Route::post('add/value_journal','AdminController@storevalueJournal');
     Route::post('edit/value_journals/{id}','AdminController@editvaluejournals');
-    Route::get('active/journals/{id}','Admincontroller@activejournals');
-    Route::get('value_stories/list','AdminController@ValuestoriesList');
+    Route::get('active/journals/{id}','AdminController@activejournals');
+    Route::get('value_stories/mainlist','AdminController@ValuestoriesmainList');
+    Route::post('add/main_value_stories','AdminController@storemainvaluestories');
+    Route::post('edit/main_value_stories/{id}','AdminController@editmainvaluestories');
+    Route::get('active/main_stories/{id}','AdminController@activemainstories');
+    Route::get('value_stories/list/{id}','AdminController@ValuestoriesList');
     Route::post('add/value_stories','AdminController@storevaluestories');
     Route::post('edit/value_stories/{id}','AdminController@editvaluestories');
-    Route::get('active/stories/{id}','Admincontroller@activestories');
+    Route::get('active/stories/{id}','AdminController@activestories');
     Route::get('list/brands','AdminController@BrandList');
     Route::post('add/brand','AdminController@addBrand');
     Route::post('edit/brand/{id}','AdminController@editBrand');
@@ -123,7 +133,7 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('assign/region','AdminController@AssignRegion');
     Route::get('/sales_connects/{modal?}','AdminController@SalesConnects')->name('Sales_Connect');
     Route::post('/Reschedule/{id}','AdminController@Reschedule');
-    Route::get('/preset_questions/{techid}/{brandid}/{from}','AdminController@PresetQuestions');
+    Route::get('/preset_questions/{techid}/{brandid}/{from}/{saleid}','AdminController@PresetQuestions');
     Route::get('/prest_questions','AdminController@allqueries');
     Route::post('add/new/query','AdminController@addsalesquery');
     Route::post('edit/query/{id}','AdminController@editsalesquery');
@@ -157,6 +167,10 @@ Route::group(['middleware' => ['auth', 'CheckAdmin'], 'prefix' => 'admin'], func
     Route::post('sales_connect/schedule/accept/{id}','AdminController@scheduleacceptforsalesconnect');
     Route::get('request_for/{type}/{id}/{modal?}','AdminController@requestslist')->name('Request_Call');
     Route::post('respond/request/{id}','AdminController@RequestRespond');
+    Route::get('/list/promotions','AdminController@promotions');
+    Route::post('add/new/promotion','AdminController@addpromotion');
+    Route::post('update/promotion/{id}','AdminController@updatepromotion');
+    Route::get('/active/promotion/{id}','AdminController@activepromotion');
     Route::get('read/notification/{id}/{type}','AdminController@readNotification');
 });
 // Route::group(['prefix' => 'admin'], function () {

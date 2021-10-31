@@ -364,7 +364,7 @@
         </li>
 
         {{-- Value Stories --}}
-        <li class=" nav-item"><a href="{{url('admin/value_stories/list')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
+        <li class=" nav-item"><a href="{{url('admin/value_stories/mainlist')}}"><i class="icon-docs"></i><span class="menu-title" data-i18n="nav.chat-application.main">Value Stories</span></a>
         </li>
 
         {{-- Brands --}}
@@ -391,6 +391,10 @@
         <li class=" nav-item"><a href="{{url('admin/list/new/events')}}"><i class="icon-calendar"></i><span class="menu-title" data-i18n="nav.chat-application.main">Events</span></a>
         </li>
         
+        {{-- Promotions --}}
+        <li class=" nav-item"><a href="{{url('admin/list/promotions')}}"><i class="icon-calendar"></i><span class="menu-title" data-i18n="nav.chat-application.main">Promotions</span></a>
+        </li>
+
         {{-- main service --}}
         <li class=" nav-item"><a href="{{url('admin/main_services/list')}}"><i class="icon-book-open"></i><span class="menu-title" data-i18n="nav.chat-application.main">Redington Services</span></a>
         </li>
